@@ -175,17 +175,13 @@ src/
 ### Phase 1: Project Setup & Foundation (Week 1)
 #### 6.1 Environment Setup
 ```bash
-# Create SvelteKit project
-npm create svelte@latest portfolio
-cd portfolio
-
 # Install dependencies
-npm install
-npm install -D @tailwindcss/typography @tailwindcss/forms
-npm install framer-motion lucide-svelte
-npm install -D @typescript-eslint/eslint-plugin @typescript-eslint/parser
-npm install -D prettier prettier-plugin-svelte
-npm install -D vitest @testing-library/svelte
+pnpm install
+pnpm install -D @tailwindcss/typography @tailwindcss/forms
+pnpm install framer-motion lucide-svelte
+pnpm install -D @typescript-eslint/eslint-plugin @typescript-eslint/parser
+pnpm install -D prettier prettier-plugin-svelte
+pnpm install -D vitest @testing-library/svelte
 ```
 
 #### 6.2 Configuration Files
@@ -282,11 +278,11 @@ export const fadeInUp = {
 #### 6.12 Testing Strategy
 ```bash
 # Unit tests
-npm run test
+pnpm run test
 
 # E2E tests with Playwright
 npx playwright install
-npm run test:e2e
+pnpm run test:e2e
 ```
 
 #### 6.13 Performance Audit
@@ -301,7 +297,7 @@ npm run test:e2e
 // vercel.json
 {
   "framework": "svelte",
-  "buildCommand": "npm run build",
+  "buildCommand": "pnpm run build",
   "outputDirectory": "build",
   "functions": {
     "src/routes/api/contact/+server.ts": {
@@ -322,9 +318,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - run: npm ci
-      - run: npm run test
-      - run: npm run build
+      - run: pnpm ci
+      - run: pnpm run test
+      - run: pnpm run build
 ```
 
 ## 7. Content Strategy
