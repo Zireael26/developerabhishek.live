@@ -40,7 +40,9 @@
 	}
 </script>
 
-<div class="flex min-h-screen flex-col bg-white dark:bg-secondary-900 text-secondary-900 dark:text-secondary-100">
+<div
+	class="dark:bg-secondary-900 text-secondary-900 dark:text-secondary-100 flex min-h-screen flex-col bg-white"
+>
 	<Header {darkMode} {toggleDarkMode} />
 
 	<main class="flex-1">

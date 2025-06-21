@@ -174,7 +174,7 @@
 		<!-- CTA -->
 		<div class="mt-16 text-center">
 			<p class="text-secondary-600 dark:text-secondary-400 mb-6">Want to see more of my work?</p>
-			<Button href="https://github.com/abhishekkaushik" variant="outline" size="lg" class="group">
+			<Button href="https://github.com/Zireael26" variant="outline" size="lg" class="group">
 				<div class="mr-2 h-5 w-5">
 					<SiGithub size={20} />
 				</div>

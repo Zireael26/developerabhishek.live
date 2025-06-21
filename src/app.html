@@ -15,7 +15,7 @@
 
 		<!-- Dark mode script to prevent flash -->
 		<script>
-			(function() {
+			(function () {
 				const stored = localStorage.getItem('darkMode');
 				const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 				const isDark = stored ? JSON.parse(stored) : prefersDark;

@@ -7,7 +7,7 @@ export const projects: Project[] = [
 		description:
 			'Modern, responsive portfolio built with SvelteKit and TypeScript. Features dark mode, animations, and optimized performance.',
 		technologies: ['SvelteKit', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],
-		githubUrl: 'https://github.com/abhishekkaushik/portfolio',
+		githubUrl: 'https://github.com/Zireael26/portfolio',
 		liveUrl: 'https://developerabhishek.live',
 		featured: true
 	},
@@ -25,7 +25,7 @@ export const projects: Project[] = [
 		description:
 			'Web3 application for exploring Cosmos blockchain transactions and validator information using CosmJS SDK.',
 		technologies: ['React', 'CosmJS', 'Cosmos SDK', 'TypeScript', 'Web3'],
-		githubUrl: 'https://github.com/abhishekkaushik/cosmos-explorer',
+		githubUrl: 'https://github.com/Zireael26/cosmos-explorer',
 		featured: true
 	},
 	{
@@ -42,7 +42,7 @@ export const projects: Project[] = [
 		description:
 			'Live monitoring dashboard for system metrics with WebSocket connections and interactive charts.',
 		technologies: ['Vue.js', 'Node.js', 'WebSockets', 'Chart.js', 'Redis'],
-		githubUrl: 'https://github.com/abhishekkaushik/analytics-dashboard',
+		githubUrl: 'https://github.com/Zireael26/analytics-dashboard',
 		featured: false
 	},
 	{

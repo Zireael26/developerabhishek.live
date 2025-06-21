@@ -4,7 +4,8 @@
 	import { Menu, X, Sun, Moon } from 'lucide-svelte';
 	import { personalInfo } from '$lib/data/personal';
 
-	let { darkMode = false, toggleDarkMode }: { darkMode?: boolean; toggleDarkMode?: () => void } = $props();
+	let { darkMode = false, toggleDarkMode }: { darkMode?: boolean; toggleDarkMode?: () => void } =
+		$props();
 	let mobileMenuOpen = $state(false);
 
 	const navItems = [
@@ -63,7 +64,7 @@
 				<button
 					type="button"
 					onclick={toggleDarkMode}
-					class="text-secondary-400 hover:text-secondary-500 dark:text-secondary-500 dark:hover:text-secondary-400 hover:bg-secondary-100 dark:hover:bg-secondary-800 focus:ring-primary-500 inline-flex items-center justify-center rounded-md p-2 focus:ring-2 focus:outline-none transition-colors"
+					class="text-secondary-400 hover:text-secondary-500 dark:text-secondary-500 dark:hover:text-secondary-400 hover:bg-secondary-100 dark:hover:bg-secondary-800 focus:ring-primary-500 inline-flex items-center justify-center rounded-md p-2 transition-colors focus:ring-2 focus:outline-none"
 					aria-label="Toggle dark mode"
 				>
 					{#if darkMode}
@@ -72,7 +73,7 @@
 						<Moon class="h-5 w-5" />
 					{/if}
 				</button>
-				
+
 				<!-- CTA Button -->
 				<Button href={personalInfo.resumeUrl} variant="outline" size="sm">Resume</Button>
 			</div>
@@ -129,7 +130,7 @@
 								Dark Mode
 							{/if}
 						</button>
-						
+
 						<!-- Resume Button -->
 						<Button href={personalInfo.resumeUrl} variant="outline" size="sm" class="w-full">
 							Resume
