@@ -1,2 +1,181 @@
-@import 'tailwindcss';
-@plugin '@tailwindcss/typography';
+/* Tailwind CSS v4 */
+@import "tailwindcss";
+
+/* Custom dark mode variant for manual control */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Tailwind v4 Theme Configuration */
+@theme {
+  /* Primary Color Scale */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  
+  /* Secondary Color Scale (using slate colors) */
+  --color-secondary-50: #f8fafc;
+  --color-secondary-100: #f1f5f9;
+  --color-secondary-200: #e2e8f0;
+  --color-secondary-300: #cbd5e1;
+  --color-secondary-400: #94a3b8;
+  --color-secondary-500: #64748b;
+  --color-secondary-600: #475569;
+  --color-secondary-700: #334155;
+  --color-secondary-800: #1e293b;
+  --color-secondary-900: #0f172a;
+  
+  /* Accent Color Scale (using amber colors) */
+  --color-accent-50: #fffbeb;
+  --color-accent-100: #fef3c7;
+  --color-accent-200: #fde68a;
+  --color-accent-300: #fcd34d;
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
+  --color-accent-700: #b45309;
+  --color-accent-800: #92400e;
+  --color-accent-900: #78350f;
+  
+  /* Font Families */
+  --font-family-display: "Playfair Display", serif;
+  --font-family-body: "Inter", sans-serif;
+  --font-family-mono: "JetBrains Mono", monospace;
+  
+  /* Custom Animations */
+  --animate-fade-in: fadeIn 0.6s ease-in-out;
+  --animate-slide-up: slideUp 0.6s ease-out;
+  --animate-slide-down: slideDown 0.6s ease-out;
+}
+
+/* Base Styles */
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	font-family: 'Inter', sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* Ensure proper text colors */
+html {
+	color-scheme: light dark;
+}
+
+.dark {
+	color-scheme: dark;
+}
+
+/* Typography Classes */
+.font-display {
+	font-family: 'Playfair Display', serif;
+}
+
+.font-body {
+	font-family: 'Inter', sans-serif;
+}
+
+.font-mono {
+	font-family: 'JetBrains Mono', monospace;
+}
+
+/* Custom Utilities */
+.gradient-text {
+	background: linear-gradient(135deg, var(--primary), var(--accent));
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+/* Custom Animations */
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes slideUp {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes slideDown {
+	from {
+		opacity: 0;
+		transform: translateY(-20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.animate-fade-in {
+	animation: fadeIn 0.6s ease-in-out;
+}
+
+.animate-slide-up {
+	animation: slideUp 0.6s ease-out;
+}
+
+.animate-slide-down {
+	animation: slideDown 0.6s ease-out;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+	:root {
+		--neutral-50: #0f172a;
+		--neutral-900: #f8fafc;
+	}
+}
+
+/* Additional visibility fixes */
+* {
+	transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Ensure text is always visible */
+h1, h2, h3, h4, h5, h6 {
+	color: inherit;
+}
+
+p, span, div {
+	color: inherit;
+}
+
+/* Fallback colors for cases where Tailwind classes might not work */
+.dark body {
+	background-color: #0f172a;
+	color: #f1f5f9;
+}
+
+body {
+	background-color: #ffffff;
+	color: #0f172a;
+}
+
+/* Ensure links are visible */
+a {
+	color: inherit;
+}
+
+a:hover {
+	opacity: 0.8;
+}
