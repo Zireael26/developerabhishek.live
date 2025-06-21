@@ -3,6 +3,8 @@
 	import Badge from '$lib/components/ui/Badge.svelte';
 	import { skills } from '$lib/data/skills';
 	import { Code } from 'lucide-svelte';
+	import { Motion } from 'svelte-motion';
+	import { animations, withViewport } from '$lib/utils/animations';
 	import {
 		SiGnubash,
 		SiReact,
@@ -39,17 +41,22 @@
 <section id="skills" class="dark:bg-secondary-900 bg-white py-20">
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<!-- Section Header -->
-		<div class="mb-16 text-center">
-			<h2
-				class="font-display text-secondary-900 mb-4 text-3xl font-bold sm:text-4xl dark:text-white"
-			>
-				Technical Skills
-			</h2>
-			<p class="text-secondary-600 dark:text-secondary-400 mx-auto max-w-3xl text-lg">
-				A comprehensive toolkit built through years of hands-on experience and continuous learning
-				in modern software development.
-			</p>
-		</div>
+		<Motion
+			{...withViewport(animations.section)}
+			let:motion
+		>
+			<div class="mb-16 text-center" use:motion>
+				<h2
+					class="font-display text-secondary-900 mb-4 text-3xl font-bold sm:text-4xl dark:text-white"
+				>
+					Technical Skills
+				</h2>
+				<p class="text-secondary-600 dark:text-secondary-400 mx-auto max-w-3xl text-lg">
+					A comprehensive toolkit built through years of hands-on experience and continuous learning
+					in modern software development.
+				</p>
+			</div>
+		</Motion>
 
 		<!-- Skills Grid -->
 		<div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-2">

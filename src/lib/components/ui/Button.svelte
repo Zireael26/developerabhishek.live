@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { Motion } from 'svelte-motion';
+	import { animations } from '$lib/utils/animations';
 
 	interface Props {
 		variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
@@ -10,6 +12,7 @@
 		class?: string;
 		children: Snippet;
 		onclick?: () => void;
+		animate?: boolean;
 	}
 
 	let {
@@ -20,7 +23,8 @@
 		type = 'button',
 		class: className = '',
 		children,
-		onclick
+		onclick,
+		animate = true
 	}: Props = $props();
 
 	const baseClasses =
@@ -46,12 +50,26 @@
 	const classes = `${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`;
 </script>
 
-{#if href}
-	<a {href} class={classes} class:pointer-events-none={disabled} role="button">
-		{@render children()}
-	</a>
+{#if animate}
+	<Motion {...animations.buttonHover} let:motion>
+		{#if href}
+			<a use:motion {href} class={classes} class:pointer-events-none={disabled} role="button">
+				{@render children()}
+			</a>
+		{:else}
+			<button use:motion class={classes} {type} {disabled} {onclick}>
+				{@render children()}
+			</button>
+		{/if}
+	</Motion>
 {:else}
-	<button class={classes} {type} {disabled} {onclick}>
-		{@render children()}
-	</button>
+	{#if href}
+		<a {href} class={classes} class:pointer-events-none={disabled} role="button">
+			{@render children()}
+		</a>
+	{:else}
+		<button class={classes} {type} {disabled} {onclick}>
+			{@render children()}
+		</button>
+	{/if}
 {/if}

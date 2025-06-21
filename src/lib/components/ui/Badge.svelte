@@ -1,12 +1,16 @@
 <script lang="ts">
+	import { Motion } from 'svelte-motion';
+	import { animations } from '$lib/utils/animations';
+
 	interface Props {
 		text: string;
 		variant?: 'primary' | 'secondary' | 'accent' | 'success';
 		size?: 'sm' | 'md' | 'lg';
 		class?: string;
+		animate?: boolean;
 	}
 
-	let { text, variant = 'primary', size = 'md', class: className = '' }: Props = $props();
+	let { text, variant = 'primary', size = 'md', class: className = '', animate = true }: Props = $props();
 
 	const baseClasses = 'inline-flex items-center rounded-full font-medium';
 
@@ -26,6 +30,14 @@
 	const classes = `${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`;
 </script>
 
-<span class={classes}>
-	{text}
-</span>
+{#if animate}
+	<Motion {...animations.skillBadge} let:motion>
+		<span use:motion class={classes}>
+			{text}
+		</span>
+	</Motion>
+{:else}
+	<span class={classes}>
+		{text}
+	</span>
+{/if}
