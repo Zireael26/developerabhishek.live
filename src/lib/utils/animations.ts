@@ -17,8 +17,8 @@ export const animations = {
 
 	// Card hover animations
 	cardHover: {
-		whileHover: { 
-			scale: 1.02, 
+		whileHover: {
+			scale: 1.02,
 			y: -8,
 			transition: { duration: 0.2, ease: 'easeOut' }
 		},
@@ -34,14 +34,14 @@ export const animations = {
 
 	// Icon animations
 	iconFloat: {
-		animate: { 
+		animate: {
 			y: [0, -8, 0],
 			rotate: [0, 5, 0]
 		},
-		transition: { 
-			duration: 3, 
-			repeat: Infinity, 
-			ease: 'easeInOut' 
+		transition: {
+			duration: 3,
+			repeat: Infinity,
+			ease: 'easeInOut'
 		}
 	},
 
@@ -137,8 +137,8 @@ export const animations = {
 	},
 
 	socialIcon: {
-		whileHover: { 
-			scale: 1.1, 
+		whileHover: {
+			scale: 1.1,
 			rotate: 5,
 			transition: { duration: 0.2 }
 		},
@@ -159,7 +159,7 @@ export const withDelay = (animation: any, delay: number) => ({
 export const viewport = {
 	once: true,
 	amount: 0.2,
-	margin: "-100px"
+	margin: '-100px'
 };
 
 // Helper function to combine animation with viewport settings

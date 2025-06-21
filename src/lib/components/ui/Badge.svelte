@@ -10,7 +10,13 @@
 		animate?: boolean;
 	}
 
-	let { text, variant = 'primary', size = 'md', class: className = '', animate = true }: Props = $props();
+	let {
+		text,
+		variant = 'primary',
+		size = 'md',
+		class: className = '',
+		animate = true
+	}: Props = $props();
 
 	const baseClasses = 'inline-flex items-center rounded-full font-medium';
 

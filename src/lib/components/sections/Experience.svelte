@@ -60,9 +60,13 @@
 											<div use:motion>
 												<Card class="transition-all duration-300 hover:shadow-lg">
 													<!-- Position Header -->
-													<div class="mb-4 flex flex-col lg:flex-row lg:items-center lg:justify-between">
+													<div
+														class="mb-4 flex flex-col lg:flex-row lg:items-center lg:justify-between"
+													>
 														<div>
-															<h4 class="text-secondary-900 mb-2 text-xl font-semibold dark:text-white">
+															<h4
+																class="text-secondary-900 mb-2 text-xl font-semibold dark:text-white"
+															>
 																{position.title}
 															</h4>
 															<div
@@ -95,7 +99,9 @@
 																	<li
 																		class="text-secondary-600 dark:text-secondary-400 flex items-start space-x-2"
 																	>
-																		<ChevronRight class="text-primary-600 mt-0.5 h-4 w-4 flex-shrink-0" />
+																		<ChevronRight
+																			class="text-primary-600 mt-0.5 h-4 w-4 flex-shrink-0"
+																		/>
 																		<span class="text-sm">{achievement}</span>
 																	</li>
 																{/each}
@@ -106,7 +112,9 @@
 													<!-- Technologies -->
 													{#if position.technologies && position.technologies.length > 0}
 														<div>
-															<h5 class="text-secondary-900 mb-3 text-sm font-semibold dark:text-white">
+															<h5
+																class="text-secondary-900 mb-3 text-sm font-semibold dark:text-white"
+															>
 																Technologies Used
 															</h5>
 															<div class="flex flex-wrap gap-2">

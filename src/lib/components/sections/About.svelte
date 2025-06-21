@@ -32,9 +32,9 @@
 
 					<div class="prose prose-lg text-secondary-600 dark:text-secondary-400">
 						<p>
-							With over 5 years of experience in software engineering, I've evolved from an individual
-							contributor to a technical leader who bridges the gap between complex technical
-							challenges and business objectives.
+							With over 5 years of experience in software engineering, I've evolved from an
+							individual contributor to a technical leader who bridges the gap between complex
+							technical challenges and business objectives.
 						</p>
 
 						<p>
@@ -56,7 +56,9 @@
 						<ul class="text-secondary-600 dark:text-secondary-400 space-y-2">
 							<li class="flex items-start space-x-3">
 								<Target class="text-primary-600 mt-0.5 h-5 w-5 flex-shrink-0" />
-								<span>Building solutions that create meaningful impact for users and businesses</span>
+								<span
+									>Building solutions that create meaningful impact for users and businesses</span
+								>
 							</li>
 							<li class="flex items-start space-x-3">
 								<Users class="text-primary-600 mt-0.5 h-5 w-5 flex-shrink-0" />
@@ -65,7 +67,8 @@
 							<li class="flex items-start space-x-3">
 								<Lightbulb class="text-primary-600 mt-0.5 h-5 w-5 flex-shrink-0" />
 								<span
-									>Staying curious and embracing emerging technologies to solve tomorrow's challenges</span
+									>Staying curious and embracing emerging technologies to solve tomorrow's
+									challenges</span
 								>
 							</li>
 							<li class="flex items-start space-x-3">
@@ -86,7 +89,9 @@
 							<Card class="border-l-primary-600 border-l-4">
 								<div class="space-y-4">
 									<div class="flex items-center space-x-3">
-										<div class="bg-primary-100 flex h-10 w-10 items-center justify-center rounded-lg">
+										<div
+											class="bg-primary-100 flex h-10 w-10 items-center justify-center rounded-lg"
+										>
 											<Lightbulb class="text-primary-600 h-5 w-5" />
 										</div>
 										<h4 class="text-secondary-900 text-lg font-semibold dark:text-white">
@@ -108,7 +113,9 @@
 							<Card class="border-l-accent-500 border-l-4">
 								<div class="space-y-4">
 									<div class="flex items-center space-x-3">
-										<div class="bg-accent-100 flex h-10 w-10 items-center justify-center rounded-lg">
+										<div
+											class="bg-accent-100 flex h-10 w-10 items-center justify-center rounded-lg"
+										>
 											<Users class="text-accent-600 h-5 w-5" />
 										</div>
 										<h4 class="text-secondary-900 text-lg font-semibold dark:text-white">
@@ -117,7 +124,8 @@
 									</div>
 									<p class="text-secondary-600 dark:text-secondary-400">
 										Promoted from Software Engineer to Associate Manager in 5 years, leading
-										cross-functional teams and driving technical excellence across multiple projects.
+										cross-functional teams and driving technical excellence across multiple
+										projects.
 									</p>
 								</div>
 							</Card>
@@ -138,8 +146,8 @@
 										</h4>
 									</div>
 									<p class="text-secondary-600 dark:text-secondary-400">
-										Winner of 3 internal hackathons and recipient of 2 Einstein Awards for outstanding
-										technical contributions and innovative solutions.
+										Winner of 3 internal hackathons and recipient of 2 Einstein Awards for
+										outstanding technical contributions and innovative solutions.
 									</p>
 								</div>
 							</Card>

@@ -62,14 +62,12 @@
 			</button>
 		{/if}
 	</Motion>
+{:else if href}
+	<a {href} class={classes} class:pointer-events-none={disabled} role="button">
+		{@render children()}
+	</a>
 {:else}
-	{#if href}
-		<a {href} class={classes} class:pointer-events-none={disabled} role="button">
-			{@render children()}
-		</a>
-	{:else}
-		<button class={classes} {type} {disabled} {onclick}>
-			{@render children()}
-		</button>
-	{/if}
+	<button class={classes} {type} {disabled} {onclick}>
+		{@render children()}
+	</button>
 {/if}

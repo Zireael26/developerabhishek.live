@@ -29,7 +29,7 @@
 		<!-- Featured Projects Grid -->
 		<Motion {...withViewport(animations.staggerContainer)} let:motion>
 			<div class="mb-20 grid gap-8 lg:grid-cols-2" use:motion>
-				{#each projects.filter(p => p.featured) as project (project.id)}
+				{#each projects.filter((p) => p.featured) as project (project.id)}
 					<Motion {...withViewport(animations.staggerChild)} let:motion>
 						<div use:motion>
 							<Card class="group h-full transition-all duration-300">
@@ -60,7 +60,7 @@
 								<!-- Project Content -->
 								<div class="space-y-4">
 									<h3
-										class="text-secondary-900 dark:text-secondary-100 text-xl font-semibold group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"
+										class="text-secondary-900 dark:text-secondary-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 text-xl font-semibold transition-colors"
 									>
 										{project.title}
 									</h3>
@@ -109,7 +109,12 @@
 											{#if project.liveUrl}
 												<Motion {...animations.buttonHover} let:motion>
 													<div use:motion>
-														<Button href={project.liveUrl} size="sm" class="group/btn flex-1" animate>
+														<Button
+															href={project.liveUrl}
+															size="sm"
+															class="group/btn flex-1"
+															animate
+														>
 															Live Demo
 															<ExternalLink
 																class="ml-2 h-3 w-3 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5"
@@ -140,7 +145,7 @@
 		<!-- Other Projects Grid -->
 		<Motion {...withViewport(animations.staggerContainer)} let:motion>
 			<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3" use:motion>
-				{#each projects.filter(p => !p.featured) as project (project.id)}
+				{#each projects.filter((p) => !p.featured) as project (project.id)}
 					<Motion {...withViewport(animations.staggerChild)} let:motion>
 						<div use:motion>
 							<Card class="group transition-all duration-300">
@@ -153,11 +158,7 @@
 									</div>
 									<div class="flex space-x-2">
 										{#if project.githubUrl}
-											<Motion
-												whileHover={{ scale: 1.2 }}
-												whileTap={{ scale: 0.95 }}
-												let:motion
-											>
+											<Motion whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.95 }} let:motion>
 												<a
 													href={project.githubUrl}
 													class="text-secondary-500 hover:text-secondary-700 dark:text-secondary-400 dark:hover:text-secondary-300 transition-colors"
@@ -168,11 +169,7 @@
 											</Motion>
 										{/if}
 										{#if project.liveUrl}
-											<Motion
-												whileHover={{ scale: 1.2 }}
-												whileTap={{ scale: 0.95 }}
-												let:motion
-											>
+											<Motion whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.95 }} let:motion>
 												<a
 													href={project.liveUrl}
 													class="text-secondary-500 hover:text-secondary-700 dark:text-secondary-400 dark:hover:text-secondary-300 transition-colors"
@@ -188,7 +185,7 @@
 								<!-- Project content -->
 								<div class="space-y-3">
 									<h4
-										class="text-secondary-900 dark:text-secondary-100 text-lg font-semibold group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"
+										class="text-secondary-900 dark:text-secondary-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 text-lg font-semibold transition-colors"
 									>
 										{project.title}
 									</h4>
@@ -234,7 +231,13 @@
 				<p class="text-secondary-600 dark:text-secondary-400 mb-6">Want to see more of my work?</p>
 				<Motion {...animations.buttonHover} let:motion>
 					<div use:motion>
-						<Button href="https://github.com/Zireael26" variant="outline" size="lg" class="group" animate>
+						<Button
+							href="https://github.com/Zireael26"
+							variant="outline"
+							size="lg"
+							class="group"
+							animate
+						>
 							<div class="mr-2 h-5 w-5">
 								<SiGithub size={20} />
 							</div>

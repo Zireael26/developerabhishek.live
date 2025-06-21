@@ -65,8 +65,8 @@
 					<div>
 						<h3 class="text-secondary-900 mb-6 text-2xl font-bold dark:text-white">Get in Touch</h3>
 						<p class="text-secondary-600 dark:text-secondary-400 mb-8">
-							Whether you're looking to hire, collaborate, or just want to chat about technology, I'd
-							love to hear from you.
+							Whether you're looking to hire, collaborate, or just want to chat about technology,
+							I'd love to hear from you.
 						</p>
 					</div>
 
@@ -83,7 +83,9 @@
 											<Mail class="text-primary-600 h-6 w-6" />
 										</div>
 										<div>
-											<h4 class="text-secondary-900 text-lg font-semibold dark:text-white">Email</h4>
+											<h4 class="text-secondary-900 text-lg font-semibold dark:text-white">
+												Email
+											</h4>
 											<a
 												href="mailto:{contactInfo.email}"
 												class="text-primary-600 hover:text-primary-700 transition-colors"
@@ -107,8 +109,12 @@
 											<MapPin class="text-accent-600 h-6 w-6" />
 										</div>
 										<div>
-											<h4 class="text-secondary-900 text-lg font-semibold dark:text-white">Location</h4>
-											<p class="text-secondary-600 dark:text-secondary-400">{contactInfo.location}</p>
+											<h4 class="text-secondary-900 text-lg font-semibold dark:text-white">
+												Location
+											</h4>
+											<p class="text-secondary-600 dark:text-secondary-400">
+												{contactInfo.location}
+											</p>
 										</div>
 									</div>
 								</Card>
@@ -129,7 +135,9 @@
 											<h4 class="text-secondary-900 text-lg font-semibold dark:text-white">
 												Response Time
 											</h4>
-											<p class="text-secondary-600 dark:text-secondary-400">Usually within 24 hours</p>
+											<p class="text-secondary-600 dark:text-secondary-400">
+												Usually within 24 hours
+											</p>
 										</div>
 									</div>
 								</Card>
@@ -167,7 +175,9 @@
 			<Motion {...withViewport(animations.contactForm)} let:motion>
 				<div use:motion>
 					<Card>
-						<h3 class="text-secondary-900 mb-6 text-2xl font-bold dark:text-white">Send a Message</h3>
+						<h3 class="text-secondary-900 mb-6 text-2xl font-bold dark:text-white">
+							Send a Message
+						</h3>
 
 						{#if submitStatus === 'success'}
 							<div
@@ -271,7 +281,13 @@
 							<!-- Submit Button -->
 							<Motion {...animations.buttonHover} let:motion>
 								<div use:motion>
-									<Button type="submit" size="lg" disabled={isSubmitting} class="group w-full" animate={false}>
+									<Button
+										type="submit"
+										size="lg"
+										disabled={isSubmitting}
+										class="group w-full"
+										animate={false}
+									>
 										{#if isSubmitting}
 											<div
 												class="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"

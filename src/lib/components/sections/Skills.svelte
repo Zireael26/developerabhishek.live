@@ -41,10 +41,7 @@
 <section id="skills" class="dark:bg-secondary-900 bg-white py-20">
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<!-- Section Header -->
-		<Motion
-			{...withViewport(animations.section)}
-			let:motion
-		>
+		<Motion {...withViewport(animations.section)} let:motion>
 			<div class="mb-16 text-center" use:motion>
 				<h2
 					class="font-display text-secondary-900 mb-4 text-3xl font-bold sm:text-4xl dark:text-white"

@@ -125,7 +125,13 @@
 
 								<Motion {...animations.buttonHover} let:motion>
 									<div use:motion>
-										<Button href={personalInfo.resumeUrl} variant="outline" size="lg" class="group" animate>
+										<Button
+											href={personalInfo.resumeUrl}
+											variant="outline"
+											size="lg"
+											class="group"
+											animate
+										>
 											<Download class="mr-2 h-5 w-5" />
 											Download Resume
 										</Button>
@@ -185,11 +191,7 @@
 				<div class="order-1 flex justify-center lg:order-2" use:motion>
 					<div class="relative">
 						<!-- Professional photo -->
-						<Motion
-							whileHover={{ scale: 1.05 }}
-							transition={{ duration: 0.3 }}
-							let:motion
-						>
+						<Motion whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }} let:motion>
 							<div
 								class="ring-primary-200 dark:ring-primary-800 h-64 w-64 overflow-hidden rounded-full shadow-2xl ring-4 lg:h-80 lg:w-80"
 								use:motion
