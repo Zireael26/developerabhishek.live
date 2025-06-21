@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Card from '$lib/components/ui/Card.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
-	import { contactInfo, personalInfo } from '$lib/data/personal';
+	import { contactInfo } from '$lib/data/personal';
 	import { SiGithub, SiX } from '@icons-pack/svelte-simple-icons';
 	import LinkedInIcon from '$lib/components/icons/LinkedIn.svelte';
 	import { Mail, MapPin, Send, MessageCircle } from 'lucide-svelte';

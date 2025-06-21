@@ -4,7 +4,7 @@
 	import Badge from '$lib/components/ui/Badge.svelte';
 	import { projects } from '$lib/data/projects';
 	import { SiGithub } from '@icons-pack/svelte-simple-icons';
-	import { ExternalLink, Star, Code } from 'lucide-svelte';
+	import { ExternalLink, Code } from 'lucide-svelte';
 	import { Motion } from 'svelte-motion';
 	import { animations, withViewport } from '$lib/utils/animations';
 </script>

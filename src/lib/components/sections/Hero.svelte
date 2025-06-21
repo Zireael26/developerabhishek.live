@@ -3,7 +3,7 @@
 	import { personalInfo } from '$lib/data/personal';
 	import { ArrowRight, Download, Mail } from 'lucide-svelte';
 	import { Motion } from 'svelte-motion';
-	import { animations, withDelay, viewport } from '$lib/utils/animations';
+	import { animations, withDelay } from '$lib/utils/animations';
 </script>
 
 <section

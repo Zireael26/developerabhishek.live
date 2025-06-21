@@ -147,10 +147,10 @@ export const animations = {
 };
 
 // Utility function to add delay to animations
-export const withDelay = (animation: any, delay: number) => ({
+export const withDelay = (animation: Record<string, unknown>, delay: number) => ({
 	...animation,
 	transition: {
-		...animation.transition,
+		...(animation.transition as Record<string, unknown>),
 		delay
 	}
 });
@@ -163,7 +163,7 @@ export const viewport = {
 };
 
 // Helper function to combine animation with viewport settings
-export const withViewport = (animation: any) => ({
+export const withViewport = (animation: Record<string, unknown>) => ({
 	...animation,
 	viewport
 });
