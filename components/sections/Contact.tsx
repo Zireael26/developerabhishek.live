@@ -27,7 +27,7 @@ const CONTACT_LINKS: ReadonlyArray<ContactLink> = [
   {
     label: 'Résumé',
     value: 'on request',
-    href: 'mailto:hello@developerabhishek.live?subject=Resume%20request',
+    href: 'mailto:hello@akaushik.org?subject=Resume%20request',
   },
 ];
 
@@ -51,9 +51,9 @@ export function Contact() {
         <div className="contact-cta">
           <a
             className="btn btn-primary btn-lg"
-            href="mailto:hello@developerabhishek.live"
+            href="mailto:hello@akaushik.org"
           >
-            hello@developerabhishek.live
+            hello@akaushik.org
             <span className="arrow" aria-hidden="true">
               →
             </span>

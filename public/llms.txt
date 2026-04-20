@@ -1,4 +1,4 @@
-# Abhishek Kaushik — developerabhishek.live
+# Abhishek Kaushik — akaushik.org
 
 > Independent engineer building agent-native software. AI systems for businesses that haven't met AI yet.
 
@@ -12,19 +12,19 @@ This file follows the [llmstxt.org](https://llmstxt.org) format. It gives agents
 
 ## Case studies
 
-- [Neev](https://developerabhishek.live/work/neev): Modular monolith, multi-tenant, tenant_id as a first-class invariant
-- [VeriCite](https://developerabhishek.live/work/vericite): Institutional RAG on top of Hugging Face TEI + Qdrant
-- [Bluehost Agents Framework](https://developerabhishek.live/work/bluehost-agents): Agent runtime powering Bluehost AI features
-- [curat.money](https://developerabhishek.live/work/curat-money): Product-engineering framing, financial data
+- [Neev](https://akaushik.org/work/neev): Modular monolith, multi-tenant, tenant_id as a first-class invariant
+- [VeriCite](https://akaushik.org/work/vericite): Institutional RAG on top of Hugging Face TEI + Qdrant
+- [Bluehost Agents Framework](https://akaushik.org/work/bluehost-agents): Agent runtime powering Bluehost AI features
+- [curat.money](https://akaushik.org/work/curat-money): Product-engineering framing, financial data
 
 ## Contact
 
-- Email: abhishek.nexus26@gmail.com
+- Email: hello@akaushik.org
 - LinkedIn: https://linkedin.com/in/abhishek26k
 - GitHub: https://github.com/Zireael26
 
 ## Optional
 
-- [Full site content](https://developerabhishek.live/llms-full.txt)
-- [Agent skills index](https://developerabhishek.live/.well-known/agent-skills/index.json)
-- [MCP server card](https://developerabhishek.live/.well-known/mcp.json)
+- [Full site content](https://akaushik.org/llms-full.txt)
+- [Agent skills index](https://akaushik.org/.well-known/agent-skills/index.json)
+- [MCP server card](https://akaushik.org/.well-known/mcp.json)

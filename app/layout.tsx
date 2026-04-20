@@ -27,20 +27,20 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://developerabhishek.live'),
+  metadataBase: new URL('https://akaushik.org'),
   title: {
     default: 'Abhishek Kaushik — AI systems for businesses that haven’t met AI yet',
     template: '%s · Abhishek Kaushik',
   },
   description:
     'Independent engineer building agent-native software. Modular monoliths, retrieval systems, and operational AI for teams that care about how things feel.',
-  applicationName: 'developerabhishek.live',
-  authors: [{ name: 'Abhishek Kaushik', url: 'https://developerabhishek.live' }],
+  applicationName: 'akaushik.org',
+  authors: [{ name: 'Abhishek Kaushik', url: 'https://akaushik.org' }],
   creator: 'Abhishek Kaushik',
   openGraph: {
     type: 'website',
-    url: 'https://developerabhishek.live',
-    siteName: 'developerabhishek.live',
+    url: 'https://akaushik.org',
+    siteName: 'akaushik.org',
     title: 'Abhishek Kaushik — AI systems for businesses that haven’t met AI yet',
     description:
       'Independent engineer building agent-native software. Case studies: Neev, VeriCite, Bluehost Agents, curat.money.',

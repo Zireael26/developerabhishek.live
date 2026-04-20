@@ -1,10 +1,10 @@
-# developerabhishek.live
+# akaushik.org
 
 Abhishek Kaushik's personal portfolio — a sales-artifact-grade site that reads as a quiet, confident craft object. AI systems for businesses that haven't met AI yet.
 
-**Live:** https://developerabhishek.live
+**Live:** https://akaushik.org · `akaushik.dev` redirects here.
 
-> This repository is mid-rewrite. The prior SvelteKit build is archived at the `legacy-v1-final` tag. The current branch is a Next.js 16.2 scaffold that Claude Code will flesh out against the Claude Design reference.
+> This repository is mid-rewrite. The prior SvelteKit build is archived at the `legacy-v1-final` tag. The current branch is a Next.js 16.2 scaffold that Claude Code will flesh out against the Claude Design reference. Domain history and canonical-URL rationale are in [`docs/adr/0003-domain-and-canonical-url.md`](docs/adr/0003-domain-and-canonical-url.md); the legacy host `developerabhishek.live` will not be renewed and 308-redirects to `akaushik.org` until the registration lapses.
 
 ## Stack
 

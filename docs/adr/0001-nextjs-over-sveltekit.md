@@ -15,7 +15,7 @@ The v1 portfolio at `developerabhishek.live` was a SvelteKit application. It was
 
 Migrate to **Next.js 16.2 LTS** with App Router, React 19.2, TypeScript 6.0, Tailwind 4.2 CSS-first, shadcn/ui v4, pnpm 10, Node 22 LTS.
 
-The SvelteKit source is preserved at git tag `legacy-v1-final` for reference. The domain remains `developerabhishek.live`.
+The SvelteKit source is preserved at git tag `legacy-v1-final` for reference. The v1 domain `developerabhishek.live` was retained at the time of this ADR; the canonical host moved to `akaushik.org` on 2026-04-20 — see ADR-0003.
 
 ## Consequences
 

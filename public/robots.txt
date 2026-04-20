@@ -10,4 +10,4 @@ Allow: /
 # ai-train    — use as model training data
 Content-Signal: search=yes, ai-input=yes, ai-train=no
 
-Sitemap: https://developerabhishek.live/sitemap.xml
+Sitemap: https://akaushik.org/sitemap.xml

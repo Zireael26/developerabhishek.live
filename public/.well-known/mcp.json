@@ -1,9 +1,9 @@
 {
   "$comment": "Scaffold placeholder for the MCP server card (SEP-1649 / SEP-1960). Claude Code will populate the real endpoint + capabilities during the agent-readiness epic. See docs/AGENT_READINESS.md.",
-  "name": "developerabhishek.live",
+  "name": "akaushik.org",
   "version": "0.0.0",
   "description": "Portfolio MCP server — hire-me skill + case-study lookup tools.",
-  "endpoint": "https://developerabhishek.live/api/mcp",
+  "endpoint": "https://akaushik.org/api/mcp",
   "transport": "streamable-http",
   "capabilities": {
     "tools": [],

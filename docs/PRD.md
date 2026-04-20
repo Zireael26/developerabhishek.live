@@ -33,7 +33,7 @@ The site is not a CV. It is a sales artifact. The success condition is stated in
 - **NG2. Not a crypto-speculation portfolio.** Prior crypto work (Evia, curat.money) gets surfaced with careful framing — as product engineering, not as DeFi hype. No price charts, no trading narrative.
 - **NG3. Not a feature showcase for third-party libraries.** react-three-fiber, HyperFrames, GSAP — these are tools. The portfolio does not lead with "look at what the library can do."
 - **NG4. Not a recruiter-targeted job-seeking site.** This is aimed at prospective clients and collaborators. There's no "download resume" as the primary CTA. A resume is available on request; the hero CTA is "let's talk about your project."
-- **NG5. Not a rebuild of developerabhishek.live.** That site was a portfolio. This is a client-acquisition product. Different job, different content architecture.
+- **NG5. Not a rebuild of the v1 site at `developerabhishek.live`.** That site was a portfolio. This is a client-acquisition product. Different job, different content architecture. The legacy host is sunset per `docs/adr/0003-domain-and-canonical-url.md`; canonical is `akaushik.org`.
 
 ## 4. Audience
 
@@ -104,7 +104,7 @@ Primary conversion surface. Low-friction. Email-first, calendar link optional, n
 - **Stack pin.** Match tgsc: Next.js 16.2 LTS, React 19.2, TypeScript 6.0, Tailwind 4.2, shadcn/ui v4, pnpm 10, Node 22 LTS, Vercel. Any divergence goes through ADR-0001.
 - **Accessibility is a gate.** WCAG 2.2 AA. Motion respects `prefers-reduced-motion`. Contrast audited. Keyboard-navigable. The 3D scene has a static fallback.
 - **Performance budget.** LCP < 2.5s on 4G, CLS < 0.1, INP < 200ms. The r3f scene is budgeted separately — it does not hold the rest of the page hostage.
-- **SEO as a first-class concern.** Proper metadata, OG images, sitemap, JSON-LD for the Person entity, MDX posts indexed, and a canonical strategy if we keep developerabhishek.live live as a fallback during cutover.
+- **SEO as a first-class concern.** Proper metadata, OG images, sitemap, JSON-LD for the Person entity, MDX posts indexed. Canonical is `akaushik.org`; `akaushik.dev` and `developerabhishek.live` 308-redirect to it (see ADR-0003). No competing canonicals.
 - **Agent readiness as a first-class concern, equal to SEO and a11y.** The site must score high on Cloudflare's `isitagentready.com` across all four dimensions: Discoverability (`robots.txt`, `sitemap.xml`, HTTP `Link` headers, `/.well-known/`), Content (Markdown content negotiation via `Accept: text/markdown`, `/llms.txt`, `/llms-full.txt`, `.md` URL alternates), Bot Access Control (Content Signals policy in `robots.txt`), and Capabilities (API Catalog at `/.well-known/api-catalog`, OpenAPI spec, at least one Agent Skill). A failed check is a ship-blocker. Full implementation contract in `AGENT_READINESS.md`.
 
 ## 8. Motion & 3D Strategy
@@ -126,11 +126,11 @@ The motif is *graphs and agents* — nodes, edges, information flow. It is the s
 
 ## 10. Open Questions
 
-- **Q1. Domain.** Current decision: stay on `developerabhishek.live` for now and decide later. Candidates to explore: handle-based `.dev` / `.ai` options. `zireael.ai` identity check was attempted this session but the proxy blocked the request (EGRESS_BLOCKED) — flagging so Abhishek can check manually.
+- **Q1. Domain.** ~~Current decision: stay on `developerabhishek.live` for now and decide later.~~ **Resolved 2026-04-20 by ADR-0003.** Canonical is `akaushik.org`; `akaushik.dev` is registered defensively and as a future developer-audience alias. `developerabhishek.live` will not be renewed.
 - **Q2. Bluehost case study confidentiality.** How much of the agents framework can be publicly described? Need a quick sanity check with his manager before finalizing case-study copy.
 - **Q3. Writing launch content.** Which 2–3 posts seed the blog? Proposed: (a) "What I learned building micrograd and makemore", (b) "Notes on bringing AI to an MSME", (c) a VeriCite technical piece on embedding model migration.
 - **Q4. Case study depth calibration.** How deep on curat.money? Possibly a shorter "product breadth" case study rather than a full technical deep-dive.
-- **Q5. Fallback domain strategy.** If/when we move off developerabhishek.live, what's the redirect and canonical plan? Should be settled before DNS cutover.
+- **Q5. Fallback domain strategy.** ~~If/when we move off developerabhishek.live, what's the redirect and canonical plan?~~ **Resolved 2026-04-20 by ADR-0003.** Catch-all 308 from `developerabhishek.live/*` → `https://akaushik.org/$1` via `vercel.json` on the legacy project, kept live until the registration lapses.
 
 ## 11. Out of Scope (for v1)
 
