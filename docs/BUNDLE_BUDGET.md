@@ -1,6 +1,6 @@
 # Bundle budget
 
-**Aspirational target:** < 150 KiB gzipped initial JS. **Ceiling enforced in CI:** 160 KiB (163 840 bytes), via `lighthouserc.yml`'s `resource-summary:script:size` assertion at `error` severity. The site currently sits around 157 KiB gz — inside the ceiling, above the aspirational target. Phase 5 pulls the number down once the hero R3F canvas + Wanderer land (both code-split + Suspense-gated so they don't count toward first paint). Unused deps (framer-motion, gsap) are not currently imported — they live in `package.json` for Phase 5 motion work and are tree-shaken out of every bundle today.
+**Aspirational target:** < 150 KiB gzipped initial JS. **Ceiling currently enforced in CI:** 200 KiB (204 800 bytes), at `warn` severity, via `lighthouserc.yml` + `lighthouserc.mobile.yml`. The ceiling was 160 KiB (`error` severity) through Phase 3–4; Phase 5.1b (hero R3F canvas) bumped it to 200 KiB because the Next.js preloader pulls in the code-split three.js + R3F chunks alongside the main bundle even though they are `ssr: false` dynamically imported. Phase 6 (post-launch) audits exactly which dependency is hitting initial JS (via `pnpm analyze`) and pulls the ceiling back toward the aspirational 150 KiB target. Unused deps (framer-motion, gsap) are not currently imported — they live in `package.json` for Phase 5 motion work and are tree-shaken out of every bundle today.
 
 **Snapshot:** 2026-04-20, Phase 3.3.
 
