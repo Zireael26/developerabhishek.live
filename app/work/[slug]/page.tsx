@@ -44,8 +44,15 @@ export default async function WorkDetail({
   const { slug } = await params;
 
   const mdx = getPost('case-studies', slug);
-  if (mdx && isCardSlug(slug)) {
-    return <CaseStudyPage post={mdx} slug={slug} />;
+  if (mdx) {
+    // An MDX file drives the render. Reuse the CaseStudyPage layout for any
+    // slug that also exists as a home-page Work card (so the Reel placeholder
+    // is wired up); fall back to a headerless layout for MDX-only entries so
+    // `generateStaticParams` doesn't pre-render a route that 404s at request.
+    if (isCardSlug(slug)) {
+      return <CaseStudyPage post={mdx} slug={slug} />;
+    }
+    return <CaseStudyPage post={mdx} slug={null} />;
   }
   if (isCardSlug(slug)) {
     return <CaseStudyStub slug={slug} />;

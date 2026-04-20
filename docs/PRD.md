@@ -30,7 +30,7 @@ The site is not a CV. It is a sales artifact. The success condition is stated in
 ## 3. Non-Goals
 
 - **NG1. Not an Awwwards maximalist showcase.** No scroll-jacking, no unreadable typography, no motion for its own sake. Motion serves meaning or it doesn't ship.
-- **NG2. Not a crypto-speculation portfolio.** Prior crypto work (Evia, curat.money) gets surfaced with careful framing — as product engineering, not as DeFi hype. No price charts, no trading narrative.
+- **NG2. Not a crypto-speculation portfolio.** Crypto-adjacent work (Evia as prior employer; curat.money as an ongoing product side of the portfolio) gets surfaced as product engineering, not as DeFi hype. No price charts, no trading narrative. curat.money's framing stays at "fair-comparison product for a niche consumer category," per `docs/CASE_STUDIES_OUTLINE.md §4.7`.
 - **NG3. Not a feature showcase for third-party libraries.** react-three-fiber, HyperFrames, GSAP — these are tools. The portfolio does not lead with "look at what the library can do."
 - **NG4. Not a recruiter-targeted job-seeking site.** This is aimed at prospective clients and collaborators. There's no "download resume" as the primary CTA. A resume is available on request; the hero CTA is "let's talk about your project."
 - **NG5. Not a rebuild of the v1 site at `developerabhishek.live`.** That site was a portfolio. This is a client-acquisition product. Different job, different content architecture. The legacy host is sunset per `docs/adr/0003-domain-and-canonical-url.md`; canonical is `akaushik.org`.
