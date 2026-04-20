@@ -28,16 +28,13 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        // `/llms.txt` is still served from `/public` (static); `/llms-full.txt`
+        // migrated to a Route Handler in Slice 4.2 which sets its own headers.
+        // AGENT_READINESS §4.2 notes `text/markdown` is the correct MIME for
+        // both, not `text/plain`.
         source: '/llms.txt',
         headers: [
-          { key: 'Content-Type', value: 'text/plain; charset=utf-8' },
-          { key: 'Cache-Control', value: 'public, max-age=300' },
-        ],
-      },
-      {
-        source: '/llms-full.txt',
-        headers: [
-          { key: 'Content-Type', value: 'text/plain; charset=utf-8' },
+          { key: 'Content-Type', value: 'text/markdown; charset=utf-8' },
           { key: 'Cache-Control', value: 'public, max-age=300' },
         ],
       },
