@@ -1,0 +1,75 @@
+name: E2E (Playwright)
+
+on:
+  pull_request:
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.0.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      # Same preview-URL resolution pattern as .github/workflows/lighthouse.yml.
+      # Vercel's `target_url` on the status context points at the dashboard,
+      # not the deployed preview — the real *.vercel.app URL only appears in
+      # the Vercel bot's sticky PR comment.
+      - name: Wait for Vercel preview
+        id: preview
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_SHA: ${{ github.event.pull_request.head.sha }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          deadline=$((SECONDS + 600))
+          while (( SECONDS < deadline )); do
+            state="$(gh api "repos/$REPO/commits/$PR_SHA/status" --jq '[.statuses[] | select(.context == "Vercel")] | .[0].state // empty')"
+            if [[ "$state" == "success" ]]; then
+              url="$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --jq '.[].body' | grep -oE 'https://[a-zA-Z0-9.-]+\.vercel\.app' | head -1)"
+              if [[ -n "$url" ]]; then
+                echo "url=$url" >> "$GITHUB_OUTPUT"
+                echo "Vercel preview ready: $url"
+                exit 0
+              fi
+              echo "Vercel status success but no *.vercel.app URL in PR comments yet"
+            else
+              echo "Waiting for Vercel preview (state=${state:-missing})…"
+            fi
+            sleep 15
+          done
+          echo "Timed out waiting for Vercel preview." >&2
+          exit 1
+
+      - name: Install Playwright browsers
+        run: pnpm test:e2e:install
+
+      - name: Run Playwright
+        env:
+          PLAYWRIGHT_BASE_URL: ${{ steps.preview.outputs.url }}
+        run: pnpm test:e2e
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ github.run_id }}
+          path: playwright-report/
+          retention-days: 7
