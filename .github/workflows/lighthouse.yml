@@ -59,6 +59,7 @@ jobs:
           configPath: ./lighthouserc.yml
           uploadArtifacts: true
           temporaryPublicStorage: true
+          artifactName: lighthouse-results-desktop
 
       - name: Lighthouse (mobile)
         uses: treosh/lighthouse-ci-action@v11
@@ -70,6 +71,7 @@ jobs:
           configPath: ./lighthouserc.mobile.yml
           uploadArtifacts: true
           temporaryPublicStorage: true
+          artifactName: lighthouse-results-mobile
 
       - name: Install axe-core CLI
         run: npm install -g @axe-core/cli@4
