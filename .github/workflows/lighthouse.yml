@@ -14,29 +14,34 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Poll the GitHub Statuses API for Vercel's "Vercel" context until it
-      # reports success, then pull the preview URL out of target_url. More
-      # reliable than wait-for-vercel-preview@v1.3.2, which hangs when
-      # Vercel reports as a StatusContext rather than a CheckRun.
+      # The Vercel "Vercel" status context's target_url points at the
+      # deployment dashboard, not the served preview. Parse the Vercel bot's
+      # PR comment instead — it ships the real *.vercel.app URL. Poll both:
+      # wait for Vercel status = success, then grep the first vercel.app URL
+      # out of any sticky comment the Vercel bot posted on the PR.
       - name: Wait for Vercel preview
         id: preview
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_SHA: ${{ github.event.pull_request.head.sha }}
           REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
           deadline=$((SECONDS + 600))
           while (( SECONDS < deadline )); do
-            payload="$(gh api "repos/$REPO/commits/$PR_SHA/status" --jq '.statuses[] | select(.context == "Vercel") | {state, target_url}' | head -1)"
-            state="$(echo "$payload" | jq -r '.state // empty')"
-            url="$(echo "$payload" | jq -r '.target_url // empty')"
-            if [[ "$state" == "success" && -n "$url" ]]; then
-              echo "url=$url" >> "$GITHUB_OUTPUT"
-              echo "Vercel preview ready: $url"
-              exit 0
+            state="$(gh api "repos/$REPO/commits/$PR_SHA/status" --jq '[.statuses[] | select(.context == "Vercel")] | .[0].state // empty')"
+            if [[ "$state" == "success" ]]; then
+              url="$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --jq '.[].body' | grep -oE 'https://[a-zA-Z0-9.-]+\.vercel\.app' | head -1)"
+              if [[ -n "$url" ]]; then
+                echo "url=$url" >> "$GITHUB_OUTPUT"
+                echo "Vercel preview ready: $url"
+                exit 0
+              fi
+              echo "Vercel status success but no *.vercel.app URL in PR comments yet"
+            else
+              echo "Waiting for Vercel preview (state=${state:-missing})…"
             fi
-            echo "Waiting for Vercel preview (state=$state)…"
             sleep 15
           done
           echo "Timed out waiting for Vercel preview." >&2
