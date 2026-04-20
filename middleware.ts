@@ -3,27 +3,35 @@ import { NextResponse, type NextRequest } from 'next/server';
 /**
  * Agent-readiness middleware.
  *
- *   1. Attaches RFC 8288 Link headers to every HTML response so crawlers
+ *   1. Attaches RFC 8288 Link headers to every response so crawlers
  *      discover llms.txt / llms-full.txt / sitemap / agent-skills / mcp /
- *      api-catalog without parsing the DOM. (AGENT_READINESS §3.3.)
+ *      api-catalog without parsing the DOM. The `describedby` + `sitemap`
+ *      rels are the IANA-registered shapes per AGENT_READINESS §3.3; the
+ *      remaining three (agent-skills / mcp / api-catalog) use
+ *      `describedby` with distinct MIME types rather than inventing
+ *      schema.org or modelcontextprotocol.io relation URIs.
  *   2. Content negotiation for Markdown (AGENT_READINESS §4.1):
  *      - Pattern B: `/work/<slug>.md` → `/work/<slug>/md`
  *        and `/writing/<slug>.md` → `/writing/<slug>/md`
- *      - Pattern A: if `Accept: text/markdown` is the preferred type on a
- *        content route, rewrite to the `/md` variant.
+ *      - Pattern A: if `Accept: text/markdown` is the preferred type:
+ *          - on `/work/<slug>` or `/writing/<slug>`, rewrite to the
+ *            corresponding `/md` route handler
+ *          - on `/` (home), rewrite to `/llms.txt` (the short-form
+ *            digest) so an agent scanner hitting the canonical root
+ *            gets Markdown too
  *
- * Pattern B is the safety net: it's the shape isitagentready.com expects
- * (`.md` literally appended). Pattern A is additive — Vercel Edge has been
- * flaky with header-based rewrites on streaming responses (Risk R4), so if
- * it misbehaves in prod, Pattern B still satisfies the scan.
+ * Pattern B is the safety net (`.md` literally appended matches the
+ * `isitagentready.com` probe shape). Pattern A is additive — Vercel Edge
+ * has been flaky with header-based rewrites on streaming responses (Risk
+ * R4), so if it misbehaves, Pattern B still satisfies the scan.
  */
 
 const LINK_HEADER = [
   '</llms.txt>; rel="describedby"; type="text/markdown"',
   '</llms-full.txt>; rel="describedby"; type="text/markdown"',
   '</sitemap.xml>; rel="sitemap"; type="application/xml"',
-  '</.well-known/agent-skills/index.json>; rel="https://schema.org/agent-skills"; type="application/json"',
-  '</.well-known/mcp.json>; rel="https://modelcontextprotocol.io/rel/server"; type="application/json"',
+  '</.well-known/agent-skills/index.json>; rel="describedby"; type="application/json"',
+  '</.well-known/mcp.json>; rel="describedby"; type="application/json"',
   '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"',
 ].join(', ');
 
@@ -35,8 +43,6 @@ function rewritePatternB(pathname: string): string | null {
   if (!pathname.endsWith('.md')) return null;
   if (!MD_ALTERNATE_PREFIXES.some((prefix) => pathname.startsWith(prefix))) return null;
   const base = pathname.slice(0, -'.md'.length);
-  // Guard against `/work/.md`, `/writing/foo/bar.md`, etc. Only one slug
-  // segment after the prefix.
   const parts = base.split('/').filter(Boolean);
   if (parts.length !== 2) return null;
   return `${base}/md`;
@@ -44,14 +50,15 @@ function rewritePatternB(pathname: string): string | null {
 
 function prefersMarkdown(accept: string | null): boolean {
   if (!accept) return false;
-  // Cheap and permissive: accept anything that lists text/markdown before
-  // text/html. A real browser leads with text/html, so this only triggers
-  // on agents that explicitly ask for Markdown.
   const head = accept.split(',')[0]?.trim().toLowerCase() ?? '';
   return head.startsWith('text/markdown');
 }
 
 function rewritePatternA(pathname: string): string | null {
+  // Home → short-form digest. Matches AGENT_READINESS §4.1 "every content
+  // page… returns Markdown on Accept: text/markdown."
+  if (pathname === '/' || pathname === '') return '/llms.txt';
+
   if (!MD_ALTERNATE_PREFIXES.some((prefix) => pathname.startsWith(prefix))) return null;
   const parts = pathname.split('/').filter(Boolean);
   if (parts.length !== 2) return null;
@@ -60,17 +67,47 @@ function rewritePatternA(pathname: string): string | null {
   return `${pathname}/md`;
 }
 
-function addContentNegotiationLink(
-  headers: Headers,
-  pathname: string,
-): void {
-  if (!MD_ALTERNATE_PREFIXES.some((prefix) => pathname.startsWith(prefix))) return;
-  const parts = pathname.split('/').filter(Boolean);
-  if (parts.length !== 2) return;
-  // Advertise the sibling `.md` alternate for this specific page.
-  const existing = headers.get('Link');
-  const alternate = `<${pathname}.md>; rel="alternate"; type="text/markdown"`;
-  headers.set('Link', existing ? `${existing}, ${alternate}` : alternate);
+function buildResponseHeaders(pathname: string): Headers {
+  const headers = new Headers();
+  headers.set('Link', LINK_HEADER);
+  headers.set('X-Content-Type-Options', 'nosniff');
+  headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  headers.set('X-Robots-Tag', 'index, follow');
+  // Advertise the sibling `.md` alternate for HTML content pages that have
+  // one. Do not advertise on the `.md` path itself (would produce
+  // `.md.md` self-reference) or on the internal `/md` subpath.
+  if (
+    MD_ALTERNATE_PREFIXES.some((prefix) => pathname.startsWith(prefix)) &&
+    !pathname.endsWith('.md') &&
+    !pathname.endsWith('/md')
+  ) {
+    const parts = pathname.split('/').filter(Boolean);
+    if (parts.length === 2) {
+      const existing = headers.get('Link') ?? '';
+      const alternate = `<${pathname}.md>; rel="alternate"; type="text/markdown"`;
+      headers.set('Link', existing ? `${existing}, ${alternate}` : alternate);
+    }
+  }
+  return headers;
+}
+
+function applyHeaders(response: NextResponse, pathname: string): NextResponse {
+  const defaults = buildResponseHeaders(pathname);
+  defaults.forEach((value, key) => {
+    // Do not clobber headers the route handler has already set (e.g. the
+    // `/md` handlers set their own Cache-Control + canonical Link). But the
+    // global Link discovery header has to land somewhere — if the handler
+    // already set a Link, append ours rather than replace.
+    if (key.toLowerCase() === 'link') {
+      const existing = response.headers.get('link');
+      response.headers.set('Link', existing ? `${existing}, ${value}` : value);
+      return;
+    }
+    if (!response.headers.has(key)) {
+      response.headers.set(key, value);
+    }
+  });
+  return response;
 }
 
 export function middleware(request: NextRequest) {
@@ -78,23 +115,23 @@ export function middleware(request: NextRequest) {
 
   const patternB = rewritePatternB(pathname);
   if (patternB) {
-    return NextResponse.rewrite(new URL(patternB, request.url));
+    return applyHeaders(
+      NextResponse.rewrite(new URL(patternB, request.url)),
+      pathname,
+    );
   }
 
   if (prefersMarkdown(request.headers.get('accept'))) {
     const patternA = rewritePatternA(pathname);
     if (patternA) {
-      return NextResponse.rewrite(new URL(patternA, request.url));
+      return applyHeaders(
+        NextResponse.rewrite(new URL(patternA, request.url)),
+        pathname,
+      );
     }
   }
 
-  const response = NextResponse.next();
-  response.headers.set('Link', LINK_HEADER);
-  response.headers.set('X-Content-Type-Options', 'nosniff');
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  response.headers.set('X-Robots-Tag', 'index, follow');
-  addContentNegotiationLink(response.headers, pathname);
-  return response;
+  return applyHeaders(NextResponse.next(), pathname);
 }
 
 export const config = {

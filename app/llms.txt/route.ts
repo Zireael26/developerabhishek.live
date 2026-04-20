@@ -1,4 +1,14 @@
-# Abhishek Kaushik — akaushik.org
+// llms.txt — short-form site digest per llmstxt.org. Served as a Route
+// Handler (not a static file) so the Content-Type is consistently
+// `text/markdown; charset=utf-8` regardless of request path (middleware
+// rewrites `/` + `Accept: text/markdown` → `/llms.txt`; static file
+// serving sets extension-based `text/plain` which defeats AGENT_READINESS
+// §4.2's MIME contract).
+
+export const dynamic = 'force-static';
+export const revalidate = 3600;
+
+const BODY = `# Abhishek Kaushik — akaushik.org
 
 > Independent engineer building agent-native software. AI systems for businesses that haven't met AI yet.
 
@@ -28,3 +38,14 @@ This file follows the [llmstxt.org](https://llmstxt.org) format. It gives agents
 - [Full site content](https://akaushik.org/llms-full.txt)
 - [Agent skills index](https://akaushik.org/.well-known/agent-skills/index.json)
 - [MCP server card](https://akaushik.org/.well-known/mcp.json)
+`;
+
+export function GET() {
+  return new Response(BODY, {
+    headers: {
+      'Content-Type': 'text/markdown; charset=utf-8',
+      'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+      'X-Robots-Tag': 'index, follow',
+    },
+  });
+}

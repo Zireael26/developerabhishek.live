@@ -1,9 +1,7 @@
 {
   "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
-  "type": "https://schemas.agentskills.io/discovery/0.2.0/index.json",
   "skills": [
     {
-      "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
       "name": "hire-me",
       "description": "Discover, fetch, and summarise Abhishek Kaushik's portfolio — case studies, writing, services, and how to start a conversation.",
       "type": "skill-md",
