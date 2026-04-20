@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getAllPosts } from '@/lib/content';
+import { formatMonthYear } from '@/lib/dates';
 
 export const metadata: Metadata = {
   title: 'Writing',
@@ -9,7 +10,9 @@ export const metadata: Metadata = {
 };
 
 export default function WritingIndex() {
-  const posts = getAllPosts('writing');
+  const posts = getAllPosts('writing')
+    .slice()
+    .sort((a, b) => (a.frontmatter.date < b.frontmatter.date ? 1 : -1));
 
   return (
     <main id="top" className="writing-index">
@@ -31,7 +34,7 @@ export default function WritingIndex() {
           <ul className="writing-index-list" role="list">
             {posts.map((p) => (
               <li key={p.slug} className="writing-index-item">
-                <span className="writing-index-date">{p.frontmatter.date}</span>
+                <span className="writing-index-date">{formatMonthYear(p.frontmatter.date)}</span>
                 <h2 className="writing-index-item-title">
                   <Link href={`/writing/${p.slug}`}>{p.frontmatter.title}</Link>
                 </h2>

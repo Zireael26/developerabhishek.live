@@ -1,0 +1,17 @@
+---
+title: What I learned building micrograd and makemore from scratch
+dek: A foundations-first reading of Karpathy's Zero to Hero — why re-implementing the thing is the only way to understand the thing.
+date: 2026-04-15
+---
+
+There is a version of learning where you watch a video, nod along, feel the concept land, and move on. And there is a version where you close the video and type the thing yourself. They feel the same in the moment. They aren't.
+
+Karpathy's *Zero to Hero* series runs from scalar-valued autograd to a transformer. I did both versions: first I watched, then I rebuilt. The second pass was slower, more frustrating, and the only one that counted.
+
+Micrograd is the smaller of the two projects — a tiny reverse-mode autodiff engine that operates on scalars. Every value is a node; every operation builds the graph; backward() walks the graph in topological order and accumulates gradients. The implementation fits in a few hundred lines. What doesn't fit in a few hundred lines is the understanding — specifically, why broadcasting in manual backprop feels different once you've traced a gradient through it yourself rather than assumed PyTorch handles it. It does handle it. You just don't own that fact until you've been the one handling it.
+
+Makemore extends the lesson across a progression: bigram counts, MLP, BatchNorm, WaveNet-style dilated convolutions, and finally a character-level transformer. Each step adds one idea. The exercise isn't to implement all the ideas at once — it's to hold the previous one in your head while you add the next. That sequencing is the pedagogy.
+
+What actually changed after I built them: I stopped treating gradient flow as a magic substrate and started treating it as a data structure I can read. That's not a small thing when you're debugging a production model that's not converging.
+
+The rest of the writing here applies the same habit — go to the foundations before you go to the abstraction — to production systems. Agent frameworks, embedding pipelines, operational AI for businesses that haven't deployed it before. Same method, different stack.

@@ -1,0 +1,43 @@
+---
+title: curat.money
+dek: A fair-comparison tool for crypto cards, built like a real product.
+index: "04"
+tag: Product breadth
+year: 2026 — now
+role: CTO · Tech Lead
+stack: [K8s, RBAC, CI/CD, High-throughput data pipeline]
+evidenceOf: Data pipeline to web product
+reel: curat.money/compare-table.mp4
+---
+
+## Context
+
+Consumer comparison sites for niche financial products tend to fail in the same direction: they publish data that is shallow, stale, and optimized for affiliate conversion rather than accuracy. The problem is structural. Provider data is scattered across marketing pages with inconsistent vocabulary, buried disclosures, and a strong incentive to make trade-offs opaque. A comparison tool that doesn't account for this isn't neutral — it inherits the provider's framing.
+
+curat.money is built on a different premise: that a rigorous, source-checked comparison platform, with custody status made explicit and country coverage reflected honestly, is worth more than yet another shallow aggregator. The product serves people evaluating crypto cards — cards that allow holders to spend against a crypto balance or crypto collateral. The engineering problem is how to keep the data accurate and the platform operationally real at a scale where manual curation breaks down.
+
+## Problem
+
+Card data is spread across provider sites that each use their own vocabulary and their own level of willingness to surface trade-offs. Users need to filter by country availability, custody model, supported assets, fees, and rewards — and they need to trust the filter. A comparison that silently lags a provider update or omits a custody distinction is worse than no comparison, because it gives false confidence.
+
+Beyond the data quality problem, the platform has to be operationally real: multi-environment hygiene so local development doesn't corrupt production state, a K8s deployment that matches where the product is heading rather than where it started, role-based access so internal operators and end users see the right surfaces, and a build pipeline that doesn't rot between runs.
+
+## Approach
+
+The data spine is a scrape-normalize-verify loop. `scrape_and_update_prod.py` pulls provider data on a repeatable schedule; `match_cards.py` normalizes the raw results to a canonical schema; `custody_scrape_results_local.json` captures the local scrape state used for development and diff verification. Custody status is not derived from marketing copy — it is checked explicitly before a record is marked production-ready. The pipeline is designed to be re-run cleanly, so a failed scrape degrades gracefully rather than publishing partial data.
+
+Multi-role RBAC gates what internal operators, external contributors, and end users can do. This matters more than it sounds: a comparison platform that accepts external data contributions without access control is one bad merge away from compromised trust signals.
+
+The production deployment runs on Kubernetes. `cloudbuild-web.yaml` drives the Cloud Build CI/CD path — the build is observable, auditable, and not a one-off shell script that only the person who wrote it knows how to run. Developer experience is organized with Make-based targets: the kind of DX investment that reduces cognitive overhead across months of iteration, not just the first week.
+
+## What shipped
+
+A data pipeline producing normalized, verified card records from live provider sources. A multi-environment web product with role-based access across internal and public surfaces. A production K8s deployment with a Cloud Build pipeline and environment parity between local and production. The comparison table reflects custody status, country coverage, and card features from a source-checked record set rather than manually maintained copy.
+
+## Trade-offs
+
+Product rigor over content-farm velocity. Fewer listings, each defensible, rather than a large catalog of unverified entries — the comparison is only valuable if users can trust the filter. K8s over simpler hosting: this is deliberate over-engineering for a v0, chosen because the deployment model should match where the product is heading, not minimize the setup cost at launch.
+
+## Honest scope
+
+Live status, exact ownership boundaries, and whether to publish product metrics: Abhishek will confirm these before this section is finalized. Some readers will bring strong priors about the asset class; the case study's claim is about product engineering discipline and data pipeline rigor, not about the category itself.
