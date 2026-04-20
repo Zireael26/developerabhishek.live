@@ -1,9 +1,28 @@
 import type { Metadata, Viewport } from 'next';
+import { Newsreader, Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 
-// Google Fonts referenced via next/font can be added here during the full
-// recreation; the scaffold uses the same <link> approach as the reference
-// so the parchment base renders the right typography immediately.
+// next/font self-hosts the three families and exposes them as CSS variables so
+// globals.css can resolve `--serif / --sans / --mono` without a runtime <link>.
+const newsreader = Newsreader({
+  subsets: ['latin'],
+  variable: '--font-newsreader',
+  display: 'swap',
+  style: ['normal', 'italic'],
+  weight: ['300', '400', '500', '600', '700'],
+});
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-jakarta',
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
+});
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-jetbrains',
+  display: 'swap',
+  weight: ['400', '500'],
+});
 export const metadata: Metadata = {
   metadataBase: new URL('https://developerabhishek.live'),
   title: {
@@ -57,15 +76,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       data-accent="forest"
       data-density="airy"
       data-motion="on"
+      className={`${newsreader.variable} ${plusJakartaSans.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,400..600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
-        />
         {/* RFC 8288 Link headers — duplicated as <link> tags for crawlers that don't
             see headers (e.g. static-HTML-only agents). */}
         <link rel="llms-txt" type="text/plain" href="/llms.txt" />

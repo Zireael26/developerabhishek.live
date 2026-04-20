@@ -38,10 +38,10 @@
 
   --motion-node: oklch(0.78 0.11 150);
 
-  /* typography */
-  --serif: 'Newsreader', ui-serif, Georgia, serif;
-  --sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
-  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  /* typography — families self-hosted via next/font (see app/layout.tsx) */
+  --serif: var(--font-newsreader), ui-serif, Georgia, serif;
+  --sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace;
 
   /* rhythm (airy default) */
   --gap-section: clamp(96px, 12vw, 160px);

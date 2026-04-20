@@ -13,6 +13,7 @@ All notable changes to developerabhishek.live are documented here. The format fo
 - ADR-0002 — process-gate policy + git-hook tool (`simple-git-hooks`, wired in Phase 1).
 - EPIC-01 — pixel-parity plan for Phase 1 (`docs/epm/EPIC-01-pixel-parity.md`).
 - `turbopack.root = process.cwd()` in `next.config.ts` to silence the multi-lockfile warning.
+- `app/layout.tsx`: swapped Google Fonts `<link>` for `next/font/google` (Newsreader + Plus Jakarta Sans + JetBrains Mono). Self-hosted, eliminates external handshake, clears the `@next/next/no-page-custom-font` warning. `app/globals.css` resolves `--serif/--sans/--mono` through the next/font CSS variables.
 
 ### Changed
 - Repository migrated from SvelteKit to Next.js 16.2. Prior state preserved at tag `legacy-v1-final`.
