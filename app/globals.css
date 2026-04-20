@@ -1,0 +1,170 @@
+/* =====================================================================
+   developerabhishek.live — scaffold base tokens
+   -------------------------------------------------------------------
+   These tokens mirror the Claude Design reference at
+   "Abhhishek's Portfolio/portfolio/styles.css". This file is a scaffold
+   foundation only — Claude Code will port the full 898-line stylesheet
+   on top of these tokens during the pixel-parity recreation phase.
+
+   Palette and typography are the single source of truth: every component
+   should resolve to these custom properties, never raw hex.
+   ===================================================================== */
+
+@import 'tailwindcss';
+
+/* ---------- design tokens (light default: parchment) ---------- */
+:root {
+  /* parchment base */
+  --bg: #F5F1E8;
+  --bg-2: #EEE8D9;
+  --ink: #1A1A1E;
+  --ink-90: #2A2A2E;
+  --ink-70: rgba(26, 26, 30, 0.72);
+  --ink-60: rgba(26, 26, 30, 0.55);
+  --ink-40: rgba(26, 26, 30, 0.38);
+  --ink-25: rgba(26, 26, 30, 0.22);
+  --ink-15: rgba(26, 26, 30, 0.13);
+  --ink-10: rgba(26, 26, 30, 0.08);
+  --ink-05: rgba(26, 26, 30, 0.045);
+  --hairline: rgba(26, 26, 30, 0.18);
+
+  /* single forest accent */
+  --accent: #13423D;
+  --accent-60: color-mix(in oklab, var(--accent) 60%, transparent);
+  --accent-40: color-mix(in oklab, var(--accent) 40%, transparent);
+  --accent-15: color-mix(in oklab, var(--accent) 15%, transparent);
+  --accent-05: color-mix(in oklab, var(--accent) 5%, transparent);
+  --accent-ink: #F5F1E8;
+
+  --motion-node: oklch(0.78 0.11 150);
+
+  /* typography — families self-hosted via next/font (see app/layout.tsx) */
+  --serif: var(--font-newsreader), ui-serif, Georgia, serif;
+  --sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace;
+
+  /* rhythm (airy default) */
+  --gap-section: clamp(96px, 12vw, 160px);
+  --gap-block: clamp(40px, 5vw, 72px);
+  --shell-pad: clamp(24px, 5vw, 72px);
+  --max: 1320px;
+
+  /* editorial radii — intentionally tiny */
+  --r-xs: 2px;
+  --r-sm: 4px;
+}
+
+/* accent presets (match tweaks.js iframe protocol) */
+[data-accent='forest']     { --accent: #13423D; }
+[data-accent='terracotta'] { --accent: #B24527; }
+[data-accent='ochre']      { --accent: #8C6617; }
+[data-accent='ink']        { --accent: #1A1A1E; }
+
+/* dark mode */
+[data-mode='dark'] {
+  --bg: #121417;
+  --bg-2: #181B1F;
+  --ink: #ECE6D4;
+  --ink-90: #E2DCC8;
+  --ink-70: rgba(236, 230, 212, 0.78);
+  --ink-60: rgba(236, 230, 212, 0.58);
+  --ink-40: rgba(236, 230, 212, 0.40);
+  --ink-25: rgba(236, 230, 212, 0.25);
+  --ink-15: rgba(236, 230, 212, 0.15);
+  --ink-10: rgba(236, 230, 212, 0.10);
+  --ink-05: rgba(236, 230, 212, 0.06);
+  --hairline: rgba(236, 230, 212, 0.18);
+  --accent-ink: #121417;
+}
+[data-mode='dark'][data-accent='forest']     { --accent: #7FB3A5; }
+[data-mode='dark'][data-accent='terracotta'] { --accent: #E08567; }
+[data-mode='dark'][data-accent='ochre']      { --accent: #D4B268; }
+[data-mode='dark'][data-accent='ink']        { --accent: #ECE6D4; }
+
+/* density + motion switches (tweaks.js protocol) */
+[data-density='tight'] {
+  --gap-section: clamp(72px, 8vw, 112px);
+  --gap-block: clamp(28px, 3.5vw, 48px);
+}
+[data-motion='off'] .packets { display: none; }
+
+/* ---------- Tailwind 4 @theme bridge ---------- */
+@theme {
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-ink: var(--ink);
+  --color-ink-90: var(--ink-90);
+  --color-ink-70: var(--ink-70);
+  --color-ink-60: var(--ink-60);
+  --color-ink-40: var(--ink-40);
+  --color-hairline: var(--hairline);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-motion-node: var(--motion-node);
+
+  --font-serif: var(--serif);
+  --font-sans: var(--sans);
+  --font-mono: var(--mono);
+
+  --radius-xs: var(--r-xs);
+  --radius-sm: var(--r-sm);
+}
+
+/* ---------- reset + base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  font-feature-settings: 'ss01', 'cv11';
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+p { text-wrap: pretty; }
+::selection { background: var(--accent); color: var(--accent-ink); }
+code { font-family: var(--mono); font-size: 0.92em; }
+
+@media (prefers-reduced-motion: reduce) {
+  .packets, .marquee-track { animation: none !important; }
+  * { scroll-behavior: auto !important; }
+}
+
+/* ---------- scaffold placeholder layout ---------- */
+.scaffold-shell {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: var(--gap-section) var(--shell-pad);
+  display: grid;
+  gap: var(--gap-block);
+}
+
+.scaffold-eyebrow {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.scaffold-title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(44px, 7vw, 88px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.scaffold-body {
+  max-width: 60ch;
+  color: var(--ink-70);
+  font-size: clamp(16px, 1.5vw, 18px);
+  line-height: 1.6;
+}

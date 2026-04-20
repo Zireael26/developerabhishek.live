@@ -1,0 +1,46 @@
+import type { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
+  reactStrictMode: true,
+  poweredByHeader: false,
+  typedRoutes: true,
+  experimental: {
+    mdxRs: true,
+  },
+  turbopack: {
+    root: process.cwd(),
+  },
+  // Sets the parchment-on-ink frame for image / static assets.
+  images: {
+    formats: ['image/avif', 'image/webp'],
+  },
+  // Agent-readiness: set discoverability headers in middleware.ts; this is the build-time
+  // declaration for the static .well-known/* routes that are served from /public.
+  async headers() {
+    return [
+      {
+        source: '/.well-known/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=300' },
+          { key: 'Access-Control-Allow-Origin', value: '*' },
+        ],
+      },
+      {
+        source: '/llms.txt',
+        headers: [
+          { key: 'Content-Type', value: 'text/plain; charset=utf-8' },
+          { key: 'Cache-Control', value: 'public, max-age=300' },
+        ],
+      },
+      {
+        source: '/llms-full.txt',
+        headers: [
+          { key: 'Content-Type', value: 'text/plain; charset=utf-8' },
+          { key: 'Cache-Control', value: 'public, max-age=300' },
+        ],
+      },
+    ];
+  },
+};
+
+export default nextConfig;

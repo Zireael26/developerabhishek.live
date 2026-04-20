@@ -1,0 +1,10 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "type": "https://schemas.agentskills.io/discovery/0.2.0/index.json",
+  "skills": [
+    {
+      "url": "https://developerabhishek.live/.well-known/agent-skills/hire-me/SKILL.md",
+      "digest": "sha256:TODO-populate-during-build"
+    }
+  ]
+}
