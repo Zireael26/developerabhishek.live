@@ -4,6 +4,7 @@ import { Work } from '@/components/sections/Work';
 import { Writing } from '@/components/sections/Writing';
 import { Services } from '@/components/sections/Services';
 import { Process } from '@/components/sections/Process';
+import { OpenSource } from '@/components/sections/OpenSource';
 
 /**
  * Home — single-page scroll with eight sections (PRD §5).
@@ -49,7 +50,7 @@ export default function Home() {
       <Writing />
       <Services />
       <Process />
-      <Placeholder id="open" label="07 In the open" pose="open" className="opensource" />
+      <OpenSource />
       <Placeholder id="contact" label="08 Contact" pose="contact" className="contact" />
     </main>
   );
