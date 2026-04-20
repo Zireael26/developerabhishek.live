@@ -1,10 +1,17 @@
 import type { Metadata, Viewport } from 'next';
 import { Newsreader, Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
+import Script from 'next/script';
 import SiteNav from '@/components/site/SiteNav';
 import SiteFooter from '@/components/site/SiteFooter';
 import { Wanderer } from '@/components/scene/Wanderer';
 import { TweakBridge } from '@/components/dev/TweakBridge';
 import './globals.css';
+
+// Cloudflare Web Analytics beacon — cookieless, no consent banner needed
+// (per memory: Cloudflare analytics, not @vercel/analytics). Token read
+// from NEXT_PUBLIC_CF_BEACON_TOKEN so it ships nowhere the codebase can
+// see. When unset (dev / preview) the script is a no-op.
+const CF_BEACON_TOKEN = process.env.NEXT_PUBLIC_CF_BEACON_TOKEN;
 
 const newsreader = Newsreader({
   subsets: ['latin'],
@@ -86,9 +93,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             users. Matches components/site/ThemeToggle.tsx (storage key + fallback). */}
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script src="/init-theme.js" />
-        {/* RFC 8288 Link header duplicates — for crawlers that skip HTTP headers. */}
-        <link rel="llms-txt" type="text/plain" href="/llms.txt" />
-        <link rel="agent-skills" href="/.well-known/agent-skills/index.json" />
+        {/* RFC 8288 Link header duplicates — for crawlers that skip HTTP
+            headers. Same rels as middleware.ts; types match AGENT_READINESS §3.3. */}
+        <link rel="describedby" type="text/markdown" href="/llms.txt" />
+        <link rel="describedby" type="text/markdown" href="/llms-full.txt" />
+        <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
       </head>
       <body>
         {/* Wanderer renders the #companion host with its SVG fallback today.
@@ -99,6 +108,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
         <SiteFooter />
         <TweakBridge />
+        {CF_BEACON_TOKEN ? (
+          <Script
+            strategy="afterInteractive"
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            data-cf-beacon={`{"token": "${CF_BEACON_TOKEN}"}`}
+          />
+        ) : null}
       </body>
     </html>
   );
