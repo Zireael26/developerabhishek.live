@@ -4,6 +4,9 @@ All notable changes to akaushik.org (legacy host: developerabhishek.live, sunset
 
 ## [Unreleased]
 
+### Added
+- Phase 5.4 — launch announcement post (plan Phase 5 §5.4). `content/writing/building-this-portfolio.mdx` — 2026-04-21 meta-post. Walks through the why of shipping the same process publicly (PRD / ADRs / ROADMAP / process-gate / AGENT_READINESS / CHANGELOG), links to every document in the repo, names the four load-bearing decisions (Next 16 over SvelteKit, process-gate pre-commit, MDX server-only + Shiki isolation, content negotiation Patterns A+B, Wanderer direct Three.js port), and closes with the honest "things still to do" list pointing at the ROADMAP. Home Writing section will now show this as the newest post (frontmatter date `2026-04-21` > all existing posts).
+
 ### Changed
 - Phase 5.3 — launch plumbing (plan Phase 5 §5.3). `app/layout.tsx` — Cloudflare Web Analytics beacon added via `next/script` (`strategy="afterInteractive"`), gated on `NEXT_PUBLIC_CF_BEACON_TOKEN`; renders nothing when the env var is unset (dev + preview). Per memory: Cloudflare analytics, not `@vercel/analytics` (cookieless, no consent banner). The `<link rel="llms-txt" type="text/plain">` + `<link rel="agent-skills">` tags in `<head>` (held over from early scaffold) rewritten to the `describedby` / `sitemap` rels + `text/markdown` / `application/xml` types that match `middleware.ts`'s `Link` header. Dropped the `metadata.other` entries that emitted `<meta name="link-llms">` / `<meta name="link-agent-skills">` — not a registered meta-name, and the Link header is the authoritative source for crawlers. `metadataBase` + `openGraph.url` already pointed at `akaushik.org` (ADR-0003) so no URL rewrites needed. **Calendly deferral** — plan Phase 5.3 calls for wiring a "Book a 20-minute call" ghost-button href; Abhishek has yet to provide the Calendly / Cal.com URL, so `components/sections/Contact.tsx`'s button stays at `href="#"`. Post-launch follow-up.
 

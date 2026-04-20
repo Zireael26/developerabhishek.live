@@ -1,0 +1,56 @@
+---
+title: Building this portfolio
+dek: Why the site ships with the same process I'd bring to a client engagement — PRD, ADRs, ROADMAP, process-gate, agent-readiness, the whole thing in the open.
+date: 2026-04-21
+---
+
+# Building this portfolio
+
+> Why the site ships with the same process I'd bring to a client engagement — PRD, ADRs, ROADMAP, process-gate, agent-readiness, the whole thing in the open.
+
+A portfolio is supposed to show the work. The tension is that *showing* the work usually means showing the surface — the typography, the case studies, the tagline. The decisions underneath are what matter, and they don't fit in a screenshot.
+
+So this one is built a different way: the same process I'd use on a paid client engagement, left in public view, with every decision and trade-off legible to anyone who reads the repo.
+
+## The receipts
+
+- [`docs/PRD.md`](https://github.com/Zireael26/akaushik.org/blob/main/docs/PRD.md) — product requirements. What the site has to do, who it's for, what a good reading experience looks like for the MSME owner *and* the senior engineer.
+- [`docs/ROADMAP.md`](https://github.com/Zireael26/akaushik.org/blob/main/docs/ROADMAP.md) — phased delivery plan. Six phases from scaffold to launch; each phase is a set of one-PR slices.
+- [`docs/adr/`](https://github.com/Zireael26/akaushik.org/tree/main/docs/adr) — architecture decisions, numbered and dated. Seven so far. Each captures what was decided, what was considered, and why.
+- [`docs/AGENT_READINESS.md`](https://github.com/Zireael26/akaushik.org/blob/main/docs/AGENT_READINESS.md) — the contract for agent crawlers. llms.txt, sitemap, RFC 8288 Link headers, content negotiation on `Accept: text/markdown`, api-catalog, Agent Skills. Implementation in Phase 4.
+- [`docs/CHANGELOG.md`](https://github.com/Zireael26/akaushik.org/blob/main/docs/CHANGELOG.md) — every shipped change, categorised, referencing the PR that landed it.
+- [`scripts/process-gate.mjs`](https://github.com/Zireael26/akaushik.org/blob/main/scripts/process-gate.mjs) — the pre-commit hook that refuses to let me commit code without a CHANGELOG entry (R1), structural changes without an ADR (R2), or epic changes without a ROADMAP update (R3). It ran on every one of the 30+ PRs that built the site.
+
+## Why this way
+
+There are two readers I want to give full signal to.
+
+The **MSME owner** I might work with on Neev is looking for clarity. Can this person explain what they've built? Will it survive contact with the day? The home page and the case studies answer that — in plain English, with honest scope on what worked and what didn't.
+
+The **senior engineer** I might work with on a platform team is looking for rigor. How do they handle change? How do they treat deprecations? Are they the kind of person who ships and forgets, or the kind who leaves a trail? The repo answers that.
+
+Both readers can get what they need without the other's material getting in the way. The portfolio is the entry point; everything under `docs/` is the depth.
+
+## The parts that were load-bearing
+
+A handful of choices shaped the rest:
+
+**Next.js 16 over SvelteKit** (ADR-0001). The Next + Turbopack + R3F ecosystem is where the Vercel-adjacent toolchain lives, and the agent-readiness work in Phase 4 needed Route Handlers + middleware at the shape Next provides. SvelteKit is a fine framework; this wasn't the site for it.
+
+**Process-gate as pre-commit** (ADR-0002). Three rules: code needs CHANGELOG, structural changes need ADR, epic changes need ROADMAP. Enforced by a shell script running on `simple-git-hooks`. Cheap to implement, load-bearing against drift.
+
+**MDX with server-only compilation + Shiki bundle isolation** (ADR-0004). `next-mdx-remote@6` compiles MDX inside React Server Components; Shiki stays out of the client bundle. Every PR re-verifies the isolation with `pnpm analyze`.
+
+**Content negotiation, Pattern A and Pattern B** (ADR-0006). Every page has a `.md` alternate at `/page.md` (Pattern B, load-bearing) and responds to `Accept: text/markdown` at the canonical URL (Pattern A, additive). Pass isitagentready.com's content-negotiation check on both axes; lose neither if one misbehaves.
+
+**The Wanderer crane port** (slice 5.1c). 221 lines of vanilla Three.js in the reference design, ported directly into a `useEffect`-driven scene (not R3F — the crane is a fixed-position full-document scene driven by document scroll, and wrapping that through R3F primitives reads worse than the direct port). Eight named POSES, IntersectionObserver-driven pose dispatch, damp lerp, scroll-velocity rotation + wing flap, pointer parallax. Bail-out to SVG fallback if first frame takes > 80ms.
+
+## What's still to do
+
+Launch isn't done, it's done enough to ship. The open follow-ups live in `docs/ROADMAP.md` — the honest list, including things like "tighten the JS bundle back toward 150 KiB once the bundle-analyzer audit identifies which preloaded chunk is currently blowing it past target," "write a real `/api/docs` page," and "run the isitagentready.com scan against prod and persist the screenshot to `docs/agent-readiness-snapshots/`."
+
+None of those are in the "you shouldn't launch without this" bucket. They're in the "you should keep shipping past launch" bucket, which is where most real engagements live.
+
+## If any of this looks useful
+
+Every file I've referenced is in the public repo. Clone it, read it, take what's useful. If you're starting a portfolio or a product and you want the same process on it, [hello@akaushik.org](mailto:hello@akaushik.org).
