@@ -1,6 +1,7 @@
 import Hero from '@/components/sections/Hero';
 import { About } from '@/components/sections/About';
 import { Services } from '@/components/sections/Services';
+import { Process } from '@/components/sections/Process';
 
 /**
  * Home — single-page scroll with eight sections (PRD §5).
@@ -45,7 +46,7 @@ export default function Home() {
       <Placeholder id="work" label="03 Work" pose="work" className="work" />
       <Placeholder id="writing" label="04 Writing" pose="writing" className="writing" />
       <Services />
-      <Placeholder id="process" label="06 Process" pose="process" className="process" />
+      <Process />
       <Placeholder id="open" label="07 In the open" pose="open" className="opensource" />
       <Placeholder id="contact" label="08 Contact" pose="contact" className="contact" />
     </main>

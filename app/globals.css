@@ -630,6 +630,82 @@ code { font-family: var(--mono); font-size: 0.92em; }
   .service { border-right: none; }
 }
 
+/* ---------- process (06) — inverted feature-wall ---------- */
+.process { padding: var(--gap-section) 0 0; }
+.process-inner {
+  max-width: var(--max); margin: 0 auto;
+  padding: clamp(48px, 6vw, 80px) var(--shell-pad);
+  background: var(--ink);
+  color: var(--bg);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: start;
+}
+[data-mode="dark"] .process-inner {
+  background: var(--bg-2);
+  color: var(--ink);
+}
+.process-inner .section-num { color: var(--motion-node); }
+.process-title {
+  font-family: var(--serif); font-weight: 400;
+  font-size: clamp(36px, 4.2vw, 56px);
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  margin: 14px 0 22px;
+}
+.process-lede {
+  font-size: 17px; line-height: 1.6;
+  color: color-mix(in oklab, var(--bg) 82%, transparent);
+  margin: 0 0 16px;
+  max-width: 46ch;
+}
+[data-mode="dark"] .process-lede { color: var(--ink-70); }
+.process-sub {
+  font-family: var(--serif); font-style: italic;
+  font-size: 19px; margin: 0;
+  color: color-mix(in oklab, var(--bg) 62%, transparent);
+  max-width: 46ch;
+}
+[data-mode="dark"] .process-sub { color: var(--ink-60); }
+
+.process-artifacts {
+  list-style: none; padding: 0; margin: 0;
+  font-family: var(--mono);
+  font-size: 13px;
+  border-top: 1px solid color-mix(in oklab, var(--bg) 18%, transparent);
+}
+[data-mode="dark"] .process-artifacts { border-top-color: var(--hairline); }
+.process-artifacts li {
+  border-bottom: 1px solid color-mix(in oklab, var(--bg) 18%, transparent);
+}
+[data-mode="dark"] .process-artifacts li { border-bottom-color: var(--hairline); }
+.process-artifacts a {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px 20px;
+  align-items: baseline;
+  padding: 16px 4px;
+  transition: padding .18s ease, color .18s ease;
+}
+.process-artifacts a:hover { padding-left: 14px; }
+.process-artifacts code {
+  color: var(--motion-node);
+  font-family: var(--mono);
+  font-size: 13px;
+}
+.process-artifacts span {
+  font-family: var(--sans);
+  color: color-mix(in oklab, var(--bg) 70%, transparent);
+  font-size: 13.5px;
+  text-align: right;
+}
+[data-mode="dark"] .process-artifacts span { color: var(--ink-60); }
+
+@media (max-width: 820px) {
+  .process-inner { grid-template-columns: 1fr; }
+}
+
 /* ---------- placeholder portrait (SVG fill, swapped for next/image in Slice 2.2) ---------- */
 .placeholder-portrait { width: 100%; height: auto; display: block; }
 .placeholder-portrait .placeholder-label {
