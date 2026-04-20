@@ -3,6 +3,7 @@ import { Newsreader, Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google'
 import SiteNav from '@/components/site/SiteNav';
 import SiteFooter from '@/components/site/SiteFooter';
 import { Wanderer } from '@/components/scene/Wanderer';
+import { TweakBridge } from '@/components/dev/TweakBridge';
 import './globals.css';
 
 const newsreader = Newsreader({
@@ -97,6 +98,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteNav />
         {children}
         <SiteFooter />
+        <TweakBridge />
       </body>
     </html>
   );
