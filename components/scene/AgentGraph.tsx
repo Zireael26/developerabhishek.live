@@ -1,7 +1,7 @@
 'use client';
 
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 // Port of the vanilla Three.js scene at `_reference/portfolio/index.html:1583–1833`.
@@ -132,29 +132,18 @@ type SceneRefs = {
 type PointerRef = React.MutableRefObject<{ tx: number; ty: number; x: number; y: number }>;
 
 function Scene({ pointerRef }: { pointerRef: PointerRef }) {
-  const [colors, setColors] = useState<ColorRead>(() => readColors());
   const { scene } = useThree();
   const refs = useRef<SceneRefs | null>(null);
 
-  // Sync colors on theme/accent change. Runs client-side only (useEffect).
+  // Build the scene imperatively on mount; theme + accent updates mutate
+  // existing materials in place via the MutationObserver below (a state-
+  // driven dep on `colors` would rebuild + dispose the whole scene on
+  // every theme flip — visible flicker, wasted GPU work).
   useEffect(() => {
-    const update = () => setColors(readColors());
-    update();
-    const mo = new MutationObserver(update);
-    mo.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-mode', 'data-accent'],
-    });
-    return () => mo.disconnect();
-  }, []);
-
-  // Build the scene imperatively on mount. Re-runs if colors snapshot
-  // identity changes (theme flip).
-  useEffect(() => {
+    const colors = readColors();
     const group = new THREE.Group();
     scene.add(group);
 
-    // Nodes
     const nodes = NODE_DEFS.map((def) => {
       const geo = new THREE.IcosahedronGeometry(def.size, 1);
       const mat = new THREE.MeshStandardMaterial({
@@ -187,7 +176,6 @@ function Scene({ pointerRef }: { pointerRef: PointerRef }) {
       return { def, mesh, ring, label, basePos: mesh.position.clone(), labelYOff: yOff };
     });
 
-    // Edges (thin lines, updated each frame to follow node positions)
     const edges = EDGE_PAIRS.map((pair) => {
       const a = nodes[pair[0]];
       const b = nodes[pair[1]];
@@ -206,7 +194,6 @@ function Scene({ pointerRef }: { pointerRef: PointerRef }) {
       return { pair, line };
     });
 
-    // Packets travelling along edges
     const packetGeo = new THREE.SphereGeometry(0.05, 12, 12);
     const packetMat = new THREE.MeshBasicMaterial({ color: colors.accent });
     const packets = EDGE_PAIRS.map((pair, i) => {
@@ -223,7 +210,33 @@ function Scene({ pointerRef }: { pointerRef: PointerRef }) {
 
     refs.current = { group, nodes, edges, packets, packetMat };
 
+    // Theme / accent sync: mutate existing materials in place instead of
+    // rebuilding. Label sprites are CanvasTextures — only way to change
+    // their color is to regenerate + swap the texture, which is still
+    // cheap (four sprites, no geometry churn).
+    const applyColors = () => {
+      const c = readColors();
+      const inkHex = '#' + c.ink.getHexString();
+      nodes.forEach((n) => {
+        n.mesh.material.color.copy(n.def.hub ? c.accent : c.satellite);
+        n.ring.material.color.copy(c.accent);
+        const next = makeLabelSprite(n.def.label, inkHex);
+        if (n.label.material.map) n.label.material.map.dispose();
+        n.label.material.dispose();
+        n.label.material = next.material;
+        n.label.scale.copy(next.scale);
+      });
+      edges.forEach((e) => e.line.material.color.copy(c.edge));
+      packetMat.color.copy(c.accent);
+    };
+    const mo = new MutationObserver(applyColors);
+    mo.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-mode', 'data-accent'],
+    });
+
     return () => {
+      mo.disconnect();
       nodes.forEach((n) => {
         n.mesh.geometry.dispose();
         n.mesh.material.dispose();
@@ -241,7 +254,7 @@ function Scene({ pointerRef }: { pointerRef: PointerRef }) {
       scene.remove(group);
       refs.current = null;
     };
-  }, [scene, colors]);
+  }, [scene]);
 
   useFrame((state) => {
     const current = refs.current;
