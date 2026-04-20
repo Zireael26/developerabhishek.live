@@ -5,6 +5,11 @@ All notable changes to developerabhishek.live are documented here. The format fo
 ## [Unreleased]
 
 ### Added
+- Phase 1 chrome slice (EPIC-01 §2, §3.1): sticky `SiteNav` with wordmark + six section links + status line + `ThemeToggle`, terminal `SiteFooter` with build-notes + commit SHA + license links, and a single-page `<main id="top">` that lays out eight section scaffolds (`#hero…#contact`) with `data-companion-pose` / `data-screen-label` anchors ready for The Wanderer. Section bodies land in per-slice PRs.
+- `components/site/{SiteNav,SiteFooter,ThemeToggle}.tsx` — nav + footer are server components; `ThemeToggle` is the only client island in the chrome (flips `html[data-mode]`, persists to `localStorage['abhishek.portfolio.mode']`, respects `prefers-color-scheme` on first mount).
+- `app/globals.css` — ported site-chrome rules verbatim from `_reference/portfolio/styles.css` (+ the inline `<style>` diffs for nav meta / theme toggle / companion). Design tokens unchanged.
+- `#companion` mount point in `<body>` so the Wanderer slice has a place to render without touching chrome again.
+- `public/init-theme.js` — pre-hydration theme bootstrap. Sync `<script src>` in `<head>` reads `localStorage['abhishek.portfolio.mode']` / `prefers-color-scheme` and sets `html[data-mode]` before first paint. Prevents a light-mode flash for dark-preference users before `ThemeToggle`'s effect reconciles.
 - Next.js 16.2 scaffold: `package.json`, `tsconfig.json`, `next.config.ts`, `postcss.config.mjs`, `app/layout.tsx`, `app/page.tsx`, `app/globals.css`, `middleware.ts`, `eslint.config.js`.
 - Design token foundation in `app/globals.css` mirroring the Claude Design reference (parchment, ink, forest accent, Newsreader + Plus Jakarta Sans + JetBrains Mono).
 - Agent-readiness scaffold: `public/robots.txt` with Content Signals, `public/llms.txt`, `public/.well-known/agent-skills/index.json`, `public/.well-known/mcp.json`, Link-header middleware.

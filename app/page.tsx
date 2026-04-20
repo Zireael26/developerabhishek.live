@@ -1,37 +1,47 @@
 /**
- * Scaffold landing page.
+ * Home — single-page scroll with eight sections (PRD §5).
  *
- * This is a placeholder that proves the design tokens, typography, and
- * Tailwind 4 bridge are wired correctly. Claude Code will replace this file
- * with the full eight-section build described in HANDOFF.md — Hero through
- * Contact, Three.js companion, stats tile, case studies, the works.
- *
- * DO NOT add page content here by hand. The single source of truth for the
- * visual design is "Abhhishek's Portfolio/portfolio/index.html" + styles.css.
+ * This file is the section-anchor scaffold. Each <section> carries the
+ * `id`, `data-screen-label`, and `data-companion-pose` attributes the
+ * reference expects — the Wanderer's IntersectionObserver keys off them
+ * (see HANDOFF §5, EPIC-01 §2). Section bodies arrive in per-slice PRs:
+ * Hero → About → Services/Process → Work → In the open → Writing → Contact.
  */
+
+type SectionPlaceholder = {
+  id: string;
+  label: string;
+  pose: string;
+  className: string;
+};
+
+const SECTIONS: ReadonlyArray<SectionPlaceholder> = [
+  { id: 'hero',     label: '01 Hero',        pose: 'hero',     className: 'hero' },
+  { id: 'about',    label: '02 About',       pose: 'about',    className: 'about' },
+  { id: 'work',     label: '03 Work',        pose: 'work',     className: 'work' },
+  { id: 'writing',  label: '04 Writing',     pose: 'writing',  className: 'writing' },
+  { id: 'services', label: '05 Services',    pose: 'services', className: 'services' },
+  { id: 'process',  label: '06 Process',     pose: 'process',  className: 'process' },
+  { id: 'open',     label: '07 In the open', pose: 'open',     className: 'opensource' },
+  { id: 'contact',  label: '08 Contact',     pose: 'contact',  className: 'contact' },
+];
+
 export default function Home() {
   return (
-    <main className="scaffold-shell">
-      <p className="scaffold-eyebrow">Scaffold · v0.0 · pixel parity pending</p>
-
-      <h1 className="scaffold-title">
-        AI systems for businesses that haven’t met AI yet.
-      </h1>
-
-      <p className="scaffold-body">
-        This is the Next.js 16.2 scaffold. Design tokens from the Claude Design reference are
-        wired. The full implementation lives behind <code>HANDOFF.md</code> — Claude Code reads
-        the reference at <code>Abhhishek&apos;s Portfolio/portfolio/</code> and rebuilds, section
-        by section, against the PRD / Design Direction / Agent Readiness contracts.
-      </p>
-
-      <p className="scaffold-body" style={{ color: 'var(--ink-60)' }}>
-        <span style={{ fontFamily: 'var(--mono)', fontSize: '12.5px', letterSpacing: '0.08em' }}>
-          NEXT ·&nbsp;
-        </span>
-        Run <code>pnpm install &amp;&amp; pnpm dev</code>, open <code>http://localhost:3000</code>,
-        then hand <code>HANDOFF.md</code> to Claude Code.
-      </p>
+    <main id="top">
+      {SECTIONS.map((s) => (
+        <section
+          key={s.id}
+          id={s.id === 'hero' ? undefined : s.id}
+          className={s.className}
+          data-screen-label={s.label}
+          data-companion-pose={s.pose}
+          data-section-placeholder="true"
+          aria-label={s.label}
+        >
+          {s.label} — section scaffold · body lands in its slice PR
+        </section>
+      ))}
     </main>
   );
 }
