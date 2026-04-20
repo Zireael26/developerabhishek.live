@@ -4,9 +4,13 @@ dek: The specific trade-offs, the retrieval quality delta on an institutional co
 date: 2026-02-18
 ---
 
+# Migrating from Fastembed ONNX to Hugging Face TEI
+
+> The specific trade-offs, the retrieval quality delta on an institutional corpus, and why the infra complexity was worth it.
+
 Fastembed ONNX on CPU is a reasonable place to start a RAG system. The library is easy to install, the model catalog covers the obvious choices, and you can get a working embedding pipeline in an afternoon without standing up any additional infrastructure. For VeriCite's early proof-of-concept, that was the right call.
 
-It stopped being the right call when retrieval quality became the constraint. The model catalog that's practical to serve through Fastembed doesn't include <code>paraphrase-multilingual-MiniLM-L12-v2</code> with the throughput we needed on an institutional corpus, and it doesn't include a cross-encoder reranker like <code>BAAI/bge-reranker-v2-m3</code> at all. Reranking matters disproportionately on the kind of corpus VeriCite deals with — documents where the lexical overlap between a query and the relevant passage is low, and where a bi-encoder's cosine similarity is a noisy signal.
+It stopped being the right call when retrieval quality became the constraint. The model catalog that's practical to serve through Fastembed doesn't include `paraphrase-multilingual-MiniLM-L12-v2` with the throughput we needed on an institutional corpus, and it doesn't include a cross-encoder reranker like `BAAI/bge-reranker-v2-m3` at all. Reranking matters disproportionately on the kind of corpus VeriCite deals with — documents where the lexical overlap between a query and the relevant passage is low, and where a bi-encoder's cosine similarity is a noisy signal.
 
 Hugging Face TEI gives you both. It's a purpose-built inference server for text embeddings and rerankers, with batching tuned for GPU throughput. The trade-off is operational: you're now running GPU nodes, managing batching configuration, and shipping k8s manifests for a TEI sidecar alongside Qdrant. That's real infra complexity, and it doesn't pay for itself unless retrieval quality is actually on the critical path.
 

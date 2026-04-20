@@ -1,33 +1,15 @@
 import Link from 'next/link';
 import { MDXRemote } from 'next-mdx-remote/rsc';
-import rehypePrettyCode from 'rehype-pretty-code';
-import rehypeSlug from 'rehype-slug';
-import remarkGfm from 'remark-gfm';
 import type { Post, CaseStudyFrontmatter } from '@/lib/content';
+import { MDX_OPTIONS } from '@/lib/mdx-options';
 import { Reel, type ReelSlug } from './reels';
-
-const MDX_OPTIONS = {
-  mdxOptions: {
-    remarkPlugins: [remarkGfm],
-    rehypePlugins: [
-      rehypeSlug,
-      [
-        rehypePrettyCode,
-        {
-          theme: { light: 'github-light', dark: 'github-dark-dimmed' },
-          keepBackground: false,
-        },
-      ],
-    ] as never,
-  },
-};
 
 export function CaseStudyPage({
   post,
   slug,
 }: {
   post: Post<'case-studies'>;
-  slug: ReelSlug;
+  slug: ReelSlug | null;
 }) {
   const fm = post.frontmatter as CaseStudyFrontmatter;
   return (
@@ -41,8 +23,6 @@ export function CaseStudyPage({
           {fm.tag ? <span className="case-tag">{fm.tag}</span> : null}
           {fm.year ? <span className="case-year">{fm.year}</span> : null}
         </div>
-        <h1 className="work-stub-title">{fm.title}</h1>
-        {fm.dek ? <p className="work-stub-dek">{fm.dek}</p> : null}
         {fm.role || fm.stack || fm.evidenceOf ? (
           <dl className="case-spec">
             {fm.role ? (
@@ -66,9 +46,11 @@ export function CaseStudyPage({
           </dl>
         ) : null}
       </header>
-      <figure className="work-detail-reel" aria-hidden="true">
-        <Reel slug={slug} />
-      </figure>
+      {slug ? (
+        <figure className="work-detail-reel" aria-hidden="true">
+          <Reel slug={slug} />
+        </figure>
+      ) : null}
       <article className="work-detail-body">
         <MDXRemote source={post.content} options={MDX_OPTIONS} />
       </article>

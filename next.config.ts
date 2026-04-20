@@ -9,9 +9,6 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   typedRoutes: true,
-  experimental: {
-    mdxRs: true,
-  },
   turbopack: {
     root: process.cwd(),
   },
