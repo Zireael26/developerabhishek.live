@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Cancel earlier in-progress runs for the same ref when a newer push lands,
+# so a push-storm doesn't queue five of these against the same commit.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.0.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Build
+        run: pnpm build
+
+      # Process-gate normally runs over *staged* changes via the pre-commit
+      # hook. In CI we run it over the diff against main so structural drift
+      # (next.config, package.json, etc. without an ADR/CHANGELOG reference)
+      # gets caught even if someone bypassed the local hook.
+      - name: Process gate (diff against main)
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          PROCESS_GATE_DIFF_BASE: origin/${{ github.base_ref }}
+        run: |
+          git fetch origin "$BASE_REF" --depth=1
+          pnpm process:check
