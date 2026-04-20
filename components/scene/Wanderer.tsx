@@ -1,16 +1,15 @@
+import { WandererCraneClient } from './WandererCraneClient';
+
 /**
  * The Wanderer — paper-crane companion.
  *
- * Phase-1 state (this file): renders the SVG fallback from
- * `_reference/portfolio/companion.js:211–219` into the `#companion` host.
- * This gives every `[data-companion-pose]` anchor a live visual target
- * without pulling Three.js into the Phase-1 bundle.
- *
- * Phase-5 Slice 5.1c upgrades this to a client component that mounts the
- * Three.js crane on top of the same host. The SVG you see here stays as
- * the `prefers-reduced-motion` / `[data-motion="off"]` / WebGL-bail-out
- * fallback. Keep the SVG geometry byte-for-byte synchronised with the
- * reference so future R3F work doesn't have to re-derive it.
+ * Server component: renders the `#companion` host + the SVG fallback
+ * (byte-for-byte from `_reference/portfolio/companion.js:211–219`), then
+ * mounts `<WandererCraneClient />` which lazy-imports the Three.js scene
+ * and hides the SVG once WebGL is live. The SVG stays visible for
+ * `prefers-reduced-motion` users, `[data-motion="off"]`, and any
+ * WebGL-unavailable environment (the client component's first-frame
+ * bail-out at 80ms removes itself and re-shows the SVG).
  */
 export function Wanderer() {
   return (
@@ -27,6 +26,7 @@ export function Wanderer() {
         <polygon points="55,60 80,70 70,55" fill="#e8dcc8" />
         <circle cx="60" cy="20" r="2" fill="#2a2a2a" />
       </svg>
+      <WandererCraneClient />
     </div>
   );
 }
