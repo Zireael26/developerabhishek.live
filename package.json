@@ -15,8 +15,12 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
+    "prepare": "simple-git-hooks || true",
     "process:check": "node scripts/process-gate.mjs",
     "stats:fetch": "node scripts/fetch-github-stats.mjs"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm process:check"
   },
   "dependencies": {
     "next": "16.2.0",
@@ -51,6 +55,7 @@
     "@typescript-eslint/parser": "^8.13.0",
     "@typescript-eslint/eslint-plugin": "^8.13.0",
     "prettier": "^3.5.3",
-    "prettier-plugin-tailwindcss": "^0.6.13"
+    "prettier-plugin-tailwindcss": "^0.6.13",
+    "simple-git-hooks": "^2.11.1"
   }
 }

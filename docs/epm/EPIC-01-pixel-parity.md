@@ -24,8 +24,9 @@ reference at three breakpoints. No section is "done" before it matches.
 Sections, in the order the reference walks the eye:
 
 1. **Hero** (`#hero`) — Newsreader 88px headline with tagline A/B/C wired to
-   `data-tagline-*`, `hero-facts` DL, hero canvas (agent graph) + SVG
-   fallback, sticky marquee. HANDOFF §4.01.
+   `data-tagline-*`, `hero-facts` DL, SVG agent-graph scene (the live
+   Three.js canvas port is reseq'd to Phase 5 — see §4 and ROADMAP),
+   sticky marquee. HANDOFF §4.01.
 2. **About** (`#about`) — long-form copy from `BIO_DRAFT.md §2` (desktop),
    shorter variant on mobile, one pull-quote in Newsreader italic, mono
    meta line. HANDOFF §4.02.
@@ -49,10 +50,15 @@ Sections, in the order the reference walks the eye:
 
 Cross-cutting work that doesn't belong to one section:
 
-- **The Wanderer** (`components/scene/Wanderer.tsx`) — r3f port of
-  `companion.js`, 8 named POSES, IntersectionObserver-driven lerp,
-  pointer parallax, accent sync via `data-accent` observer, SVG fallback
-  for reduced-motion / WebGL-missing. `<Suspense>` wrapped. HANDOFF §5.
+- **The Wanderer** — Phase 1 ships the SVG fallback + `#companion` mount
+  wiring only (`components/scene/Wanderer.tsx`, reference
+  `companion.js:211–219`). The full r3f port — 8 POSES,
+  IntersectionObserver-driven lerp, pointer parallax, accent sync via
+  `data-accent` observer — is **reseq'd to Phase 5** alongside the R3F 9
+  + drei 10 peer-dep bump (ADR pending). Rationale: decouple pixel
+  parity from the peer-dep upgrade so a regression in one doesn't block
+  the other, and keep the Phase 1 bundle under budget until the
+  content-polish phases settle. HANDOFF §5.
 - **TweakBridge** (`components/dev/TweakBridge.tsx`) — dev/iframe-only
   iframe protocol port of `tweaks.js`: `tagline / accent / mode / density
   / motion`, postMessage contract per HANDOFF §6, `localStorage` key
@@ -84,8 +90,10 @@ driven, not calendar-driven.
 7. **Writing** — empty-state-first; trivial until MDX posts arrive.
 8. **Contact** — small; land last so the footer final-polish happens
    after every other section is settled.
-9. **The Wanderer** — orthogonal to section order; ship after section 4
-   when enough `[data-companion-pose]` anchors exist to exercise POSES.
+9. **The Wanderer (SVG fallback only)** — orthogonal to section order;
+   ship after all section bodies land so every `[data-companion-pose]`
+   anchor exists. The full r3f port (with POSES, parallax, accent sync)
+   moves to Phase 5 per §4.
 10. **TweakBridge** — ship once any two tokens (accent, mode) actually
     affect the visual surface.
 
@@ -132,6 +140,11 @@ made, not before.
   digest, api-catalog (Phase 4; tracked separately).
 - CI quality-gate enforcement (Phase 3).
 - Custom domain, analytics, OG images (Phase 5).
+- **Hero Three.js canvas** (agent-graph live scene) — reseq'd to Phase 5
+  Slice 5.1b. Phase 1 Hero ships the SVG fallback only.
+- **Wanderer r3f full port** — reseq'd to Phase 5 Slice 5.1c. Phase 1
+  ships the SVG-only fallback and mount wiring (Slice 1.9) so the
+  `#companion` anchor is live.
 
 ## 7. Dependencies / asks of Abhishek
 

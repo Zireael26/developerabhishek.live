@@ -16,11 +16,17 @@ A living document. Phases are ordered by dependency, not calendar. The goal is s
 
 ## Phase 1 — Pixel parity with the Claude Design reference
 
-- [ ] Hero section (01): taglines A/B/C, hero-facts DL, hero-scene (canvas + SVG fallback), marquee
-- [ ] About (02), Work (03), Writing (04), Services (05), Process (06), In the open (07), Contact (08)
-- [ ] The Wanderer Three.js companion — 8 POSES, pointer parallax, accent sync, reduced-motion fallback
+- [x] Hero section (01): taglines A/B/C, hero-facts DL, static SVG agent-graph scene, marquee
+- [ ] About (02), Work (03) w/ stub detail pages, Writing (04), Services (05), Process (06), In the open (07), Contact (08)
+- [ ] The Wanderer — SVG fallback + `#companion` mount wiring (r3f full port reseq'd to Phase 5)
 - [ ] `tweaks.js` Claude Design iframe protocol (tagline / accent / mode / density / motion)
 - [ ] Stats tile wired from `public/data/stats.json`
+
+> Reseq note (2026-04-20): the Hero Three.js canvas and the Wanderer r3f
+> full port move to Phase 5 Slices 5.1b/5.1c. Rationale is bundle-budget
+> stability and decoupling pixel parity from the R3F 9 + drei 10
+> peer-dep bump. Slice 1.9 ships the SVG-only Wanderer mount so every
+> `[data-companion-pose]` anchor is live during Phases 2–4.
 
 ## Phase 2 — Content fill
 
@@ -45,7 +51,10 @@ A living document. Phases are ordered by dependency, not calendar. The goal is s
 
 ## Phase 5 — Launch
 
+- [ ] R3F 9 + drei 10 bump (ADR) — resolves React 19 peer warnings
+- [ ] Hero Three.js canvas port (agent-graph live scene) — reseq'd from Phase 1
+- [ ] Wanderer r3f full port — 8 POSES, IntersectionObserver lerp, pointer parallax, accent sync, WebGL bail-out
+- [ ] OG images via Next.js ImageResponse (home, case studies, writing posts)
 - [ ] Custom domain + HSTS
-- [ ] Social cards + OG images
 - [ ] Analytics (privacy-respecting: Plausible or Vercel Web Analytics)
 - [ ] Announcement post
