@@ -1,0 +1,2099 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Abhishek Kaushik — AI engineer</title>
+<meta name="description" content="AI systems for businesses that haven't met AI yet. Agents, RAG, production platforms — built end-to-end and shipped to real users." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+.companion { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+.companion canvas { width: 100%; height: 100%; display: block; }
+.companion-svg { position: fixed; right: 6vw; top: 18vh; width: 120px; height: 80px; opacity: 0.9; }
+
+/* =====================================================================
+   Abhishek Kaushik — portfolio · v0.1
+   Warm editorial base · single forest accent · node-and-edge motif.
+   ===================================================================== */
+
+:root {
+  /* parchment (light default) */
+  --bg: #F5F1E8;
+  --bg-2: #EEE8D9;
+  --ink: #1A1A1E;
+  --ink-90: #2A2A2E;
+  --ink-70: rgba(26, 26, 30, 0.72);
+  --ink-60: rgba(26, 26, 30, 0.55);
+  --ink-40: rgba(26, 26, 30, 0.38);
+  --ink-25: rgba(26, 26, 30, 0.22);
+  --ink-15: rgba(26, 26, 30, 0.13);
+  --ink-10: rgba(26, 26, 30, 0.08);
+  --ink-05: rgba(26, 26, 30, 0.045);
+  --hairline: rgba(26, 26, 30, 0.18);
+
+  /* accents */
+  --accent: #13423D;
+  --accent-60: color-mix(in oklab, var(--accent) 60%, transparent);
+  --accent-40: color-mix(in oklab, var(--accent) 40%, transparent);
+  --accent-15: color-mix(in oklab, var(--accent) 15%, transparent);
+  --accent-05: color-mix(in oklab, var(--accent) 5%, transparent);
+  --accent-ink: #F5F1E8;
+
+  --motion-node: oklch(0.78 0.11 150);
+
+  /* type */
+  --serif: "Newsreader", ui-serif, Georgia, serif;
+  --sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* rhythm (airy default) */
+  --gap-section: clamp(96px, 12vw, 160px);
+  --gap-block: clamp(40px, 5vw, 72px);
+  --shell-pad: clamp(24px, 5vw, 72px);
+  --max: 1320px;
+
+  /* radii are minimal; this is editorial */
+  --r-xs: 2px;
+  --r-sm: 4px;
+}
+
+/* accent presets */
+[data-accent="forest"]     { --accent: #13423D; }
+[data-accent="terracotta"] { --accent: #B24527; }
+[data-accent="ochre"]      { --accent: #8C6617; }
+[data-accent="ink"]        { --accent: #1A1A1E; }
+
+/* dark mode */
+[data-mode="dark"] {
+  --bg: #121417;
+  --bg-2: #181B1F;
+  --ink: #ECE6D4;
+  --ink-90: #E2DCC8;
+  --ink-70: rgba(236, 230, 212, 0.78);
+  --ink-60: rgba(236, 230, 212, 0.58);
+  --ink-40: rgba(236, 230, 212, 0.40);
+  --ink-25: rgba(236, 230, 212, 0.25);
+  --ink-15: rgba(236, 230, 212, 0.15);
+  --ink-10: rgba(236, 230, 212, 0.10);
+  --ink-05: rgba(236, 230, 212, 0.06);
+  --hairline: rgba(236, 230, 212, 0.18);
+  --accent-ink: #121417;
+}
+[data-mode="dark"][data-accent="forest"]     { --accent: #7FB3A5; }
+[data-mode="dark"][data-accent="terracotta"] { --accent: #E08567; }
+[data-mode="dark"][data-accent="ochre"]      { --accent: #D4B268; }
+[data-mode="dark"][data-accent="ink"]        { --accent: #ECE6D4; }
+
+[data-density="tight"] {
+  --gap-section: clamp(72px, 8vw, 112px);
+  --gap-block: clamp(28px, 3.5vw, 48px);
+}
+
+[data-motion="off"] .packets { display: none; }
+
+/* ------------------------------- base ------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+p { text-wrap: pretty; }
+::selection { background: var(--accent); color: var(--accent-ink); }
+code { font-family: var(--mono); font-size: 0.92em; }
+
+@media (prefers-reduced-motion: reduce) {
+  .packets, .marquee-track { animation: none !important; }
+  * { scroll-behavior: auto !important; }
+}
+
+/* ------------------------------- nav ------------------------------- */
+.site-nav {
+  position: sticky; top: 0; z-index: 40;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 32px;
+  padding: 18px var(--shell-pad);
+  background: color-mix(in oklab, var(--bg) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--hairline);
+  font-size: 14px;
+}
+.wordmark {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--serif); font-size: 18px; letter-spacing: -0.01em;
+}
+.wordmark-mark {
+  color: var(--accent);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.nav-links {
+  justify-self: center;
+  display: flex; gap: 28px;
+}
+.nav-links a {
+  color: var(--ink-70);
+  padding: 4px 2px;
+  position: relative;
+  transition: color .18s ease;
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-links a::after {
+  content: ""; position: absolute; left: 0; right: 100%; bottom: -2px;
+  height: 1px; background: var(--accent);
+  transition: right .22s ease;
+}
+.nav-links a:hover::after { right: 0; }
+.nav-meta {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-size: 12.5px; color: var(--ink-60);
+  font-feature-settings: "tnum";
+}
+.nav-status-text { display: inline-flex; align-items: center; gap: 8px; }
+.theme-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px;
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: 100px;
+  color: var(--ink-70);
+  cursor: pointer;
+  transition: color .18s ease, border-color .18s ease, background .18s ease;
+  padding: 0;
+}
+.theme-toggle:hover { color: var(--ink); border-color: var(--ink-40); }
+.theme-toggle .theme-icon { display: none; }
+[data-mode="light"] .theme-toggle .theme-icon-moon { display: block; }
+[data-mode="dark"] .theme-toggle .theme-icon-sun { display: block; }
+.status-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--motion-node);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--motion-node) 25%, transparent);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1 } 50% { opacity: .45 } }
+
+@media (max-width: 860px) {
+  .site-nav { grid-template-columns: auto auto; }
+  .nav-links { display: none; }
+  .nav-meta { justify-self: end; gap: 10px; }
+  .nav-status-text { display: none; }
+}
+
+/* ------------------------------- buttons ------------------------------- */
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 13px 20px;
+  font-family: var(--sans); font-size: 14.5px; font-weight: 500;
+  letter-spacing: 0.003em;
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+  transition: transform .15s ease, background .15s ease, color .15s ease, border-color .15s ease;
+  cursor: pointer;
+}
+.btn-primary {
+  background: var(--accent); color: var(--accent-ink);
+}
+.btn-primary:hover { transform: translateY(-1px); }
+.btn-primary .arrow { transition: transform .2s ease; }
+.btn-primary:hover .arrow { transform: translateX(3px); }
+.btn-ghost {
+  background: transparent; color: var(--ink);
+  border-color: var(--hairline);
+}
+.btn-ghost:hover { border-color: var(--ink); }
+.btn-lg { padding: 18px 26px; font-size: 16px; }
+
+/* ------------------------------- hero ------------------------------- */
+.hero {
+  padding: clamp(48px, 6vw, 88px) var(--shell-pad) var(--gap-block);
+  max-width: var(--max); margin: 0 auto;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+  min-height: min(720px, 78vh);
+}
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink-60);
+  margin: 0 0 28px;
+}
+.eyebrow-num { color: var(--accent); margin-right: 4px; }
+.hero-title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(42px, 6vw, 88px);
+  line-height: 0.98;
+  letter-spacing: -0.022em;
+  margin: 0 0 28px;
+  color: var(--ink);
+}
+.hero-title [data-tagline-a] em,
+.hero-title em { font-style: italic; color: var(--accent); }
+.hero-lede {
+  font-size: clamp(17px, 1.4vw, 20px);
+  line-height: 1.55;
+  color: var(--ink-70);
+  max-width: 48ch;
+  margin: 0 0 36px;
+}
+.hero-cta-row {
+  display: flex; flex-wrap: wrap; gap: 14px;
+  margin-bottom: 48px;
+}
+.hero-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px 32px;
+  margin: 0;
+  padding-top: 24px;
+  border-top: 1px solid var(--hairline);
+}
+.hero-facts div { margin: 0; }
+.hero-facts dt {
+  font-family: var(--mono);
+  font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink-60); margin-bottom: 6px;
+}
+.hero-facts dd { margin: 0; font-size: 14.5px; color: var(--ink); }
+
+/* hero scene */
+.hero-scene { margin: 0; }
+.scene-frame {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: var(--bg-2);
+  border: 1px solid var(--hairline);
+  overflow: hidden;
+}
+.scene-label {
+  position: absolute; top: 14px; left: 14px; right: 14px;
+  display: flex; justify-content: space-between;
+  font-family: var(--mono); font-size: 11px;
+  color: var(--ink-60);
+  z-index: 2;
+}
+.scene-label-key { color: var(--accent); }
+.scene-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block;
+}
+.scene-svg { width: 100%; height: 100%; }
+.scene-svg-fallback { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+[data-motion="off"] .scene-canvas { display: none; }
+[data-motion="off"] .scene-svg-fallback { opacity: 1; }
+.scene-svg .node-core { fill: var(--accent); }
+.scene-svg .node-core.node-primary { fill: var(--accent); }
+.scene-svg .node-ring {
+  fill: none; stroke: var(--accent); stroke-width: 1;
+  stroke-dasharray: 2 3; opacity: 0.5;
+  transform-origin: center;
+  animation: spin 40s linear infinite;
+}
+.scene-svg .nodes g { }
+.scene-svg .nodes text {
+  font-family: var(--mono); font-size: 11px;
+  fill: var(--ink-60); text-transform: lowercase;
+  letter-spacing: 0.02em;
+}
+.scene-svg .edges path { opacity: 0.5; }
+.scene-foot {
+  position: absolute; bottom: 14px; left: 14px; right: 14px;
+  display: flex; justify-content: space-between;
+  font-family: var(--mono); font-size: 10.5px;
+  color: var(--ink-40);
+}
+.scene-foot-mono { color: var(--ink-60); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* marquee */
+.hero-marquee {
+  margin-top: var(--gap-block);
+  padding: 20px 0;
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  overflow: hidden;
+  position: relative;
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.marquee-track {
+  display: inline-flex; gap: 28px; align-items: center;
+  white-space: nowrap;
+  font-family: var(--mono); font-size: 13px; letter-spacing: 0.02em;
+  color: var(--ink-70);
+  animation: marquee 45s linear infinite;
+  will-change: transform;
+}
+.marquee-track em { color: var(--accent); font-style: normal; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+@media (max-width: 900px) {
+  .hero-grid { grid-template-columns: 1fr; min-height: auto; }
+  .hero-scene { order: -1; max-width: 520px; }
+  .hero-facts { grid-template-columns: 1fr; gap: 16px; }
+}
+
+/* ------------------------------- section heads ------------------------------- */
+.section-head {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: baseline;
+  gap: 20px;
+  max-width: var(--max);
+  margin: 0 auto var(--gap-block);
+  padding: 0 var(--shell-pad);
+}
+.section-num {
+  font-family: var(--mono);
+  font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent);
+}
+.section-title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(28px, 3vw, 40px);
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+.section-rule {
+  height: 1px; background: var(--hairline); display: block; width: 100%;
+  align-self: center;
+}
+.section-kicker {
+  grid-column: 1 / -1;
+  max-width: 62ch;
+  color: var(--ink-70);
+  margin: 12px 0 0;
+  font-size: 16.5px;
+}
+.section-kicker a { color: var(--accent); border-bottom: 1px solid var(--accent-40); }
+
+/* ------------------------------- about ------------------------------- */
+.about {
+  padding: var(--gap-section) 0 0;
+}
+.about-grid {
+  max-width: var(--max); margin: 0 auto;
+  padding: 0 var(--shell-pad);
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) minmax(0, 1.8fr);
+  gap: clamp(32px, 6vw, 88px);
+  align-items: start;
+}
+.about-portrait figcaption {
+  margin-top: 12px;
+  font-family: var(--mono); font-size: 11.5px; color: var(--ink-60);
+}
+.about-kicker {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-60);
+  margin: 0 0 16px;
+}
+.about-lede {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(26px, 2.4vw, 34px);
+  line-height: 1.2;
+  letter-spacing: -0.012em;
+  margin: 0 0 28px;
+  text-wrap: balance;
+}
+.about-lede em { color: var(--accent); font-style: italic; }
+.about-prose p {
+  font-size: 17px; line-height: 1.65; color: var(--ink-90);
+  margin: 0 0 18px;
+  max-width: 62ch;
+}
+.about-prose a {
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent-40);
+}
+.about-prose strong { color: var(--ink); font-weight: 600; }
+.about-meta {
+  list-style: none; padding: 0; margin: 36px 0 0;
+  border-top: 1px solid var(--hairline);
+  font-size: 14.5px;
+}
+.about-meta li {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.about-meta span {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-60);
+}
+
+@media (max-width: 800px) {
+  .about-grid { grid-template-columns: 1fr; }
+  .about-portrait { max-width: 320px; }
+}
+
+/* ------------------------------- work ------------------------------- */
+.work { padding: var(--gap-section) 0 0; }
+.case-list {
+  list-style: none; padding: 0; margin: 0;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--shell-pad);
+}
+.case-item {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+  padding: clamp(36px, 4vw, 56px) 0;
+  border-top: 1px solid var(--hairline);
+  grid-template-areas:
+    "meta"
+    "body"
+    "reel";
+}
+.case-meta { grid-area: meta; }
+.case-body { grid-area: body; }
+.case-reel { grid-area: reel; }
+.case-item:last-child { border-bottom: 1px solid var(--hairline); }
+.case-item--lead { padding-top: clamp(48px, 5vw, 72px); }
+.case-item--lead .case-title { font-size: clamp(48px, 6vw, 88px); }
+
+.case-meta {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.06em;
+  color: var(--ink-60); text-transform: uppercase;
+}
+.case-index { color: var(--accent); font-weight: 500; }
+.case-tag {
+  padding: 4px 10px; border: 1px solid var(--hairline);
+  border-radius: 100px;
+  color: var(--ink-70);
+  text-transform: none; letter-spacing: 0.01em;
+}
+.case-year { margin-left: auto; }
+.case-title {
+  font-family: var(--serif); font-weight: 400;
+  font-size: clamp(34px, 4vw, 56px);
+  letter-spacing: -0.02em; line-height: 1.02;
+  margin: 0;
+}
+.case-dek {
+  font-family: var(--serif); font-style: italic;
+  font-size: clamp(18px, 1.6vw, 22px); line-height: 1.4;
+  color: var(--ink-90);
+  margin: 12px 0 0;
+  max-width: 38ch;
+}
+.case-lede {
+  font-size: 16.5px; line-height: 1.6;
+  color: var(--ink-70);
+  margin: 18px 0 0;
+  max-width: 58ch;
+}
+.case-lede code { background: var(--ink-05); padding: 1px 6px; border-radius: var(--r-xs); }
+.case-spec {
+  margin: 24px 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 18px 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--hairline);
+}
+.case-spec div { margin: 0; }
+.case-spec dt {
+  font-family: var(--mono); font-size: 10.5px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink-60); margin-bottom: 4px;
+}
+.case-spec dd { margin: 0; font-size: 14px; color: var(--ink); }
+
+.case-link {
+  display: inline-flex; align-items: center; gap: 10px;
+  margin-top: 24px;
+  font-size: 14.5px; font-weight: 500;
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent-40);
+  padding-bottom: 2px;
+  transition: border-color .18s ease;
+}
+.case-link:hover { border-color: var(--accent); }
+.case-link .arrow { transition: transform .2s ease; }
+.case-link:hover .arrow { transform: translateX(3px); }
+
+.case-reel svg { width: 100%; height: auto; }
+
+@media (min-width: 960px) {
+  .case-item {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: clamp(32px, 4vw, 64px);
+    align-items: start;
+    grid-template-areas:
+      "meta meta"
+      "body reel";
+  }
+  .case-reel { position: sticky; top: 96px; }
+  .case-item--lead {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+/* ------------------------------- writing ------------------------------- */
+.writing { padding: var(--gap-section) 0 0; }
+.post-list {
+  list-style: none; padding: 0; margin: 0;
+  max-width: var(--max); margin-inline: auto;
+  padding-inline: var(--shell-pad);
+}
+.post {
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  gap: 24px 32px;
+  padding: 32px 0;
+  border-top: 1px solid var(--hairline);
+  align-items: baseline;
+}
+.post:last-child { border-bottom: 1px solid var(--hairline); }
+.post-date {
+  font-family: var(--mono); font-size: 11.5px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--ink-60);
+}
+.post-title {
+  font-family: var(--serif); font-weight: 400;
+  font-size: clamp(22px, 2vw, 28px); line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+.post-title a {
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  transition: background-size .3s ease;
+  padding-bottom: 2px;
+}
+.post-title a:hover { background-size: 100% 1px; }
+.post-dek {
+  grid-column: 2;
+  color: var(--ink-70);
+  margin: 8px 0 0; font-size: 15.5px;
+  max-width: 60ch;
+}
+.post-read {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--ink-60); letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.more-link {
+  display: inline-flex; align-items: center; gap: 10px;
+  max-width: var(--max); margin: 28px auto 0;
+  padding: 0 var(--shell-pad);
+  width: 100%;
+  color: var(--accent); font-weight: 500; font-size: 14.5px;
+}
+.more-link .arrow { transition: transform .2s ease; }
+.more-link:hover .arrow { transform: translateX(3px); }
+
+@media (max-width: 720px) {
+  .post { grid-template-columns: 1fr; gap: 6px; }
+  .post-dek { grid-column: auto; }
+  .post-read { display: none; }
+}
+
+/* ------------------------------- services ------------------------------- */
+.services { padding: var(--gap-section) 0 0; }
+.service-grid {
+  max-width: var(--max); margin: 0 auto;
+  padding: 0 var(--shell-pad);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-left: 1px solid var(--hairline);
+  border-right: 1px solid var(--hairline);
+  border-top: 1px solid var(--hairline);
+}
+.service {
+  padding: clamp(28px, 3vw, 40px);
+  border-right: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  display: flex; flex-direction: column; gap: 18px;
+  background: var(--bg);
+  transition: background .2s ease;
+}
+.service:last-child { border-right: none; }
+.service:hover { background: var(--bg-2); }
+.service header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 16px;
+  align-items: end;
+}
+.service-num {
+  grid-column: 1 / -1;
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent);
+}
+.service h3 {
+  font-family: var(--serif); font-weight: 400;
+  font-size: clamp(22px, 1.8vw, 26px); line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0;
+  max-width: 18ch;
+}
+.service-dur {
+  font-family: var(--mono); font-size: 11.5px;
+  color: var(--ink-60); white-space: nowrap;
+}
+.service-lede {
+  margin: 0;
+  font-size: 15.5px; line-height: 1.55;
+  color: var(--ink-70);
+}
+.service-list {
+  list-style: none; padding: 0; margin: auto 0 0;
+  border-top: 1px solid var(--hairline);
+  font-size: 13.5px;
+}
+.service-list li {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--hairline);
+  color: var(--ink-90);
+}
+.service-list li:last-child { border-bottom: none; }
+.service-list span {
+  font-family: var(--mono); font-size: 10.5px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink-60); padding-top: 2px;
+}
+
+@media (max-width: 860px) {
+  .service-grid { grid-template-columns: 1fr; }
+  .service { border-right: none; }
+}
+
+/* ------------------------------- process ------------------------------- */
+.process {
+  padding: var(--gap-section) 0 0;
+}
+.process-inner {
+  max-width: var(--max); margin: 0 auto;
+  padding: clamp(48px, 6vw, 80px) var(--shell-pad);
+  background: var(--ink);
+  color: var(--bg);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: start;
+  position: relative;
+}
+.process-inner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 80% at 100% 0%, color-mix(in oklab, var(--accent) 50%, transparent) 0%, transparent 60%),
+    radial-gradient(50% 70% at 0% 100%, color-mix(in oklab, var(--motion-node) 18%, transparent) 0%, transparent 55%);
+  opacity: 0.9;
+  pointer-events: none;
+}
+.process-inner > * { position: relative; z-index: 1; }
+[data-mode="dark"] .process-inner {
+  background: var(--bg-2);
+  color: var(--ink);
+}
+.process-inner .section-num { color: var(--motion-node); }
+.process-eyebrow {
+  display: inline-block;
+  padding: 4px 10px;
+  border: 1px solid color-mix(in oklab, var(--motion-node) 40%, transparent);
+  border-radius: 100px;
+}
+.process-title {
+  font-family: var(--serif); font-weight: 400;
+  font-size: clamp(36px, 4.2vw, 56px);
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  margin: 14px 0 22px;
+}
+.process-lede {
+  font-size: 17px; line-height: 1.6;
+  color: color-mix(in oklab, var(--bg) 82%, transparent);
+  margin: 0 0 16px;
+  max-width: 46ch;
+}
+[data-mode="dark"] .process-lede { color: var(--ink-70); }
+.process-sub {
+  font-family: var(--serif); font-style: italic;
+  font-size: 19px; margin: 0;
+  color: color-mix(in oklab, var(--bg) 62%, transparent);
+  max-width: 46ch;
+}
+[data-mode="dark"] .process-sub { color: var(--ink-60); }
+
+.process-artifacts {
+  list-style: none; padding: 0; margin: 0;
+  font-family: var(--mono);
+  font-size: 13px;
+  border-top: 1px solid color-mix(in oklab, var(--bg) 18%, transparent);
+}
+[data-mode="dark"] .process-artifacts { border-top-color: var(--hairline); }
+.process-artifacts li {
+  border-bottom: 1px solid color-mix(in oklab, var(--bg) 18%, transparent);
+}
+[data-mode="dark"] .process-artifacts li { border-bottom-color: var(--hairline); }
+.process-artifacts a {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px 20px;
+  align-items: baseline;
+  padding: 16px 4px;
+  transition: padding .18s ease, color .18s ease;
+}
+.process-artifacts a:hover { padding-left: 14px; }
+.process-artifacts code {
+  color: var(--motion-node);
+  font-family: var(--mono);
+  font-size: 13px;
+}
+.process-artifacts span {
+  font-family: var(--sans);
+  color: color-mix(in oklab, var(--bg) 70%, transparent);
+  font-size: 13.5px;
+  text-align: right;
+}
+[data-mode="dark"] .process-artifacts span { color: var(--ink-60); }
+
+@media (max-width: 820px) {
+  .process-inner { grid-template-columns: 1fr; }
+}
+
+/* ------------------------------- in the open (github stats) ------------------------------- */
+.opensource {
+  padding: var(--gap-section) 0 0;
+}
+.section-note {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em;
+  color: var(--ink-60); text-align: right;
+  justify-self: end;
+}
+.section-note-link { color: var(--accent); border-bottom: 1px solid var(--accent-40); }
+.section-note-link:hover { color: var(--ink); border-bottom-color: var(--ink-40); }
+.os-inner {
+  max-width: var(--max); margin: 0 auto;
+  padding: 0 var(--shell-pad);
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(32px, 4vw, 56px);
+  align-items: start;
+}
+.os-total {
+  display: flex; flex-direction: column;
+  gap: 14px;
+  padding: clamp(28px, 3vw, 40px);
+  border: 1px solid var(--hairline);
+  background: var(--bg-2);
+}
+.os-label {
+  font-family: var(--mono); font-size: 11.5px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink-60);
+}
+.os-number {
+  font-family: var(--serif); font-weight: 400;
+  font-size: clamp(72px, 9vw, 128px);
+  line-height: 0.95;
+  color: var(--accent);
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  letter-spacing: -0.02em;
+}
+.os-sub {
+  font-family: var(--mono); font-size: 11.5px;
+  color: var(--ink-60);
+}
+.os-spark {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+  display: flex; flex-direction: column; gap: 10px;
+  padding: clamp(20px, 2.5vw, 32px);
+  border: 1px solid var(--hairline);
+}
+.os-spark-svg {
+  width: 100%; height: auto;
+  aspect-ratio: 520 / 120;
+  display: block;
+}
+.os-spark-svg rect { fill: var(--accent); }
+.os-spark-svg .os-spark-axis { fill: var(--ink-25); }
+.os-spark figcaption {
+  font-family: var(--mono); font-size: 10.5px;
+  color: var(--ink-40); letter-spacing: 0.04em;
+}
+.os-repos {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  list-style: none; padding: 0; margin: 0;
+  border-top: 1px solid var(--hairline);
+}
+.os-repo {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr) auto;
+  gap: 16px;
+  align-items: baseline;
+  padding: 20px 4px;
+  border-bottom: 1px solid var(--hairline);
+}
+.os-repo-name {
+  font-family: var(--serif); font-size: 22px; font-weight: 400;
+  color: var(--ink);
+}
+.os-repo-name a { color: inherit; border-bottom: 1px solid var(--ink-25); }
+.os-repo-name a:hover { color: var(--accent); border-bottom-color: var(--accent-40); }
+.os-repo-bar {
+  position: relative;
+  height: 6px;
+  background: var(--ink-10);
+  overflow: hidden;
+}
+.os-repo-bar > span {
+  position: absolute; inset: 0 auto 0 0;
+  background: var(--accent);
+}
+.os-repo-count {
+  font-family: var(--mono); font-size: 13px;
+  color: var(--ink-70);
+  font-feature-settings: "tnum" 1;
+  white-space: nowrap;
+}
+.os-repo-count em {
+  color: var(--accent); font-style: normal; font-weight: 500;
+}
+.os-repo-loading { opacity: 0.6; }
+
+@media (max-width: 820px) {
+  .os-inner { grid-template-columns: 1fr; }
+  .os-spark { grid-column: 1; grid-row: auto; }
+  .os-repos { grid-row: auto; }
+  .os-repo { grid-template-columns: 1fr auto; }
+  .os-repo-bar { grid-column: 1 / -1; }
+}
+
+/* ------------------------------- contact ------------------------------- */
+.contact { padding: var(--gap-section) 0 var(--gap-section); }
+.contact-inner {
+  max-width: var(--max); margin: 0 auto;
+  padding: 0 var(--shell-pad);
+}
+.contact-title {
+  font-family: var(--serif); font-weight: 400;
+  font-size: clamp(40px, 5.5vw, 84px);
+  line-height: 0.98; letter-spacing: -0.022em;
+  margin: 16px 0 22px;
+  max-width: 16ch;
+  text-wrap: balance;
+}
+.contact-lede {
+  font-size: clamp(17px, 1.3vw, 19px); line-height: 1.55;
+  color: var(--ink-70);
+  max-width: 52ch;
+  margin: 0 0 36px;
+}
+.contact-cta {
+  display: flex; flex-wrap: wrap; gap: 14px;
+  margin-bottom: 56px;
+}
+.contact-links {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  margin: 0;
+}
+.contact-links div {
+  padding: 20px 0;
+  border-right: 1px solid var(--hairline);
+  padding-right: 24px;
+  margin: 0;
+}
+.contact-links div:last-child { border-right: none; padding-right: 0; }
+.contact-links div:not(:first-child) { padding-left: 24px; }
+.contact-links dt {
+  font-family: var(--mono); font-size: 10.5px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink-60); margin-bottom: 6px;
+}
+.contact-links dd { margin: 0; font-size: 15px; }
+.contact-links a {
+  border-bottom: 1px solid var(--hairline);
+  padding-bottom: 1px;
+  transition: border-color .18s ease;
+}
+.contact-links a:hover { border-color: var(--ink); }
+
+@media (max-width: 720px) {
+  .contact-links { grid-template-columns: repeat(2, 1fr); }
+  .contact-links div { border-bottom: 1px solid var(--hairline); }
+  .contact-links div:nth-child(2n) { border-right: none; }
+  .contact-links div:nth-last-child(-n+2) { border-bottom: none; }
+}
+
+/* ------------------------------- foot ------------------------------- */
+.site-foot {
+  padding: 32px var(--shell-pad);
+  border-top: 1px solid var(--hairline);
+  font-family: var(--mono); font-size: 12px;
+  color: var(--ink-60);
+}
+.foot-row {
+  max-width: var(--max); margin: 0 auto;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 24px;
+  align-items: center;
+}
+.foot-mark {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: var(--ink);
+}
+.foot-mark svg { color: var(--accent); }
+.foot-colophon { justify-self: center; color: var(--ink-60); }
+.foot-links { display: flex; gap: 18px; }
+.foot-links a:hover { color: var(--accent); }
+
+@media (max-width: 720px) {
+  .foot-row { grid-template-columns: 1fr; text-align: center; }
+  .foot-links { justify-content: center; }
+}
+
+/* ------------------------------- placeholders ------------------------------- */
+.placeholder-label {
+  font-family: var(--mono);
+  font-size: 12px;
+  fill: var(--ink-70);
+}
+.placeholder-sublabel {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  fill: var(--ink-60);
+}
+.placeholder-reel { border: 1px solid var(--hairline); }
+.placeholder-reel .node-core { fill: var(--accent); }
+.placeholder-reel .node-core.node-primary { fill: var(--accent); }
+.placeholder-reel text.placeholder-label { fill: var(--ink-60); }
+
+/* ------------------------------- tweaks ------------------------------- */
+.tweaks {
+  position: fixed; right: 20px; bottom: 20px; z-index: 80;
+  width: 300px;
+  background: var(--bg);
+  border: 1px solid var(--hairline);
+  box-shadow: 0 18px 48px -24px rgba(0,0,0,0.35), 0 4px 12px rgba(0,0,0,0.08);
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  max-height: calc(100vh - 40px);
+  overflow: auto;
+}
+.tweaks-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--hairline);
+  background: var(--bg-2);
+}
+.tweaks-title {
+  font-family: var(--mono); font-size: 11.5px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent);
+}
+.tweaks-close {
+  background: none; border: none; font-size: 20px;
+  color: var(--ink-60); cursor: pointer; line-height: 1;
+  padding: 0 4px;
+}
+.tweaks-close:hover { color: var(--ink); }
+.tweaks-body { padding: 8px 16px 16px; }
+.tweaks fieldset {
+  border: none; padding: 12px 0; margin: 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.tweaks fieldset:last-child { border-bottom: none; }
+.tweaks legend {
+  font-family: var(--mono); font-size: 10.5px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink-60);
+  padding: 0; margin-bottom: 8px;
+}
+.tweaks label {
+  display: flex; align-items: center; gap: 10px;
+  padding: 5px 0;
+  cursor: pointer;
+  color: var(--ink-90);
+}
+.tweaks label:hover { color: var(--ink); }
+.tweaks input[type="radio"] { accent-color: var(--accent); }
+.tweak-swatches {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+}
+.tweak-swatches label {
+  font-size: 12.5px; padding: 6px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-xs);
+}
+.tweak-swatches label:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-05);
+}
+.tweak-swatches span {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 1px solid var(--hairline);
+  display: inline-block;
+}
+.tweak-swatches input { display: none; }
+
+</style>
+</head>
+<body data-mode="light" data-density="airy" data-accent="forest" data-motion="on" data-tagline="a">
+<div id="companion" class="companion" aria-hidden="true"></div>
+
+
+<!-- ================================= NAV ================================= -->
+<header class="site-nav" role="banner">
+  <a class="wordmark" href="#top" aria-label="Abhishek Kaushik, home">
+    <span class="wordmark-mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="18" height="18"><circle cx="5" cy="12" r="2.2"/><circle cx="19" cy="6" r="2.2"/><circle cx="19" cy="18" r="2.2"/><path d="M6.8 11 17 6.8 M6.8 13 17 17.2" stroke="currentColor" stroke-width="1.1" fill="none"/></svg>
+    </span>
+    <span class="wordmark-text">Abhishek Kaushik</span>
+  </a>
+  <nav class="nav-links" aria-label="Primary">
+    <a href="#work">Work</a>
+    <a href="#writing">Writing</a>
+    <a href="#services">Services</a>
+    <a href="#process">Process</a>
+    <a href="#open">Open</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <div class="nav-meta">
+    <span class="status-dot" aria-hidden="true"></span>
+    <span class="nav-status-text">Open to one project this quarter</span>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle color theme" title="Toggle theme">
+      <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+        <circle cx="12" cy="12" r="4" fill="currentColor"/>
+        <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7"/>
+        </g>
+      </svg>
+      <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+        <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="currentColor"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- =============================== HERO =============================== -->
+  <section class="hero" data-screen-label="01 Hero" data-companion-pose="hero">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-num">01</span> — AI engineer · six years shipping software</p>
+        <h1 class="hero-title" data-slot="tagline">
+          <span data-tagline-a>AI systems for<br/>businesses that<br/>haven't met AI yet.</span>
+          <span data-tagline-b hidden>I build agent systems<br/>that go to production —<br/>and stay there.</span>
+          <span data-tagline-c hidden>I build the systems<br/>your business<br/>will actually use.</span>
+        </h1>
+        <p class="hero-lede">
+          I design and build the agents and back-end systems that quietly do the work — for distributors, founders, and teams who'd rather see results than slide decks.
+        </p>
+        <div class="hero-cta-row">
+          <a class="btn btn-primary" href="#contact">Let's talk about your project<span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn-ghost" href="#work">Read a case study</a>
+        </div>
+        <dl class="hero-facts" aria-label="At a glance">
+          <div><dt>Currently</dt><dd>Bluehost · agents framework</dd></div>
+          <div><dt>Building</dt><dd>Neev · VeriCite · curat.money</dd></div>
+          <div><dt>Shipped</dt><dd><span data-stat="total">—</span> commits · last 12mo</dd></div>
+          <div><dt>Based in</dt><dd>India · working globally</dd></div>
+        </dl>
+      </div>
+
+      <figure class="hero-scene" aria-label="Decorative graph of agent nodes exchanging messages">
+        <div class="scene-frame">
+          <div class="scene-label">
+            <span class="scene-label-key">scene.live</span>
+            <span class="scene-label-val">agent-graph · three.js</span>
+          </div>
+          <canvas id="agent-graph-canvas" class="scene-canvas" aria-hidden="true"></canvas>
+          <svg class="scene-svg scene-svg-fallback" viewBox="0 0 520 520" aria-hidden="true">
+            <defs>
+              <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.35"/>
+                <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+              </radialGradient>
+              <pattern id="grid" width="26" height="26" patternUnits="userSpaceOnUse">
+                <path d="M26 0H0V26" fill="none" stroke="var(--hairline)" stroke-width="0.5"/>
+              </pattern>
+            </defs>
+            <rect width="520" height="520" fill="url(#grid)"/>
+            <circle cx="260" cy="260" r="210" fill="url(#glow)"/>
+            <g class="edges" stroke="var(--ink-60)" stroke-width="1" fill="none">
+              <path d="M120 140 Q 260 200 400 130"/>
+              <path d="M120 140 Q 180 300 260 380"/>
+              <path d="M400 130 Q 430 280 400 400"/>
+              <path d="M260 380 Q 330 380 400 400"/>
+            </g>
+            <g class="nodes">
+              <g transform="translate(120 140)"><circle r="14" class="node-core"/><circle r="22" class="node-ring"/><text y="40" text-anchor="middle">agent</text></g>
+              <g transform="translate(400 130)"><circle r="10" class="node-core"/><circle r="18" class="node-ring"/><text y="36" text-anchor="middle">tool</text></g>
+              <g transform="translate(260 380)"><circle r="18" class="node-core node-primary"/><circle r="28" class="node-ring"/><text y="48" text-anchor="middle">orchestrator</text></g>
+              <g transform="translate(400 400)"><circle r="10" class="node-core"/><circle r="18" class="node-ring"/><text y="36" text-anchor="middle">memory</text></g>
+            </g>
+          </svg>
+          <div class="scene-foot">
+            <span>four agents · cursor-reactive · reduced-motion safe</span>
+            <span class="scene-foot-mono">scene/agent-graph.v2</span>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="hero-marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>Next.js 16</span><em>·</em><span>TypeScript 6</span><em>·</em><span>Hugging Face TEI</span><em>·</em><span>Qdrant</span><em>·</em><span>MCP</span><em>·</em><span>Framer Motion</span><em>·</em><span>r3f</span><em>·</em><span>Tailwind 4</span><em>·</em><span>shadcn/ui v4</span><em>·</em><span>Vercel</span><em>·</em><span>Kubernetes</span><em>·</em><span>Ory</span><em>·</em>
+        <span>Next.js 16</span><em>·</em><span>TypeScript 6</span><em>·</em><span>Hugging Face TEI</span><em>·</em><span>Qdrant</span><em>·</em><span>MCP</span><em>·</em><span>Framer Motion</span><em>·</em><span>r3f</span><em>·</em><span>Tailwind 4</span><em>·</em><span>shadcn/ui v4</span><em>·</em><span>Vercel</span><em>·</em><span>Kubernetes</span><em>·</em><span>Ory</span><em>·</em>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================== ABOUT =============================== -->
+  <section class="about" id="about" data-screen-label="02 About" data-companion-pose="about">
+    <div class="section-head">
+      <span class="section-num">02</span>
+      <h2 class="section-title">About</h2>
+      <span class="section-rule"></span>
+    </div>
+    <div class="about-grid">
+      <div class="about-portrait" aria-hidden="true">
+        <svg viewBox="0 0 320 400" class="placeholder placeholder-portrait">
+          <defs>
+            <pattern id="stripes-portrait" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="8" stroke="var(--ink-15)" stroke-width="3"/>
+            </pattern>
+          </defs>
+          <rect width="320" height="400" fill="var(--ink-05)"/>
+          <rect width="320" height="400" fill="url(#stripes-portrait)"/>
+          <text x="160" y="200" text-anchor="middle" class="placeholder-label">portrait.jpg</text>
+          <text x="160" y="222" text-anchor="middle" class="placeholder-sublabel">about/abhishek.webp · 4:5</text>
+        </svg>
+        <figcaption>Abhishek, 2026 — candid, working-at-desk framing.</figcaption>
+      </div>
+      <div class="about-prose">
+        <p class="about-kicker">The short version</p>
+        <p class="about-lede">
+          I'm Abhishek — an AI engineer who builds agent systems that businesses can <em>actually</em> run.
+        </p>
+        <p>
+          For the last six years I've been shipping software — AI and platform engineering for the past stretch of it, most recently on the agents framework behind Bluehost's AI products. Outside of that, I'm building <a href="#work">Neev</a>, a modular operations platform for Indian MSMEs starting with textile distribution — because the most exciting place for AI right now isn't another consumer chatbot. It's the <strong>63 million businesses</strong> still running on WhatsApp messages and paper ledgers.
+        </p>
+        <p>
+          My way into AI was Andrej Karpathy's <em>Zero to Hero</em> series. I didn't just watch it — I built micrograd and makemore from scratch to understand what I was watching. That habit, going to the foundations rather than the abstractions, is how I work on most things. Including this site.
+        </p>
+        <ul class="about-meta">
+          <li><span>Now</span>Bluehost · agents framework backend</li>
+          <li><span>Building</span>Neev · MSME operations platform</li>
+          <li><span>Co-founder / CTO</span>VeriCite · curat.money</li>
+          <li><span>Writes</span>agent systems · AI for traditional business</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================== WORK =============================== -->
+  <section class="work" id="work" data-screen-label="03 Work" data-companion-pose="work">
+    <div class="section-head">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Selected work</h2>
+      <span class="section-rule"></span>
+      <p class="section-kicker">Four case studies, ordered by strategic weight. Each is a problem in the client's words, an approach, what shipped, and honest scope on what was and wasn't included.</p>
+    </div>
+
+    <ol class="case-list" role="list">
+
+      <li class="case-item case-item--lead" id="case-neev">
+        <div class="case-meta">
+          <span class="case-index">01</span>
+          <span class="case-tag">Hero case · MSME thesis</span>
+          <span class="case-year">2026 — now</span>
+        </div>
+        <div class="case-body">
+          <h3 class="case-title">Neev</h3>
+          <p class="case-dek">Bringing AI to an industry that still runs on WhatsApp.</p>
+          <p class="case-lede">A modular operations platform for Indian textile distributors — built to be boring where boring matters, and quietly smart where it counts.</p>
+          <dl class="case-spec">
+            <div><dt>Role</dt><dd>Co-founder &amp; CTO — product, architecture, build</dd></div>
+            <div><dt>Stack</dt><dd>Next.js · Postgres · multi-tenant monolith</dd></div>
+            <div><dt>Evidence of</dt><dd>MSME depth · systems &amp; product discipline</dd></div>
+          </dl>
+          <a class="case-link" href="#">Read the case study<span class="arrow">→</span></a>
+        </div>
+        <div class="case-reel" aria-hidden="true">
+          <svg viewBox="0 0 600 400" class="placeholder placeholder-reel">
+            <defs>
+              <pattern id="stripes-neev" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                <line x1="0" y1="0" x2="0" y2="10" stroke="var(--accent-15)" stroke-width="4"/>
+              </pattern>
+            </defs>
+            <rect width="600" height="400" fill="var(--accent-05)"/>
+            <rect width="600" height="400" fill="url(#stripes-neev)"/>
+            <g class="reel-overlay">
+              <circle cx="180" cy="200" r="38" class="node-core node-primary"/>
+              <circle cx="360" cy="130" r="22" class="node-core"/>
+              <circle cx="420" cy="280" r="26" class="node-core"/>
+              <path d="M180 200 L360 130 M180 200 L420 280 M360 130 L420 280" stroke="var(--accent-60)" stroke-width="1.2" fill="none"/>
+            </g>
+            <text x="300" y="370" text-anchor="middle" class="placeholder-label">neev/reel.mp4 · hyperframes</text>
+          </svg>
+        </div>
+      </li>
+
+      <li class="case-item" id="case-vericite">
+        <div class="case-meta">
+          <span class="case-index">02</span>
+          <span class="case-tag">AI systems depth</span>
+          <span class="case-year">2026 — now</span>
+        </div>
+        <div class="case-body">
+          <h3 class="case-title">VeriCite</h3>
+          <p class="case-dek">A retrieval stack an institution can actually trust with its own words.</p>
+          <p class="case-lede">Multi-tenant institutional RAG, migrating from Fastembed ONNX to Hugging Face TEI for <code>BAAI/bge-reranker-v2-m3</code>. Qdrant as the backbone, Ory for identity.</p>
+          <dl class="case-spec">
+            <div><dt>Role</dt><dd>Co-founder &amp; CTO — retrieval pipeline</dd></div>
+            <div><dt>Stack</dt><dd>HF TEI · Qdrant · Ory · k8s · Vercel</dd></div>
+            <div><dt>Evidence of</dt><dd>Institutional AI-systems sophistication</dd></div>
+          </dl>
+          <a class="case-link" href="#">Read the case study<span class="arrow">→</span></a>
+        </div>
+        <div class="case-reel" aria-hidden="true">
+          <svg viewBox="0 0 600 400" class="placeholder placeholder-reel">
+            <rect width="600" height="400" fill="var(--ink-05)"/>
+            <g stroke="var(--ink-25)" stroke-width="0.8" fill="none">
+              <path d="M0 120 H600 M0 200 H600 M0 280 H600"/>
+            </g>
+            <g>
+              <rect x="60" y="80" width="140" height="80" fill="var(--ink-15)"/>
+              <rect x="230" y="160" width="140" height="80" fill="var(--accent-40)"/>
+              <rect x="400" y="240" width="140" height="80" fill="var(--ink-15)"/>
+            </g>
+            <text x="300" y="370" text-anchor="middle" class="placeholder-label">vericite/retrieval-trace.mp4</text>
+          </svg>
+        </div>
+      </li>
+
+      <li class="case-item" id="case-bluehost">
+        <div class="case-meta">
+          <span class="case-index">03</span>
+          <span class="case-tag">Production scale</span>
+          <span class="case-year">2025 — now</span>
+        </div>
+        <div class="case-body">
+          <h3 class="case-title">Bluehost · agents framework</h3>
+          <p class="case-dek">The foundational platform behind Bluehost's agentic AI products.</p>
+          <p class="case-lede">Where AI agents meet web-hosting reality — customer scale, production uptime, and real users with real bills. A major hand in maintaining and continuously improving the platform.</p>
+          <dl class="case-spec">
+            <div><dt>Role</dt><dd>Platform engineer · ongoing</dd></div>
+            <div><dt>Stack</dt><dd>Agent runtime · tool-calling · observability</dd></div>
+            <div><dt>Evidence of</dt><dd>Operating at scale · team context</dd></div>
+          </dl>
+          <a class="case-link" href="#">Read the case study<span class="arrow">→</span></a>
+        </div>
+        <div class="case-reel" aria-hidden="true">
+          <svg viewBox="0 0 600 400" class="placeholder placeholder-reel">
+            <rect width="600" height="400" fill="var(--ink-05)"/>
+            <g>
+              <path d="M40 340 C 120 220, 200 260, 280 180 S 440 140, 560 100" stroke="var(--accent)" stroke-width="2.4" fill="none"/>
+              <path d="M40 360 C 120 320, 200 330, 280 280 S 440 260, 560 220" stroke="var(--ink-40)" stroke-width="1.2" fill="none" stroke-dasharray="3 4"/>
+            </g>
+            <g fill="var(--accent)">
+              <circle cx="40" cy="340" r="4"/><circle cx="280" cy="180" r="4"/><circle cx="560" cy="100" r="4"/>
+            </g>
+            <text x="300" y="380" text-anchor="middle" class="placeholder-label">bluehost/latency-budget.mp4</text>
+          </svg>
+        </div>
+      </li>
+
+      <li class="case-item" id="case-curat">
+        <div class="case-meta">
+          <span class="case-index">04</span>
+          <span class="case-tag">Product breadth</span>
+          <span class="case-year">2026 — now</span>
+        </div>
+        <div class="case-body">
+          <h3 class="case-title">curat.money</h3>
+          <p class="case-dek">A fair-comparison tool for crypto cards, built like a real product.</p>
+          <p class="case-lede">Custody checks, provider coverage, multi-environment deploys — the boring-but-important scaffolding most crypto product sites skip.</p>
+          <dl class="case-spec">
+            <div><dt>Role</dt><dd>CTO · Tech Lead</dd></div>
+            <div><dt>Stack</dt><dd>High-throughput data pipeline · K8s · RBAC · CI/CD</dd></div>
+            <div><dt>Evidence of</dt><dd>Data pipeline to web product</dd></div>
+          </dl>
+          <a class="case-link" href="#">Read the case study<span class="arrow">→</span></a>
+        </div>
+        <div class="case-reel" aria-hidden="true">
+          <svg viewBox="0 0 600 400" class="placeholder placeholder-reel">
+            <rect width="600" height="400" fill="var(--ink-05)"/>
+            <g>
+              <rect x="40" y="60" width="520" height="40" fill="var(--ink-15)"/>
+              <rect x="40" y="120" width="360" height="28" fill="var(--ink-10)"/>
+              <rect x="40" y="160" width="420" height="28" fill="var(--ink-10)"/>
+              <rect x="40" y="200" width="300" height="28" fill="var(--ink-10)"/>
+              <rect x="40" y="240" width="480" height="28" fill="var(--ink-10)"/>
+              <rect x="40" y="280" width="380" height="28" fill="var(--ink-10)"/>
+            </g>
+            <text x="300" y="370" text-anchor="middle" class="placeholder-label">curat.money/compare-table.mp4</text>
+          </svg>
+        </div>
+      </li>
+
+    </ol>
+  </section>
+
+  <!-- =============================== WRITING =============================== -->
+  <section class="writing" id="writing" data-screen-label="04 Writing" data-companion-pose="writing">
+    <div class="section-head">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Writing</h2>
+      <span class="section-rule"></span>
+      <p class="section-kicker">First-principles notes on agent systems and AI for traditional businesses. New posts land here without a redesign.</p>
+    </div>
+    <ul class="post-list" role="list">
+      <li class="post">
+        <span class="post-date">Apr 2026</span>
+        <h3 class="post-title"><a href="#">What I learned building micrograd and makemore from scratch</a></h3>
+        <p class="post-dek">A foundations-first reading of Karpathy's <em>Zero to Hero</em> — why re-implementing the thing is the only way to understand the thing.</p>
+        <span class="post-read">12 min read</span>
+      </li>
+      <li class="post">
+        <span class="post-date">Mar 2026</span>
+        <h3 class="post-title"><a href="#">Notes on bringing AI to an MSME</a></h3>
+        <p class="post-dek">WhatsApp, paper ledgers, Tally, and a few spreadsheets. What actually moves the needle, and what doesn't.</p>
+        <span class="post-read">9 min read</span>
+      </li>
+      <li class="post">
+        <span class="post-date">Feb 2026</span>
+        <h3 class="post-title"><a href="#">Migrating from Fastembed ONNX to Hugging Face TEI</a></h3>
+        <p class="post-dek">The specific trade-offs, the retrieval quality delta on an institutional corpus, and why the infra complexity was worth it.</p>
+        <span class="post-read">14 min read</span>
+      </li>
+    </ul>
+    <a class="more-link" href="#">All writing<span class="arrow">→</span></a>
+  </section>
+
+  <!-- =============================== SERVICES =============================== -->
+  <section class="services" id="services" data-screen-label="05 Services" data-companion-pose="services">
+    <div class="section-head">
+      <span class="section-num">05</span>
+      <h2 class="section-title">What I can build for you</h2>
+      <span class="section-rule"></span>
+      <p class="section-kicker">Three engagement shapes. Each with what's in scope, what's not, and a realistic timeline. If something sounds close but not quite, <a href="#contact">tell me what you're actually trying to do</a>.</p>
+    </div>
+    <div class="service-grid">
+      <article class="service">
+        <header>
+          <span class="service-num">S/01</span>
+          <h3>Agent MVP</h3>
+          <span class="service-dur">4 — 6 weeks</span>
+        </header>
+        <p class="service-lede">A working agent system, in production, doing one thing your business needs done. Tool-use, memory, observability from day one.</p>
+        <ul class="service-list">
+          <li><span>In</span>Problem framing, agent design, production deploy, handoff docs</li>
+          <li><span>Out</span>Brand work, non-AI product surface area</li>
+          <li><span>Fit</span>Teams with a clear repeated workflow and real data</li>
+        </ul>
+      </article>
+      <article class="service">
+        <header>
+          <span class="service-num">S/02</span>
+          <h3>AI enablement for an MSME operation</h3>
+          <span class="service-dur">8 — 12 weeks</span>
+        </header>
+        <p class="service-lede">For businesses that run on WhatsApp and spreadsheets. A layer that removes typing and memory load — not one that replaces judgment.</p>
+        <ul class="service-list">
+          <li><span>In</span>Operator interviews, a narrow AI surface, training &amp; rollout</li>
+          <li><span>Out</span>Full ERP replacement, ledger migration</li>
+          <li><span>Fit</span>Owner-operators who want software that survives the day</li>
+        </ul>
+      </article>
+      <article class="service">
+        <header>
+          <span class="service-num">S/03</span>
+          <h3>Production-hardening a POC</h3>
+          <span class="service-dur">3 — 6 weeks</span>
+        </header>
+        <p class="service-lede">You have a prototype that works in a demo. It needs to work on a Tuesday at 3pm with 200 users. I take it the rest of the way.</p>
+        <ul class="service-list">
+          <li><span>In</span>Observability, eval harness, rate limits, error budgets, on-call runbook</li>
+          <li><span>Out</span>New features during hardening</li>
+          <li><span>Fit</span>Teams who've shipped a POC and lost a night's sleep to it</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- =============================== PROCESS =============================== -->
+  <section class="process" id="process" data-screen-label="06 Process" data-companion-pose="process">
+    <div class="process-inner">
+      <div class="process-copy">
+        <span class="section-num process-eyebrow">06 · feature wall</span>
+        <h2 class="process-title">Built in the open.</h2>
+        <p class="process-lede">This site uses the same process I'd bring to a client engagement — PRD, ADR, ROADMAP, EPM progress log, CHANGELOG, process-gate scripts. Public on the repo; linked from here.</p>
+        <p class="process-sub">The portfolio is itself a case study in what I build.</p>
+      </div>
+      <ul class="process-artifacts">
+        <li><a href="#"><code>PRD.md</code><span>Product requirements, v0.1 → live</span></a></li>
+        <li><a href="#"><code>ADR-0001-stack.md</code><span>Stack decision · Next.js 16 · pinned</span></a></li>
+        <li><a href="#"><code>ROADMAP.md</code><span>Phased delivery plan</span></a></li>
+        <li><a href="#"><code>AGENT_READINESS.md</code><span>Cloudflare isitagentready checks</span></a></li>
+        <li><a href="#"><code>CHANGELOG.md</code><span>Every shipped change</span></a></li>
+        <li><a href="#"><code>/llms-full.txt</code><span>Whole site, one Markdown file</span></a></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- =============================== IN THE OPEN =============================== -->
+  <section class="opensource" id="open" data-screen-label="07 In the open" data-companion-pose="open">
+    <div class="section-head">
+      <span class="section-num">07</span>
+      <h2 class="section-title">In the open</h2>
+      <span class="section-note">live from github · <a href="https://github.com/Zireael26" class="section-note-link">@Zireael26</a></span>
+    </div>
+    <div class="os-inner">
+      <div class="os-total">
+        <span class="os-label">Contributions, last 12 months</span>
+        <span class="os-number" data-stat="total">—</span>
+        <span class="os-sub">private repos included · <span data-stat="updated">updating…</span></span>
+      </div>
+      <figure class="os-spark" aria-label="Weekly contribution sparkline, oldest to newest">
+        <svg class="os-spark-svg" viewBox="0 0 520 120" preserveAspectRatio="none" aria-hidden="true" data-stat="sparkline"></svg>
+        <figcaption>52 weeks · oldest → newest</figcaption>
+      </figure>
+      <ul class="os-repos" data-stat="repos" role="list">
+        <li class="os-repo os-repo-loading"><span class="os-repo-name">loading…</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- =============================== CONTACT =============================== -->
+  <section class="contact" id="contact" data-screen-label="08 Contact" data-companion-pose="contact">
+    <div class="contact-inner">
+      <span class="section-num">08</span>
+      <h2 class="contact-title">Let's talk about your project.</h2>
+      <p class="contact-lede">Email is best. Tell me what you're trying to do in plain language — the industry, who uses it, what's getting in the way. I read every one.</p>
+      <div class="contact-cta">
+        <a class="btn btn-primary btn-lg" href="mailto:hello@developerabhishek.live">hello@developerabhishek.live<span class="arrow">→</span></a>
+        <a class="btn btn-ghost" href="#">Book a 20-minute call</a>
+      </div>
+      <dl class="contact-links">
+        <div><dt>GitHub</dt><dd><a href="#">@Zireael26</a></dd></div>
+        <div><dt>LinkedIn</dt><dd><a href="#">in/abhishek26k</a></dd></div>
+        <div><dt>X</dt><dd><a href="#">@abhi2601k</a></dd></div>
+        <div><dt>Résumé</dt><dd><a href="#">on request</a></dd></div>
+      </dl>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="foot-row">
+    <span class="foot-mark">
+      <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><circle cx="5" cy="12" r="2.2"/><circle cx="19" cy="6" r="2.2"/><circle cx="19" cy="18" r="2.2"/><path d="M6.8 11 17 6.8 M6.8 13 17 17.2" stroke="currentColor" stroke-width="1.1" fill="none"/></svg>
+      Abhishek Kaushik · © 2026
+    </span>
+    <span class="foot-colophon">Set in Newsreader &amp; Plus Jakarta Sans. Built in the open.</span>
+    <span class="foot-links">
+      <a href="#">/process</a>
+      <a href="#">/llms.txt</a>
+      <a href="#">/sitemap.xml</a>
+    </span>
+  </div>
+</footer>
+
+<!-- =============================== TWEAKS =============================== -->
+<aside class="tweaks" id="tweaks" hidden>
+  <header class="tweaks-head">
+    <span class="tweaks-title">Tweaks</span>
+    <button class="tweaks-close" aria-label="Close tweaks">×</button>
+  </header>
+  <div class="tweaks-body">
+    <fieldset>
+      <legend>Hero tagline</legend>
+      <label><input type="radio" name="tagline" value="a" checked/> A · MSME-readable, warm</label>
+      <label><input type="radio" name="tagline" value="b"/> B · Craft-first, dual audience</label>
+      <label><input type="radio" name="tagline" value="c"/> C · Identity-first, plain</label>
+    </fieldset>
+    <fieldset>
+      <legend>Primary accent</legend>
+      <div class="tweak-swatches">
+        <label><input type="radio" name="accent" value="forest" checked/><span style="background:#13423D"></span>forest</label>
+        <label><input type="radio" name="accent" value="terracotta"/><span style="background:#C44D2E"></span>terracotta</label>
+        <label><input type="radio" name="accent" value="ochre"/><span style="background:#B8892B"></span>ochre</label>
+        <label><input type="radio" name="accent" value="ink"/><span style="background:#1A1A1E"></span>ink</label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Mode</legend>
+      <label><input type="radio" name="mode" value="light" checked/> Light · parchment</label>
+      <label><input type="radio" name="mode" value="dark"/> Dark · slate</label>
+    </fieldset>
+    <fieldset>
+      <legend>Density</legend>
+      <label><input type="radio" name="density" value="airy" checked/> Airy</label>
+      <label><input type="radio" name="density" value="tight"/> Tight</label>
+    </fieldset>
+    <fieldset>
+      <legend>Node-graph motion</legend>
+      <label><input type="radio" name="motion" value="on" checked/> On</label>
+      <label><input type="radio" name="motion" value="off"/> Off</label>
+    </fieldset>
+  </div>
+</aside>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+/* Agent-graph hero scene — three.js */
+(function () {
+  'use strict';
+  if (!window.THREE) return;
+  const canvas = document.getElementById('agent-graph-canvas');
+  if (!canvas) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const THREE = window.THREE;
+  const scene = new THREE.Scene();
+  // Pull the camera back slightly so the graph sits inset from the frame edges.
+  const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+  camera.position.set(0, 0, 8.4);
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  function readColors() {
+    const cs = getComputedStyle(document.body);
+    const accent = new THREE.Color(cs.getPropertyValue('--accent').trim() || '#13423D');
+    const ink = new THREE.Color(cs.getPropertyValue('--ink').trim() || '#1A1A1E');
+    const bg = new THREE.Color(cs.getPropertyValue('--bg').trim() || '#F5F1E8');
+    // Satellite color: accent shifted toward bg so it reads distinctly on any mode.
+    const satellite = accent.clone().lerp(bg, 0.35);
+    const edgeColor = ink.clone().lerp(bg, 0.55);
+    return { accent, ink, bg, satellite, edgeColor };
+  }
+  let colors = readColors();
+
+  // Nodes: orchestrator (hub) + three satellites. Labels map to the real shape
+  // of an agent system: reasoning, tool use, state.
+  const nodeDefs = [
+    { label: 'orchestrator', pos: [0, 0, 0], size: 0.46, hub: true },
+    { label: 'reasoning',   pos: [-1.85, 1.1, -0.3], size: 0.30 },
+    { label: 'tools',       pos: [ 1.9, 0.7,  0.2],  size: 0.26 },
+    { label: 'memory',      pos: [ 0.1,-1.75, 0.1],  size: 0.28 },
+  ];
+
+  // Label sprites (billboarded text via CanvasTexture).
+  function makeLabelSprite(text, hexColor) {
+    const pad = 12;
+    const c = document.createElement('canvas');
+    const fontPx = 40;
+    const ctx = c.getContext('2d');
+    ctx.font = `500 ${fontPx}px "JetBrains Mono", ui-monospace, monospace`;
+    const w = Math.ceil(ctx.measureText(text).width) + pad * 2;
+    const h = fontPx + pad * 2;
+    c.width = w; c.height = h;
+    const ctx2 = c.getContext('2d');
+    ctx2.font = `500 ${fontPx}px "JetBrains Mono", ui-monospace, monospace`;
+    ctx2.textAlign = 'center';
+    ctx2.textBaseline = 'middle';
+    ctx2.fillStyle = hexColor;
+    ctx2.fillText(text, w / 2, h / 2 + 2);
+    const tex = new THREE.CanvasTexture(c);
+    tex.minFilter = THREE.LinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    tex.generateMipmaps = false;
+    const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+    const sprite = new THREE.Sprite(mat);
+
+    sprite.userData.text = text;
+    sprite.renderOrder = 10;
+    // Smaller, quieter labels — they should read as annotation, not headline.
+    const scaleFactor = 0.0022;
+    sprite.scale.set(w * scaleFactor, h * scaleFactor, 1);
+    return sprite;
+  }
+  function labelHex(def) {
+    const c = def.hub ? colors.ink : colors.ink;
+    return '#' + c.getHexString();
+  }
+
+  const nodes = [];
+  const group = new THREE.Group();
+  scene.add(group);
+
+  nodeDefs.forEach((def) => {
+    const geo = new THREE.IcosahedronGeometry(def.size, 1);
+    const mat = new THREE.MeshStandardMaterial({
+      color: def.hub ? colors.accent : colors.satellite,
+      roughness: 0.55, metalness: 0.1, flatShading: true,
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(def.pos[0], def.pos[1], def.pos[2]);
+    group.add(mesh);
+
+    // soft ring around each node
+    const ringGeo = new THREE.RingGeometry(def.size * 1.55, def.size * 1.58, 48);
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: colors.accent, transparent: true, opacity: 0.35, side: THREE.DoubleSide,
+    });
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.position.copy(mesh.position);
+    group.add(ring);
+
+    nodes.push({ def, mesh, ring, basePos: mesh.position.clone() });
+  });
+
+  // Attach label sprites AFTER nodes are placed.
+  nodes.forEach((n) => {
+    const sprite = makeLabelSprite(n.def.label, labelHex(n.def));
+    // Offset label below (satellites) or above (hub) so it doesn't overlap the mesh.
+    const yOff = n.def.hub ? (n.def.size + 0.32) : -(n.def.size + 0.28);
+    sprite.position.set(n.basePos.x, n.basePos.y + yOff, n.basePos.z);
+    group.add(sprite);
+    n.label = sprite;
+    n.labelYOff = yOff;
+  });
+
+  // Edges: hub to each satellite, plus satellite ring
+  const edgePairs = [
+    [0, 1], [0, 2], [0, 3],
+    [1, 2], [2, 3], [3, 1],
+  ];
+  const edges = [];
+  edgePairs.forEach(([a, b]) => {
+    const geom = new THREE.BufferGeometry().setFromPoints([
+      nodes[a].basePos.clone(), nodes[b].basePos.clone(),
+    ]);
+    const mat = new THREE.LineBasicMaterial({
+      color: colors.edgeColor, transparent: true, opacity: 0.5,
+    });
+    const line = new THREE.Line(geom, mat);
+    group.add(line);
+    edges.push({ a, b, line, mat });
+  });
+
+  // Packets traveling along edges (slow, calm flow)
+  const packetGeo = new THREE.SphereGeometry(0.05, 12, 12);
+  const packetMat = new THREE.MeshBasicMaterial({ color: colors.accent });
+  const packets = edgePairs.map((pair, i) => {
+    const m = new THREE.Mesh(packetGeo, packetMat);
+    group.add(m);
+    return { pair, mesh: m, t: Math.random(), speed: 0.11 + Math.random() * 0.06, dir: i % 2 ? 1 : -1 };
+  });
+
+  // Lights
+  const key = new THREE.DirectionalLight(0xffffff, 0.9);
+  key.position.set(3, 4, 5);
+  scene.add(key);
+  const fill = new THREE.DirectionalLight(0xffffff, 0.35);
+  fill.position.set(-4, -2, 3);
+  scene.add(fill);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+
+  // Pointer tracking for parallax
+  const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
+  const frame = canvas.parentElement;
+  frame.addEventListener('pointermove', (e) => {
+    const r = frame.getBoundingClientRect();
+    pointer.tx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+    pointer.ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
+  });
+  frame.addEventListener('pointerleave', () => { pointer.tx = 0; pointer.ty = 0; });
+
+  function resize() {
+    const r = canvas.getBoundingClientRect();
+    if (r.width < 2 || r.height < 2) return;
+    renderer.setSize(r.width, r.height, false);
+    camera.aspect = r.width / r.height;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Update colors on theme/accent change
+  const mo = new MutationObserver(() => {
+    colors = readColors();
+    nodes.forEach((n) => {
+      n.mesh.material.color.copy(n.def.hub ? colors.accent : colors.satellite);
+      n.ring.material.color.copy(colors.accent);
+      if (n.label) {
+        // Rebuild the label texture with the new ink color so it reads on both modes.
+        const newSprite = makeLabelSprite(n.def.label, labelHex(n.def));
+        n.label.material.map.dispose();
+        n.label.material.dispose();
+        n.label.material = newSprite.material;
+        n.label.scale.copy(newSprite.scale);
+      }
+    });
+    edges.forEach((e) => e.mat.color.copy(colors.edgeColor));
+    packetMat.color.copy(colors.accent);
+  });
+  mo.observe(document.body, { attributes: true, attributeFilter: ['data-mode', 'data-accent'] });
+
+  const clock = new THREE.Clock();
+  let running = true;
+
+  function tick() {
+    if (!running) return;
+    requestAnimationFrame(tick);
+    const t = clock.getElapsedTime();
+
+    // ease pointer
+    pointer.x += (pointer.tx - pointer.x) * 0.06;
+    pointer.y += (pointer.ty - pointer.y) * 0.06;
+    group.rotation.y = pointer.x * 0.25 + Math.sin(t * 0.15) * 0.05;
+    group.rotation.x = -pointer.y * 0.18 + Math.cos(t * 0.17) * 0.04;
+
+    // gentle node bob
+    nodes.forEach((n, i) => {
+      const base = n.basePos;
+      n.mesh.position.set(
+        base.x + Math.sin(t * 0.6 + i) * 0.04,
+        base.y + Math.cos(t * 0.5 + i * 1.3) * 0.05,
+        base.z + Math.sin(t * 0.4 + i * 2.1) * 0.03
+      );
+      n.ring.position.copy(n.mesh.position);
+      n.ring.rotation.x += 0.003;
+      n.ring.rotation.y += 0.004;
+      if (n.label) {
+        n.label.position.set(
+          n.mesh.position.x,
+          n.mesh.position.y + n.labelYOff,
+          n.mesh.position.z
+        );
+      }
+      n.mesh.rotation.y += 0.002;
+    });
+
+    // update edge endpoints
+    edges.forEach((e) => {
+      const p = e.line.geometry.attributes.position;
+      const pa = nodes[e.a].mesh.position, pb = nodes[e.b].mesh.position;
+      p.setXYZ(0, pa.x, pa.y, pa.z);
+      p.setXYZ(1, pb.x, pb.y, pb.z);
+      p.needsUpdate = true;
+    });
+
+    // advance packets
+    packets.forEach((pk) => {
+      pk.t += pk.speed * pk.dir * 0.016;
+      if (pk.t > 1) pk.t -= 1;
+      if (pk.t < 0) pk.t += 1;
+      const pa = nodes[pk.pair[0]].mesh.position;
+      const pb = nodes[pk.pair[1]].mesh.position;
+      pk.mesh.position.lerpVectors(pa, pb, pk.t);
+    });
+
+    renderer.render(scene, camera);
+  }
+  tick();
+
+  // Pause when offscreen or tab hidden
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) running = false;
+    else { running = true; clock.getDelta(); tick(); }
+  });
+})();
+</script>
+
+<script>
+/* Tweakable defaults persisted to disk */
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "tagline": "a",
+  "accent": "forest",
+  "mode": "dark",
+  "density": "airy",
+  "motion": "on"
+}/*EDITMODE-END*/;
+</script>
+<script>
+(function () {
+  'use strict';
+
+  const TWEAK_KEYS = ['tagline', 'accent', 'mode', 'density', 'motion'];
+  const panel = document.getElementById('tweaks');
+  const body = document.body;
+  const STORAGE_KEY = 'abhishek.portfolio.mode';
+  let modeSetByUser = false;
+  let active = false;
+
+  // ------------------------ apply ------------------------
+  function apply(key, value) {
+    if (!TWEAK_KEYS.includes(key)) return;
+    if (key === 'tagline') {
+      body.setAttribute('data-tagline', value);
+      document.querySelectorAll('[data-slot="tagline"] > span').forEach((span) => {
+        const which = span.dataset.taglineA !== undefined ? 'a'
+                    : span.dataset.taglineB !== undefined ? 'b'
+                    : span.dataset.taglineC !== undefined ? 'c' : null;
+        if (which === value) span.removeAttribute('hidden');
+        else span.setAttribute('hidden', '');
+      });
+      return;
+    }
+    body.setAttribute(`data-${key}`, value);
+  }
+
+  function applyAll(obj) {
+    TWEAK_KEYS.forEach((k) => { if (obj[k] != null) apply(k, obj[k]); });
+    // sync UI
+    panel.querySelectorAll('input[type="radio"]').forEach((input) => {
+      input.checked = obj[input.name] === input.value;
+    });
+  }
+
+  // ------------------------ init ------------------------
+  const defaults = (typeof window.TWEAK_DEFAULTS === 'object' && window.TWEAK_DEFAULTS)
+    || (typeof TWEAK_DEFAULTS !== 'undefined' ? TWEAK_DEFAULTS : {});
+  const base = Object.assign({ tagline: 'a', accent: 'forest', mode: 'light', density: 'airy', motion: 'on' }, defaults);
+
+  // Mode precedence: saved user choice > system preference > base default.
+  const saved = (() => { try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; } })();
+  const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (saved === 'light' || saved === 'dark') {
+    base.mode = saved;
+    modeSetByUser = true;
+  } else {
+    base.mode = systemPrefersDark ? 'dark' : 'light';
+  }
+
+  applyAll(base);
+
+  // Follow system changes unless the user explicitly picked a mode.
+  if (window.matchMedia) {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const onSystemChange = (e) => {
+      if (modeSetByUser) return;
+      apply('mode', e.matches ? 'dark' : 'light');
+      syncPanel();
+    };
+    if (mq.addEventListener) mq.addEventListener('change', onSystemChange);
+    else if (mq.addListener) mq.addListener(onSystemChange);
+  }
+
+  function syncPanel() {
+    panel.querySelectorAll('input[type="radio"]').forEach((input) => {
+      input.checked = body.getAttribute('data-' + input.name) === input.value
+                   || (input.name === 'tagline' && body.getAttribute('data-tagline') === input.value);
+    });
+  }
+
+  // respect reduced motion
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    body.setAttribute('data-motion', 'off');
+  }
+
+  // ------------------------ host protocol ------------------------
+  window.addEventListener('message', (ev) => {
+    const d = ev.data || {};
+    if (d.type === '__activate_edit_mode') {
+      panel.hidden = false;
+      active = true;
+    } else if (d.type === '__deactivate_edit_mode') {
+      panel.hidden = true;
+      active = false;
+    }
+  });
+
+  try {
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+  } catch (e) { /* standalone */ }
+
+  // ------------------------ inputs ------------------------
+  panel.addEventListener('change', (e) => {
+    const input = e.target;
+    if (input.type !== 'radio') return;
+    apply(input.name, input.value);
+    if (input.name === 'mode') {
+      modeSetByUser = true;
+      try { localStorage.setItem(STORAGE_KEY, input.value); } catch (err) {}
+    }
+    const edits = {};
+    edits[input.name] = input.value;
+    try {
+      window.parent.postMessage({ type: '__edit_mode_set_keys', edits }, '*');
+    } catch (err) { /* standalone */ }
+  });
+
+  // ------------------------ theme toggle button ------------------------
+  const toggleBtn = document.getElementById('theme-toggle');
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      const next = body.getAttribute('data-mode') === 'dark' ? 'light' : 'dark';
+      apply('mode', next);
+      modeSetByUser = true;
+      try { localStorage.setItem(STORAGE_KEY, next); } catch (err) {}
+      syncPanel();
+      try { window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { mode: next } }, '*'); } catch (err) {}
+    });
+  }
+
+  const closeBtn = panel.querySelector('.tweaks-close');
+  if (closeBtn) closeBtn.addEventListener('click', () => {
+    panel.hidden = true;
+    try { window.parent.postMessage({ type: '__edit_mode_close' }, '*'); } catch (e) {}
+  });
+
+  // local dev: toggle with ` key
+  window.addEventListener('keydown', (e) => {
+    if (e.key === '`') {
+      panel.hidden = !panel.hidden;
+    }
+  });
+})();
+
+</script>
+
+<script>
+/* GitHub stats loader — hydrates #open + hero fact from /data/stats.json.
+   Silent if the file is missing or malformed. */
+(function () {
+  'use strict';
+  const url = 'data/stats.json';
+  fetch(url, { cache: 'no-cache' })
+    .then((r) => { if (!r.ok) throw new Error('stats: http ' + r.status); return r.json(); })
+    .then((data) => hydrate(data))
+    .catch((err) => {
+      console.warn('[stats]', err);
+      // Hide the section if we truly can't load; better silence than broken numbers.
+      const sec = document.getElementById('open');
+      if (sec) sec.hidden = true;
+      document.querySelectorAll('[data-stat="total"]').forEach((el) => {
+        if (el.closest('.hero-facts')) el.closest('div').hidden = true;
+      });
+    });
+
+  function fmt(n) { return (n || 0).toLocaleString('en-US'); }
+
+  function hydrate(data) {
+    // headline total (renders in hero-facts AND the 07 block)
+    document.querySelectorAll('[data-stat="total"]').forEach((el) => {
+      el.textContent = fmt(data.totalContributions);
+    });
+
+    // updated-at label
+    const updatedEls = document.querySelectorAll('[data-stat="updated"]');
+    if (updatedEls.length && data.generatedAt) {
+      const d = new Date(data.generatedAt);
+      const txt = 'updated ' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      updatedEls.forEach((el) => { el.textContent = txt; });
+    }
+
+    // sparkline
+    const svg = document.querySelector('[data-stat="sparkline"]');
+    if (svg && Array.isArray(data.weeks) && data.weeks.length) {
+      drawSparkline(svg, data.weeks);
+    }
+
+    // per-repo rows
+    const repoWrap = document.querySelector('[data-stat="repos"]');
+    if (repoWrap && Array.isArray(data.repos)) {
+      const max = data.repos.reduce((m, r) => Math.max(m, r.commits12mo || 0), 1);
+      repoWrap.innerHTML = '';
+      data.repos.forEach((r) => {
+        const li = document.createElement('li');
+        li.className = 'os-repo';
+        const name = document.createElement('span');
+        name.className = 'os-repo-name';
+        if (r.url) {
+          const a = document.createElement('a');
+          a.href = r.url;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          a.textContent = r.label || r.name;
+          name.appendChild(a);
+        } else {
+          name.textContent = r.label || r.name;
+        }
+        const bar = document.createElement('span');
+        bar.className = 'os-repo-bar';
+        const fill = document.createElement('span');
+        const pct = Math.max(4, Math.round(((r.commits12mo || 0) / max) * 100));
+        fill.style.width = pct + '%';
+        bar.appendChild(fill);
+        const count = document.createElement('span');
+        count.className = 'os-repo-count';
+        count.innerHTML = '<em>' + fmt(r.commits12mo) + '</em> commits · last 12mo';
+        li.appendChild(name);
+        li.appendChild(bar);
+        li.appendChild(count);
+        repoWrap.appendChild(li);
+      });
+    }
+  }
+
+  function drawSparkline(svg, weeks) {
+    const W = 520, H = 120, pad = 6;
+    const n = weeks.length;
+    const max = Math.max.apply(null, weeks) || 1;
+    const gap = 2;
+    const barW = Math.max(1, (W - pad * 2 - gap * (n - 1)) / n);
+    const innerH = H - pad * 2;
+    const ns = 'http://www.w3.org/2000/svg';
+    svg.innerHTML = '';
+
+    // baseline
+    const axis = document.createElementNS(ns, 'rect');
+    axis.setAttribute('x', pad);
+    axis.setAttribute('y', H - pad - 0.5);
+    axis.setAttribute('width', W - pad * 2);
+    axis.setAttribute('height', 0.5);
+    axis.setAttribute('class', 'os-spark-axis');
+    svg.appendChild(axis);
+
+    weeks.forEach((v, i) => {
+      const h = Math.max(1, (v / max) * innerH);
+      const x = pad + i * (barW + gap);
+      const y = H - pad - h;
+      const r = document.createElementNS(ns, 'rect');
+      r.setAttribute('x', x.toFixed(2));
+      r.setAttribute('y', y.toFixed(2));
+      r.setAttribute('width', barW.toFixed(2));
+      r.setAttribute('height', h.toFixed(2));
+      r.setAttribute('opacity', (0.45 + 0.55 * (v / max)).toFixed(3));
+      svg.appendChild(r);
+    });
+  }
+})();
+</script>
+
+<script type="module" src="companion.js"></script>
+</body>
+</html>

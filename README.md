@@ -1,154 +1,87 @@
-# Abhishek's Portfolio Website
+# developerabhishek.live
 
-A modern, animated portfolio website showcasing my work as a software engineer. Built with SvelteKit, TypeScript, and Tailwind CSS, featuring smooth animations powered by Framer Motion.
+Abhishek Kaushik's personal portfolio — a sales-artifact-grade site that reads as a quiet, confident craft object. AI systems for businesses that haven't met AI yet.
 
-🌐 **Live Site**: [developerabhishek.live](https://developerabhishek.live)
+**Live:** https://developerabhishek.live
 
-## ✨ Features
+> This repository is mid-rewrite. The prior SvelteKit build is archived at the `legacy-v1-final` tag. The current branch is a Next.js 16.2 scaffold that Claude Code will flesh out against the Claude Design reference.
 
-- **Modern Tech Stack**: SvelteKit, TypeScript, Tailwind CSS
-- **Smooth Animations**: Framer Motion integration for engaging user experience
-- **Responsive Design**: Works seamlessly across all devices
-- **Dark/Light Mode**: Theme switching with system preference detection
-- **Performance Optimized**: Fast loading with SvelteKit's optimizations
-- **Type Safe**: Full TypeScript implementation
-- **Accessible**: Built with accessibility best practices
+## Stack
 
-## 🛠️ Tech Stack
+| Layer | Choice | Reason |
+| --- | --- | --- |
+| Framework | Next.js 16.2 LTS (App Router) | Matches `tgsc`; stable server/client boundary; edge-ready |
+| Language | TypeScript 6.0 (strict) | `noUncheckedIndexedAccess`, `verbatimModuleSyntax`-ready |
+| UI | React 19.2 | Actions, `use`, server components |
+| Styling | Tailwind 4.2 (CSS-first, no `tailwind.config.ts`) | Tokens live in `app/globals.css` under `@theme` |
+| Components | shadcn/ui v4 | Re-skinned with forest-on-parchment tokens |
+| 3D | react-three-fiber + drei | The Wanderer (low-poly paper crane companion) |
+| Motion | Framer Motion + GSAP | Micro-interactions + scroll timeline |
+| Content | MDX (App Router `mdx-rs`) | Case studies, writing, skill cards |
+| Package manager | pnpm 10 | Same as `tgsc` |
+| Runtime | Node 22 LTS | See `.nvmrc` |
+| Host | Vercel | Git-driven deploys, edge middleware |
 
-- **Framework**: [SvelteKit](https://kit.svelte.dev/)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/) via [svelte-motion](https://svelte-motion.gradientdescent.de/)
-- **Package Manager**: [pnpm](https://pnpm.io/)
-- **Deployment**: [Vercel](https://vercel.com/)
-- **Code Quality**: ESLint, Prettier
+## Local development
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js 18+ 
-- pnpm (recommended) or npm
-
-### Installation
-
-1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/developerabhishek.live.git
-cd developerabhishek.live
-```
-
-2. Install dependencies
-```bash
+# one-time
+corepack enable
 pnpm install
-```
 
-3. Start the development server
-```bash
-pnpm dev
-```
-
-4. Open [http://localhost:5173](http://localhost:5173) in your browser
-
-## 📝 Available Scripts
-
-```bash
-# Start development server
-pnpm dev
-
-# Build for production
-pnpm build
-
-# Preview production build
-pnpm preview
-
-# Run type checking
-pnpm check
-
-# Run linting
+# run
+pnpm dev          # http://localhost:3000
+pnpm typecheck
 pnpm lint
-
-# Format code with Prettier
-pnpm format
+pnpm build && pnpm start
 ```
 
-## 🏗️ Project Structure
+## How the build is organized
 
 ```
-├── src/
-│   ├── lib/
-│   │   ├── components/
-│   │   │   ├── layout/        # Layout components
-│   │   │   ├── sections/      # Page sections (Hero, About, etc.)
-│   │   │   └── ui/            # Reusable UI components
-│   │   ├── data/              # Static data (experience, projects, etc.)
-│   │   ├── types/             # TypeScript type definitions
-│   │   └── utils/             # Utility functions and animations
-│   ├── routes/                # SvelteKit routes
-│   ├── app.html               # HTML template
-│   └── app.css                # Global styles
-├── static/                    # Static assets
-├── docs/                      # Documentation
-└── ...config files
+/app                     App Router (layout, page, routes)
+/components              Presentational components (section/, scene/, ui/)
+/content                 MDX case studies + writing
+/lib                     Utilities, server actions, token helpers
+/public                  Static assets (/.well-known/* served from here)
+/scripts                 fetch-github-stats.mjs, process-gate.mjs, etc.
+/docs
+  PRD.md                 Product requirements (ship-blocking)
+  DESIGN_DIRECTION.md    North-star aesthetic brief
+  AGENT_READINESS.md     Cloudflare isitagentready.com compliance contract
+  CASE_STUDIES_OUTLINE.md  4 hero case studies, five-beat structure
+  BIO_DRAFT.md           Tagline + About copy candidates
+  ROADMAP.md             Phased plan (to be written during scaffold phase)
+  CHANGELOG.md           Human-readable release notes
+  adr/                   ADRs for substantive decisions
+  epm/                   Epic plans
+/_reference              Frozen Claude Design prototype (visual source of truth — do not edit)
+HANDOFF.md               Self-contained Claude Code prompt (v0 → v1)
 ```
 
-## 🎨 Customization
+## Process gates (match `tgsc`)
 
-### Data
-Update your personal information, experience, and projects in the `src/lib/data/` directory:
-- `personal.ts` - Personal information and contact details
-- `experience.ts` - Work experience and education
-- `projects.ts` - Portfolio projects
-- `skills.ts` - Technical skills and competencies
+Every non-trivial change must ship with:
 
-### Styling
-The project uses Tailwind CSS for styling. Customize:
-- `tailwind.config.js` - Tailwind configuration
-- `src/app.css` - Global styles and CSS variables
+1. An **ADR** if the decision is architectural
+2. An updated **ROADMAP.md** if the scope shifts
+3. An **EPM** for anything that touches more than one sub-system
+4. A **CHANGELOG.md** entry
+5. A passing **process-gate** run: `pnpm process:check`
 
-### Animations
-Animation configurations are centralized in `src/lib/utils/animations.ts` for easy customization.
+`pnpm process:check` validates the presence of the required sibling docs for any staged code change. It is wired into pre-commit locally and into CI as a blocking check.
 
-## 🚀 Deployment
+## Agent-readiness contract
 
-This site is deployed on Vercel with automatic deployments from the main branch.
+See `docs/AGENT_READINESS.md`. In short, every deploy must satisfy Cloudflare's [isitagentready.com](https://isitagentready.com/) scan across all four dimensions: Discoverability, Content, Bot Access Control, and Capabilities. Regressions are release-blocking.
 
-### Deploy to Vercel
+## Links
 
-1. Connect your GitHub repository to Vercel
-2. Vercel will automatically detect the SvelteKit configuration
-3. Set the Node.js version to 20.x in your deployment settings
-4. Deploy!
+- LinkedIn · [abhishek26k](https://linkedin.com/in/abhishek26k)
+- GitHub · [Zireael26](https://github.com/Zireael26)
+- X · [@abhi2601k](https://x.com/abhi2601k)
+- Email · `abhishek.nexus26@gmail.com`
 
-### Other Platforms
+## License
 
-The site can be deployed to any platform that supports Node.js. You may need to install the appropriate [SvelteKit adapter](https://kit.svelte.dev/docs/adapters) for your target platform.
-
-## 📊 Performance
-
-- **Lighthouse Score**: 100/100 (Performance, Accessibility, Best Practices, SEO)
-- **Core Web Vitals**: All green
-- **Bundle Size**: Optimized with SvelteKit's automatic code splitting
-
-## 🤝 Contributing
-
-This is a personal portfolio project, but feel free to:
-- Report bugs or suggest improvements via issues
-- Fork the project as a template for your own portfolio
-- Submit pull requests for bug fixes
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
-## 📞 Contact
-
-- **Website**: [developerabhishek.live](https://developerabhishek.live)
-- **Email**: [abhishek.nexus26@gmail.com](mailto:abhishek.nexus26@gmail.com)
-- **LinkedIn**: [Your LinkedIn Profile](https://linkedin.com/in/yourprofile)
-- **GitHub**: [Your GitHub Profile](https://github.com/yourusername)
-
----
-
-Built with ❤️ using SvelteKit and TypeScript
+Source code: MIT. Written content and case studies: CC BY-NC 4.0 (the words and diagrams are mine, feel free to learn from them, not to republish as your own).

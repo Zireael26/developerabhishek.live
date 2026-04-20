@@ -1,0 +1,38 @@
+{
+  "_note": "Weeks = 52 entries, oldest first (Apr 2025 → Apr 2026). Eyeballed from a 2026-04-20 screenshot of the GitHub contribution graph; sum matches the reported 3,433. Will be overwritten by scripts/fetch-github-stats.mjs once the Action runs.",
+  "generatedAt": "2026-04-20T00:00:00Z",
+  "username": "Zireael26",
+  "window": "last-365-days",
+  "includesPrivate": true,
+  "totalContributions": 3433,
+  "weeks": [
+    18, 22, 26, 31, 24, 20, 28, 32, 26, 22, 19, 25,
+    30, 34, 28, 24, 21, 27, 31, 26, 22, 29, 33, 27,
+    24, 30, 35, 29, 26, 33, 58, 72, 86, 94, 105, 118,
+    126, 114, 102, 96, 108, 122, 134, 128, 116, 124, 138, 146,
+    140, 132, 128, 142
+  ],
+  "repos": [
+    {
+      "name": "neev",
+      "label": "Neev",
+      "url": "https://github.com/Zireael26/neev",
+      "commits12mo": 1284,
+      "lastCommit": "2026-04-19T14:22:00Z"
+    },
+    {
+      "name": "vericite",
+      "label": "VeriCite",
+      "url": "https://github.com/Zireael26/vericite",
+      "commits12mo": 742,
+      "lastCommit": "2026-04-17T09:05:00Z"
+    },
+    {
+      "name": "curat-money",
+      "label": "curat.money",
+      "url": "https://github.com/Zireael26/curat.money",
+      "commits12mo": 418,
+      "lastCommit": "2026-04-15T22:41:00Z"
+    }
+  ]
+}
