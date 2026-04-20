@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from 'next';
 import { Newsreader, Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
+import SiteNav from '@/components/site/SiteNav';
+import SiteFooter from '@/components/site/SiteFooter';
 import './globals.css';
 
-// next/font self-hosts the three families and exposes them as CSS variables so
-// globals.css can resolve `--serif / --sans / --mono` without a runtime <link>.
 const newsreader = Newsreader({
   subsets: ['latin'],
   variable: '--font-newsreader',
@@ -23,6 +23,7 @@ const jetbrainsMono = JetBrains_Mono({
   display: 'swap',
   weight: ['400', '500'],
 });
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://developerabhishek.live'),
   title: {
@@ -46,16 +47,11 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     creator: '@abhi2601k',
   },
-  // Agent-readiness: llms.txt + Agent Skills index are linked at document level so
-  // agent crawlers see them without traversing the DOM.
   other: {
     'link-llms': '</llms.txt>; rel="llms-txt"; type="text/plain"',
     'link-agent-skills': '</.well-known/agent-skills/index.json>; rel="agent-skills"',
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = {
@@ -76,16 +72,30 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       data-accent="forest"
       data-density="airy"
       data-motion="on"
+      data-tagline="a"
       className={`${newsreader.variable} ${plusJakartaSans.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
       <head>
-        {/* RFC 8288 Link headers — duplicated as <link> tags for crawlers that don't
-            see headers (e.g. static-HTML-only agents). */}
+        {/* Pre-hydration theme bootstrap — /public/init-theme.js reads the user's
+            stored choice or system preference and sets html[data-mode] before
+            first paint. The sync load is deliberate: an async/deferred script
+            would paint first, then flip theme, causing FOUC for dark-preference
+            users. Matches components/site/ThemeToggle.tsx (storage key + fallback). */}
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script src="/init-theme.js" />
+        {/* RFC 8288 Link header duplicates — for crawlers that skip HTTP headers. */}
         <link rel="llms-txt" type="text/plain" href="/llms.txt" />
         <link rel="agent-skills" href="/.well-known/agent-skills/index.json" />
       </head>
-      <body>{children}</body>
+      <body>
+        {/* Companion (Wanderer) mount — the three.js crane renders into this node
+            once the scene slice lands. Empty + aria-hidden is safe until then. */}
+        <div id="companion" className="companion" aria-hidden="true" />
+        <SiteNav />
+        {children}
+        <SiteFooter />
+      </body>
     </html>
   );
 }
