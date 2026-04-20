@@ -5,42 +5,13 @@ import { Writing } from '@/components/sections/Writing';
 import { Services } from '@/components/sections/Services';
 import { Process } from '@/components/sections/Process';
 import { OpenSource } from '@/components/sections/OpenSource';
+import { Contact } from '@/components/sections/Contact';
 
 /**
- * Home — single-page scroll with eight sections (PRD §5).
- *
- * Sections with a dedicated component render themselves (including their own
- * <section> element with id / data-screen-label / data-companion-pose).
- * Sections still awaiting implementation fall back to the placeholder
- * scaffold so the Wanderer's IntersectionObserver still has live anchors
- * (HANDOFF §5, EPIC-01 §2).
+ * Home — single-page scroll with all eight sections (PRD §5).
+ * Each section component owns its own <section> element with the
+ * data-companion-pose / data-screen-label attrs that Wanderer keys off.
  */
-
-function Placeholder({
-  id,
-  label,
-  pose,
-  className,
-}: {
-  id: string;
-  label: string;
-  pose: string;
-  className: string;
-}) {
-  return (
-    <section
-      id={id}
-      className={className}
-      data-screen-label={label}
-      data-companion-pose={pose}
-      data-section-placeholder="true"
-      aria-label={label}
-    >
-      {label} — section scaffold · body lands in its slice PR
-    </section>
-  );
-}
-
 export default function Home() {
   return (
     <main id="top">
@@ -51,7 +22,7 @@ export default function Home() {
       <Services />
       <Process />
       <OpenSource />
-      <Placeholder id="contact" label="08 Contact" pose="contact" className="contact" />
+      <Contact />
     </main>
   );
 }
