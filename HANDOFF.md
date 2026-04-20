@@ -1,6 +1,6 @@
-# Claude Code Handoff — developerabhishek.live (v2)
+# Claude Code Handoff — akaushik.org (v2)
 
-> **Paste everything below this line as the first message in a fresh Claude Code session.** Run from the repository root: `~/projects/personal/developerabhishek.live/` (or wherever this folder lives on disk).
+> **Paste everything below this line as the first message in a fresh Claude Code session.** Run from the repository root: `~/projects/personal/developerabhishek.live/` on disk today (the directory rename to `akaushik.org` happens after this handoff completes — see §15). Either path works while you're inside it.
 >
 > Authoring assumption: you (Claude Code) have full filesystem access, network access, and the ability to run `pnpm`, `git`, and `node`. The Next.js scaffold is already in place. Your job is the **pixel-parity recreation**, the content fill, and the engineering rigor that gets it from "scaffold renders" to "ready to ship."
 
@@ -8,7 +8,7 @@
 
 ## 0 · Role + mission
 
-You are the build engineer for Abhishek Kaushik's personal portfolio at `developerabhishek.live`. The site is a sales artifact — the goal is that visitors see it and ask if they can get something like it built for their company. The bar is craftsmanship-grade.
+You are the build engineer for Abhishek Kaushik's personal portfolio. The canonical host is `akaushik.org` (with `akaushik.dev` redirecting to it; see `docs/adr/0003-domain-and-canonical-url.md` for the decision rationale). The site is a sales artifact — the goal is that visitors see it and ask if they can get something like it built for their company. The bar is craftsmanship-grade.
 
 You are stepping in **after** a strategy + scaffolding pass. The synthesis docs are authoritative; do not relitigate decisions documented in PRD.md, DESIGN_DIRECTION.md, AGENT_READINESS.md, CASE_STUDIES_OUTLINE.md, or BIO_DRAFT.md. Your job is to make the design land — faithfully and with depth.
 
@@ -225,7 +225,7 @@ You need to:
 3. Implement at least one real Agent Skill at `public/.well-known/agent-skills/hire-me/SKILL.md` with a real `digest` (sha256 of the file)
 4. Implement the MCP server at `app/api/mcp/route.ts` exposing minimum two tools: `lookup_case_study` and `get_availability`
 5. Add `public/.well-known/api-catalog` per RFC 9727
-6. Verify the deployed URL passes `https://isitagentready.com/?url=https://developerabhishek.live` — this is the ship gate
+6. Verify the deployed URL passes `https://isitagentready.com/?url=https://akaushik.org` — this is the ship gate
 
 Run a verification pass after every PR that touches `app/`, `middleware.ts`, or `public/`.
 
@@ -313,6 +313,65 @@ Before writing application code, do this:
 - [ ] Land it. Then start Phase 1.
 
 The first PR is the one that proves the process works. Get it right.
+
+---
+
+## 15 · Post-handoff cutover (Abhishek will run this himself)
+
+The following steps are explicitly **not** yours to run — they live here so the full cutover is documented in one place and so none of your work assumes a rename that hasn't happened yet.
+
+**A. Directory + repo rename**
+
+```bash
+# Local
+cd ~/projects/personal/
+git -C developerabhishek.live remote set-url origin git@github.com:Zireael26/akaushik.org.git
+mv developerabhishek.live akaushik.org
+
+# GitHub
+gh repo rename akaushik.org --repo Zireael26/developerabhishek.live
+```
+
+The repo-relative import paths (`@/components/...`) are unaffected. No source changes required.
+
+**B. Flip the repo to public**
+
+Do this only after:
+
+1. Every `developerabhishek.live` reference in the repo has been scrubbed (see the ADR-0003 CHANGELOG entry — this handoff's work confirms that)
+2. No secrets are committed (`GH_STATS_TOKEN` is env-only; double-check `.env*` is gitignored)
+3. `_reference/` licensing is intentional (contains the Claude Design prototype; fine to be public as visual reference)
+
+```bash
+gh repo edit Zireael26/akaushik.org --visibility public --accept-visibility-change-consequences
+```
+
+**C. Vercel + Cloudflare wiring**
+
+1. Vercel → Project → Settings → Domains: add `akaushik.org` (mark as production primary), add `akaushik.dev` (mark as permanent 308 redirect to `akaushik.org`).
+2. Cloudflare DNS for both zones: `CNAME @ cname.vercel-dns.com` with proxy ON (orange cloud). SSL mode: Full (strict).
+3. Cloudflare Email Routing for `akaushik.org`: route `hello@akaushik.org` → `abhishek.nexus26@gmail.com`. The contact section's mailto: links to this address; the mailbox must exist before any public sharing.
+4. Verify `https://isitagentready.com/?url=https://akaushik.org` passes all four dimensions.
+
+**D. Legacy domain sunset**
+
+On the existing `developerabhishek.live` Vercel project, deploy a minimal `vercel.json`:
+
+```json
+{
+  "redirects": [
+    { "source": "/(.*)", "destination": "https://akaushik.org/$1", "permanent": true }
+  ]
+}
+```
+
+Leave the redirect live until the registration lapses naturally. Do not renew.
+
+**E. Social bio sync** (single coordinated pass before public announcement)
+
+- LinkedIn → About → Contact Info → Websites: `https://akaushik.org`
+- GitHub → `Zireael26` profile → "Website": `https://akaushik.org`
+- X → `@abhi2601k` → Bio link: `https://akaushik.org`
 
 ---
 

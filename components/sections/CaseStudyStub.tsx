@@ -39,7 +39,7 @@ export function CaseStudyStub({ slug }: CaseStudyStubProps) {
       <div className="work-stub-notice">
         Case study in preparation. Full write-up lands in Phase 2 via the MDX
         pipeline. Meanwhile: the home-page card above is the honest headline —
-        email <a href="mailto:hello@developerabhishek.live">hello@developerabhishek.live</a>{' '}
+        email <a href="mailto:hello@akaushik.org">hello@akaushik.org</a>{' '}
         if you want the full story today.
       </div>
     </main>
