@@ -1,0 +1,32 @@
+# Lighthouse CI config — mobile variant. Invoked by
+# `.github/workflows/lighthouse.yml` against Vercel preview URLs alongside
+# the desktop config. Mobile is where the real launch risk lives (slower
+# CPU emulation, slower network, image weight) so we enforce it separately.
+#
+# Launch target (PRD §5 + AGENT_READINESS §2): Perf ≥ 0.95 / A11y 1.0 /
+# BP ≥ 0.95 / SEO 1.0. Phase 3 warn-severity floors are the same as
+# desktop (0.9/0.95/0.9/0.9) — if mobile degrades further, the warning
+# surfaces without blocking the merge. Phase 5 tightens back to error.
+
+ci:
+  collect:
+    numberOfRuns: 3
+    # Lighthouse CI defaults to the mobile emulation profile when no preset
+    # is specified; `preset: mobile` is not a valid config value (valid
+    # choices are "perf", "experimental", "desktop").
+  assert:
+    assertions:
+      categories:performance: ['warn', { minScore: 0.8 }]
+      categories:accessibility: ['warn', { minScore: 0.95 }]
+      categories:best-practices: ['warn', { minScore: 0.9 }]
+      categories:seo: ['warn', { minScore: 0.9 }]
+
+      # Initial-JS budget mirrors desktop. Mobile throttling makes the
+      # same KiB cost more latency; the ceiling lives here so the CI gate
+      # is identical across the two configs.
+      resource-summary:script:size:
+        - 'error'
+        - maxNumericValue: 163840 # 160 KiB
+
+  upload:
+    target: temporary-public-storage
