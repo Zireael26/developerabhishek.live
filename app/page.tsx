@@ -1,6 +1,7 @@
 import Hero from '@/components/sections/Hero';
 import { About } from '@/components/sections/About';
 import { Work } from '@/components/sections/Work';
+import { Writing } from '@/components/sections/Writing';
 import { Services } from '@/components/sections/Services';
 import { Process } from '@/components/sections/Process';
 
@@ -45,7 +46,7 @@ export default function Home() {
       <Hero />
       <About />
       <Work />
-      <Placeholder id="writing" label="04 Writing" pose="writing" className="writing" />
+      <Writing />
       <Services />
       <Process />
       <Placeholder id="open" label="07 In the open" pose="open" className="opensource" />
