@@ -23,18 +23,22 @@ if (process.env.SKIP_PROCESS_GATE === '1') {
   process.exit(0);
 }
 
+// Default: read the pre-commit hook's staged diff.
+// CI: set PROCESS_GATE_DIFF_BASE=origin/main to diff a committed PR branch
+// against its base — same policy, different input.
+const diffBase = process.env.PROCESS_GATE_DIFF_BASE;
+const gitArgs = diffBase
+  ? ['diff', '--name-only', '--diff-filter=ACMRD', `${diffBase}..HEAD`]
+  : ['diff', '--cached', '--name-only', '--diff-filter=ACMRD'];
+
 let staged;
 try {
-  staged = execFileSync(
-    'git',
-    ['diff', '--cached', '--name-only', '--diff-filter=ACMRD'],
-    { encoding: 'utf8' },
-  )
+  staged = execFileSync('git', gitArgs, { encoding: 'utf8' })
     .split('\n')
     .map((s) => s.trim())
     .filter(Boolean);
 } catch (err) {
-  console.error('process-gate: failed to read staged diff:', err.message);
+  console.error('process-gate: failed to read diff:', err.message);
   process.exit(2);
 }
 

@@ -1,0 +1,50 @@
+name: Lighthouse + Axe
+
+on:
+  pull_request:
+
+concurrency:
+  group: lighthouse-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      # Vercel's Git integration deploys every PR and exposes the preview URL
+      # as a Check Run. wait-for-vercel-preview polls the Checks API and emits
+      # the URL once the deploy is ready — no Vercel token needed when the
+      # workflow is triggered by the same GitHub app that runs the deploy.
+      - name: Wait for Vercel preview
+        id: preview
+        uses: patrickedqvist/wait-for-vercel-preview@v1.3.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          max_timeout: 600
+
+      - name: Lighthouse
+        uses: treosh/lighthouse-ci-action@v11
+        env:
+          PREVIEW_URL: ${{ steps.preview.outputs.url }}
+        with:
+          urls: |
+            ${{ steps.preview.outputs.url }}
+            ${{ steps.preview.outputs.url }}/work/neev
+            ${{ steps.preview.outputs.url }}/writing
+          configPath: ./lighthouserc.yml
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Install axe-core CLI
+        run: npm install -g @axe-core/cli@4
+
+      - name: Axe-core scan
+        env:
+          PREVIEW_URL: ${{ steps.preview.outputs.url }}
+        run: |
+          axe "$PREVIEW_URL" "$PREVIEW_URL/work/neev" "$PREVIEW_URL/writing" \
+            --exit \
+            --tags wcag2a,wcag2aa,wcag21a,wcag21aa
