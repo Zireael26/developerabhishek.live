@@ -1,8 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
 
-// E2E smoke suite. Three viewports × three browsers = 9 projects. Runs
-// against a local `pnpm dev` server by default; CI runs against the Vercel
-// preview URL via `PLAYWRIGHT_BASE_URL` (see .github/workflows/e2e.yml).
+// E2E smoke suite. 5 projects: Chromium/Firefox/WebKit desktop (1440×900)
+// + Chromium tablet (768×1024) + Chromium mobile (iPhone SE, 375×667).
+// Runs against a local `pnpm dev` server by default; CI runs against the
+// Vercel preview URL via `PLAYWRIGHT_BASE_URL` (see
+// `.github/workflows/e2e.yml`).
 //
 // Tests target user-visible behaviour only — section presence, nav anchor
 // scroll, theme toggle, reduced-motion honoring. No internal state, no
@@ -44,10 +46,11 @@ export default defineConfig({
       name: 'chromium-tablet',
       use: { ...devices['Desktop Chrome'], viewport: { width: 768, height: 1024 } },
     },
-    // Mobile
+    // Mobile — iPhone SE (375×667) matches the PRD's 375 mobile breakpoint
+    // spec. iPhone 13 resolves to 390×844 which is close but off-contract.
     {
       name: 'chromium-mobile',
-      use: { ...devices['iPhone 13'] },
+      use: { ...devices['iPhone SE'] },
     },
   ],
 

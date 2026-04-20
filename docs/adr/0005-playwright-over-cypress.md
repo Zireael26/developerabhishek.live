@@ -28,9 +28,9 @@ Suite layout (`e2e/*.spec.ts`):
 - `theme.spec.ts` — `html[data-mode]` flips, `localStorage['abhishek.portfolio.mode']` persists, flip-back is idempotent.
 - `reduced-motion.spec.ts` — marquee `animation-name` or `animation-play-state` resolves to a no-op under `reducedMotion: 'reduce'`.
 
-Browser matrix (`playwright.config.ts`): Chromium / Firefox / WebKit on desktop (1440×900), Chromium on tablet (768×1024), Chromium on iPhone 13 mobile. The full Cartesian product is overkill for a static content site — three desktop browsers cover cross-engine rendering; tablet + mobile Chromium cover the breakpoints. Additional mobile browsers can be added if Phase-5 Wanderer work surfaces browser-specific WebGL gaps.
+Browser matrix (`playwright.config.ts`): Chromium / Firefox / WebKit on desktop (1440×900), Chromium on tablet (768×1024), Chromium on iPhone SE mobile (375×667 — matches the PRD's 375 breakpoint). The full Cartesian product is overkill for a static content site — three desktop browsers cover cross-engine rendering; tablet + mobile Chromium cover the breakpoints. Additional mobile browsers can be added if Phase-5 Wanderer work surfaces browser-specific WebGL gaps.
 
-CI wiring (`.github/workflows/e2e.yml`): on `pull_request`, wait for the Vercel preview URL (same `patrickedqvist/wait-for-vercel-preview` action as `lighthouse.yml`), install Playwright browsers, run the suite with `PLAYWRIGHT_BASE_URL` pointed at the preview, upload the HTML report as an artefact.
+CI wiring (`.github/workflows/e2e.yml`): on `pull_request`, wait for the Vercel preview URL via a two-step bash poll — wait for the `Vercel` commit-status context to flip to `success`, then grep the first `https://…vercel.app` URL out of the Vercel bot's sticky PR comment (the status context's `target_url` points at the Vercel dashboard, not the deployed preview, so the comment is the only reliable source). `lighthouse.yml` uses the same pattern. The third-party `patrickedqvist/wait-for-vercel-preview` action was evaluated and dropped — it hangs when Vercel reports as a `StatusContext` rather than a `CheckRun`. Then install Playwright browsers, run the suite with `PLAYWRIGHT_BASE_URL` pointed at the preview, upload the HTML report as an artefact.
 
 ## Consequences
 

@@ -32,7 +32,9 @@ jobs:
           while (( SECONDS < deadline )); do
             state="$(gh api "repos/$REPO/commits/$PR_SHA/status" --jq '[.statuses[] | select(.context == "Vercel")] | .[0].state // empty')"
             if [[ "$state" == "success" ]]; then
-              url="$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --jq '.[].body' | grep -oE 'https://[a-zA-Z0-9.-]+\.vercel\.app' | head -1)"
+              # Filter by Vercel bot author so a PR comment containing a
+              # stray vercel.app URL can't shadow the real deployment.
+              url="$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --jq '[.[] | select(.user.login == "vercel[bot]")] | .[].body' | grep -oE 'https://[a-zA-Z0-9.-]+\.vercel\.app' | head -1)"
               if [[ -n "$url" ]]; then
                 echo "url=$url" >> "$GITHUB_OUTPUT"
                 echo "Vercel preview ready: $url"
@@ -47,7 +49,7 @@ jobs:
           echo "Timed out waiting for Vercel preview." >&2
           exit 1
 
-      - name: Lighthouse
+      - name: Lighthouse (desktop)
         uses: treosh/lighthouse-ci-action@v11
         with:
           urls: |
@@ -55,6 +57,17 @@ jobs:
             ${{ steps.preview.outputs.url }}/work/neev
             ${{ steps.preview.outputs.url }}/writing
           configPath: ./lighthouserc.yml
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Lighthouse (mobile)
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          urls: |
+            ${{ steps.preview.outputs.url }}
+            ${{ steps.preview.outputs.url }}/work/neev
+            ${{ steps.preview.outputs.url }}/writing
+          configPath: ./lighthouserc.mobile.yml
           uploadArtifacts: true
           temporaryPublicStorage: true
 
