@@ -10,25 +10,40 @@ concurrency:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
-      # Vercel's Git integration deploys every PR and exposes the preview URL
-      # as a Check Run. wait-for-vercel-preview polls the Checks API and emits
-      # the URL once the deploy is ready — no Vercel token needed when the
-      # workflow is triggered by the same GitHub app that runs the deploy.
+      # Poll the GitHub Statuses API for Vercel's "Vercel" context until it
+      # reports success, then pull the preview URL out of target_url. More
+      # reliable than wait-for-vercel-preview@v1.3.2, which hangs when
+      # Vercel reports as a StatusContext rather than a CheckRun.
       - name: Wait for Vercel preview
         id: preview
-        uses: patrickedqvist/wait-for-vercel-preview@v1.3.2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          max_timeout: 600
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_SHA: ${{ github.event.pull_request.head.sha }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          deadline=$((SECONDS + 600))
+          while (( SECONDS < deadline )); do
+            payload="$(gh api "repos/$REPO/commits/$PR_SHA/status" --jq '.statuses[] | select(.context == "Vercel") | {state, target_url}' | head -1)"
+            state="$(echo "$payload" | jq -r '.state // empty')"
+            url="$(echo "$payload" | jq -r '.target_url // empty')"
+            if [[ "$state" == "success" && -n "$url" ]]; then
+              echo "url=$url" >> "$GITHUB_OUTPUT"
+              echo "Vercel preview ready: $url"
+              exit 0
+            fi
+            echo "Waiting for Vercel preview (state=$state)…"
+            sleep 15
+          done
+          echo "Timed out waiting for Vercel preview." >&2
+          exit 1
 
       - name: Lighthouse
         uses: treosh/lighthouse-ci-action@v11
-        env:
-          PREVIEW_URL: ${{ steps.preview.outputs.url }}
         with:
           urls: |
             ${{ steps.preview.outputs.url }}
