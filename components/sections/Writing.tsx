@@ -1,17 +1,7 @@
 import Link from 'next/link';
 import { SectionHeader } from './SectionHeader';
 import { getAllPostsWithReadingTime } from '@/lib/content';
-
-const MONTH_YEAR = new Intl.DateTimeFormat('en-US', {
-  month: 'short',
-  year: 'numeric',
-});
-
-function formatMonthYear(iso: string): string {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  return MONTH_YEAR.format(d);
-}
+import { formatMonthYear } from '@/lib/dates';
 
 export function Writing() {
   const posts = getAllPostsWithReadingTime('writing')

@@ -1,23 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getAllPosts } from '@/lib/content';
+import { formatMonthYear } from '@/lib/dates';
 
 export const metadata: Metadata = {
   title: 'Writing',
   description:
     'First-principles notes on agent systems and AI for traditional businesses.',
 };
-
-const MONTH_YEAR = new Intl.DateTimeFormat('en-US', {
-  month: 'short',
-  year: 'numeric',
-});
-
-function formatMonthYear(iso: string): string {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  return MONTH_YEAR.format(d);
-}
 
 export default function WritingIndex() {
   const posts = getAllPosts('writing')
