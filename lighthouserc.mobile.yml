@@ -11,8 +11,9 @@
 ci:
   collect:
     numberOfRuns: 3
-    settings:
-      preset: mobile
+    # Lighthouse CI defaults to the mobile emulation profile when no preset
+    # is specified; `preset: mobile` is not a valid config value (valid
+    # choices are "perf", "experimental", "desktop").
   assert:
     assertions:
       categories:performance: ['warn', { minScore: 0.8 }]
