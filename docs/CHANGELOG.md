@@ -5,6 +5,8 @@ All notable changes to akaushik.org (legacy host: developerabhishek.live, sunset
 ## [Unreleased]
 
 ### Added
+- Phase 5 canvas E2E smoke (follow-up to ADR-0005). `e2e/canvas.spec.ts` — five chromium-desktop scenarios: scene frame renders both SVG fallback + canvas host, Wanderer host ships SVG + hosts a `<canvas>` after hydration, `prefers-reduced-motion` hides the canvas and prevents Wanderer from mounting, `[data-motion="off"]` hides the canvas, no console errors on home page load. Scope kept narrow — WebGL doesn't render deterministically on Playwright headless, so the spec asserts DOM plumbing + no errors rather than pixel output. Visual parity against `_reference/portfolio/` remains Abhishek's eyes per plan §Final state.
+
 - Phase 5.4 — launch announcement post (plan Phase 5 §5.4). `content/writing/building-this-portfolio.mdx` — 2026-04-21 meta-post. Walks through the why of shipping the same process publicly (PRD / ADRs / ROADMAP / process-gate / AGENT_READINESS / CHANGELOG), links to every document in the repo, names the four load-bearing decisions (Next 16 over SvelteKit, process-gate pre-commit, MDX server-only + Shiki isolation, content negotiation Patterns A+B, Wanderer direct Three.js port), and closes with the honest "things still to do" list pointing at the ROADMAP. Home Writing section will now show this as the newest post (frontmatter date `2026-04-21` > all existing posts).
 
 ### Changed
