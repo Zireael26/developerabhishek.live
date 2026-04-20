@@ -80,6 +80,8 @@ const SPEC = {
     '/writing/{slug}.md': {
       get: {
         summary: 'Writing post as Markdown',
+        description:
+          'Pattern B (suffix). Equivalent to GET /writing/{slug} with Accept: text/markdown (Pattern A, RFC 7231 content negotiation).',
         parameters: [
           {
             name: 'slug',
@@ -100,6 +102,8 @@ const SPEC = {
     '/work/{slug}.md': {
       get: {
         summary: 'Case study as Markdown',
+        description:
+          'Pattern B (suffix). Equivalent to GET /work/{slug} with Accept: text/markdown (Pattern A, RFC 7231 content negotiation).',
         parameters: [
           {
             name: 'slug',
@@ -114,6 +118,22 @@ const SPEC = {
             content: { 'text/markdown': { schema: { type: 'string' } } },
           },
           '404': { description: 'Slug not found' },
+        },
+      },
+    },
+    '/': {
+      get: {
+        summary: 'Home page',
+        description:
+          'HTML by default. With Accept: text/markdown the server rewrites to /llms.txt (short-form digest).',
+        responses: {
+          '200': {
+            description: 'HTML home page or Markdown digest (content-negotiated)',
+            content: {
+              'text/html': { schema: { type: 'string' } },
+              'text/markdown': { schema: { type: 'string' } },
+            },
+          },
         },
       },
     },
