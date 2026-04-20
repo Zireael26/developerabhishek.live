@@ -1,0 +1,57 @@
+---
+title: VeriCite
+dek: A retrieval stack an institution can actually trust with its own words.
+index: "02"
+tag: AI systems depth
+year: 2026 — now
+role: Co-founder & CTO — retrieval pipeline
+stack: [HF TEI, Qdrant, Ory, Kubernetes, Vercel]
+evidenceOf: Institutional AI-systems sophistication
+reel: vericite/retrieval-trace.mp4
+---
+
+## Context
+
+Institutional RAG is a different problem from consumer RAG. A consumer chatbot can miss the right passage and the user shrugs and rephrases. An institution can't. When a knowledge system surfaces a passage, the institution will be asked why that passage appeared: by an auditor, a regulator, or a faculty committee. The answer has to hold. The embedding model, the reranker, the chunking strategy, the tenancy model — every layer is load-bearing in a way it simply isn't when the stakes are a search result.
+
+VeriCite is a multi-tenant institutional RAG platform. The product surface runs on Vercel. The retrieval pipeline behind it has to earn the trust that the product surface asks for.
+
+## Problem
+
+I started the pipeline on Fastembed running ONNX models on CPU. That's a reasonable place to start: low infrastructure overhead, quick to iterate, and good enough to validate the retrieval idea. But it imposed real limits that compounded as the product matured.
+
+First, the embedding-model catalog available through Fastembed's ONNX path is narrower than what HF TEI can serve. I needed <code>paraphrase-multilingual-MiniLM-L12-v2</code> as the primary embedder and <code>BAAI/bge-reranker-v2-m3</code> as the cross-encoder reranker — both worth running correctly, and the throughput curve on CPU-ONNX gets expensive before it gets good. Second, batching behavior and GPU-aware scheduling are first-class in TEI; bolting them onto a CPU-ONNX path is the wrong direction. Third, the system needed to stay defensibly multi-tenant from the start, with identity enforced at the query path, not added as a filter at read time.
+
+## Approach
+
+**Move embedding and reranking to Hugging Face Text Embeddings Inference (TEI).** TEI is purpose-built for serving transformer-based embedders and rerankers: it handles dynamic batching, GPU allocation, and model-specific optimizations that Fastembed on CPU can't match. I migrated the pipeline to TEI — it wasn't a drop-in swap. I re-validated retrieval quality on the institution's corpus, reconciled output format differences, and updated the upstream chunking pipeline to feed TEI's batch interface correctly.
+
+**Separate the embedding and reranking paths.** <code>paraphrase-multilingual-MiniLM-L12-v2</code> answers the first question: is this chunk plausibly relevant? <code>BAAI/bge-reranker-v2-m3</code> answers the harder one: of the plausibly relevant chunks, which ones actually are? Keeping these as independent services means each can scale, be swapped, or be versioned without destabilizing the other.
+
+**Qdrant as the vector store.** Per-tenant filtering is enforced at the retrieval layer via Qdrant's payload filters, not added on top afterward. This is the correct place to enforce tenancy — letting vectors cross tenant boundaries at retrieval and filtering later is a design flaw, not a trade-off.
+
+**Ory for identity.** Institutional tenants arrive with non-trivial auth requirements: SSO, provisioned users, role hierarchies. Ory handles that surface area properly. A lightweight JWT library would have required rebuilding it.
+
+**Monorepo discipline.** The codebase lives in a monorepo with four top-level namespaces: <code>apps/</code> for product surfaces, <code>packages/</code> for shared retrieval libraries and utilities, <code>infra/</code> for Terraform and cloud configuration, and <code>k8s/</code> for Kubernetes manifests. This layout lets the serving infrastructure, the retrieval library, and the Vercel-deployed product surface evolve on independent cadences without accumulating drift between them.
+
+## What shipped
+
+- Production-ready institutional RAG stack running <code>paraphrase-multilingual-MiniLM-L12-v2</code> for embedding and <code>BAAI/bge-reranker-v2-m3</code> for reranking, served via HF TEI.
+- Multi-tenant retrieval with tenant-scoped Qdrant collections and payload-level filters enforced at query time.
+- Identity layer built on Ory, covering SSO and provisioned-user workflows for institutional customers.
+- Monorepo with CI/CD pipelines, Kubernetes manifests under <code>k8s/</code>, and the product web surface deployed on Vercel.
+- Completed migration from Fastembed ONNX to TEI, including corpus re-validation and batch pipeline updates.
+
+*(Abhishek: confirm current deployment status and any institution-specific retrieval quality numbers you can share publicly.)*
+
+## Trade-offs
+
+**TEI over Fastembed.** I chose more infrastructure to operate — a running TEI service with GPU access rather than an in-process ONNX runtime. The payoff is a wider model catalog, correct batching behavior, and a throughput curve that doesn't break before you want it to. For a consumer prototype, Fastembed is fine. For an institutional product where retrieval quality is the core claim, the infrastructure cost is the right trade.
+
+**Qdrant over a Postgres vector extension.** I chose a purpose-built vector store, which adds an extra service to operate and monitor. The operational overhead is real. What it buys is a retrieval layer designed for the access patterns a RAG pipeline actually has — payload filtering, named collections, and a query API that doesn't require thinking around a general-purpose database's constraints.
+
+**Ory over a lightweight auth library.** The surface area is larger and the learning curve is steeper. Institutional identity requirements (provisioned users, SSO, org-level RBAC) make that surface area necessary — not incidental. A lightweight library would have deferred the problem, not solved it.
+
+## Honest scope
+
+*(Abhishek: confirm how much of this is your individual design/implementation vs. team/contracted work; list explicitly what's yours to claim.)*

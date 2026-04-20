@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { getReadingTime } from './reading-time';
 
 export type ContentType = 'case-studies' | 'writing';
 
@@ -147,6 +148,24 @@ export function getAllPosts<T extends ContentType>(
       const post = getPost(type, slug);
       if (!post) return null;
       return { slug: post.slug, frontmatter: post.frontmatter };
+    })
+    .filter((p): p is NonNullable<typeof p> => p !== null);
+}
+
+// Index-with-reading-time variant for the home Writing list + writing index.
+// Reads every body to derive reading time when frontmatter doesn't specify one,
+// which is more expensive than getAllPosts — keep that around for callers that
+// only need frontmatter (sitemap, /api/writing, llms.txt).
+export function getAllPostsWithReadingTime<T extends ContentType>(
+  type: T,
+): Array<Omit<Post<T>, 'content'> & { readingTime: string }> {
+  return getPostSlugs(type)
+    .map((slug) => {
+      const post = getPost(type, slug);
+      if (!post) return null;
+      const fm = post.frontmatter as { readingTime?: string };
+      const readingTime = fm.readingTime ?? getReadingTime(post.content);
+      return { slug: post.slug, frontmatter: post.frontmatter, readingTime };
     })
     .filter((p): p is NonNullable<typeof p> => p !== null);
 }

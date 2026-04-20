@@ -1,48 +1,24 @@
+import Link from 'next/link';
 import { SectionHeader } from './SectionHeader';
+import { getAllPostsWithReadingTime } from '@/lib/content';
 
-type Post = {
-  date: string;
-  title: string;
-  dek: React.ReactNode;
-  readingTime: string;
-  href: string;
-};
+const MONTH_YEAR = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  year: 'numeric',
+});
 
-/**
- * Empty-state-first Writing list. Phase 1 ships the three reference posts
- * as placeholders (hrefs #); Phase 2 Slice 2.7 replaces this array with a
- * server-side `getAllPosts('writing')` call into `content/writing/*.mdx`.
- */
-const PLACEHOLDER_POSTS: ReadonlyArray<Post> = [
-  {
-    date: 'Apr 2026',
-    title: 'What I learned building micrograd and makemore from scratch',
-    dek: (
-      <>
-        A foundations-first reading of Karpathy&apos;s <em>Zero to Hero</em> —
-        why re-implementing the thing is the only way to understand the thing.
-      </>
-    ),
-    readingTime: '12 min read',
-    href: '#',
-  },
-  {
-    date: 'Mar 2026',
-    title: 'Notes on bringing AI to an MSME',
-    dek: 'WhatsApp, paper ledgers, Tally, and a few spreadsheets. What actually moves the needle, and what doesn\u2019t.',
-    readingTime: '9 min read',
-    href: '#',
-  },
-  {
-    date: 'Feb 2026',
-    title: 'Migrating from Fastembed ONNX to Hugging Face TEI',
-    dek: 'The specific trade-offs, the retrieval quality delta on an institutional corpus, and why the infra complexity was worth it.',
-    readingTime: '14 min read',
-    href: '#',
-  },
-];
+function formatMonthYear(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return MONTH_YEAR.format(d);
+}
 
 export function Writing() {
+  const posts = getAllPostsWithReadingTime('writing')
+    .slice()
+    .sort((a, b) => (a.frontmatter.date < b.frontmatter.date ? 1 : -1))
+    .slice(0, 3);
+
   return (
     <section
       className="writing"
@@ -56,24 +32,31 @@ export function Writing() {
         title="Writing"
         kicker="First-principles notes on agent systems and AI for traditional businesses. New posts land here without a redesign."
       />
-      <ul className="post-list" role="list">
-        {PLACEHOLDER_POSTS.map((p) => (
-          <li className="post" key={p.title}>
-            <span className="post-date">{p.date}</span>
-            <h3 className="post-title">
-              <a href={p.href}>{p.title}</a>
-            </h3>
-            <p className="post-dek">{p.dek}</p>
-            <span className="post-read">{p.readingTime}</span>
-          </li>
-        ))}
-      </ul>
-      <a className="more-link" href="#">
+      {posts.length === 0 ? (
+        <p className="writing-index-empty">
+          Drafting in the open. First posts land alongside the Phase-2 content
+          push.
+        </p>
+      ) : (
+        <ul className="post-list" role="list">
+          {posts.map((p) => (
+            <li className="post" key={p.slug}>
+              <span className="post-date">{formatMonthYear(p.frontmatter.date)}</span>
+              <h3 className="post-title">
+                <Link href={`/writing/${p.slug}`}>{p.frontmatter.title}</Link>
+              </h3>
+              <p className="post-dek">{p.frontmatter.dek}</p>
+              <span className="post-read">{p.readingTime}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      <Link className="more-link" href="/writing">
         All writing
         <span className="arrow" aria-hidden="true">
           →
         </span>
-      </a>
+      </Link>
     </section>
   );
 }

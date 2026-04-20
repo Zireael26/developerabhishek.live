@@ -8,8 +8,21 @@ export const metadata: Metadata = {
     'First-principles notes on agent systems and AI for traditional businesses.',
 };
 
+const MONTH_YEAR = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  year: 'numeric',
+});
+
+function formatMonthYear(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return MONTH_YEAR.format(d);
+}
+
 export default function WritingIndex() {
-  const posts = getAllPosts('writing');
+  const posts = getAllPosts('writing')
+    .slice()
+    .sort((a, b) => (a.frontmatter.date < b.frontmatter.date ? 1 : -1));
 
   return (
     <main id="top" className="writing-index">
@@ -31,7 +44,7 @@ export default function WritingIndex() {
           <ul className="writing-index-list" role="list">
             {posts.map((p) => (
               <li key={p.slug} className="writing-index-item">
-                <span className="writing-index-date">{p.frontmatter.date}</span>
+                <span className="writing-index-date">{formatMonthYear(p.frontmatter.date)}</span>
                 <h2 className="writing-index-item-title">
                   <Link href={`/writing/${p.slug}`}>{p.frontmatter.title}</Link>
                 </h2>
