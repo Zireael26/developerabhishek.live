@@ -10,6 +10,7 @@
   "packageManager": "pnpm@10.0.0",
   "scripts": {
     "dev": "next dev --turbo",
+    "prebuild": "tsx scripts/build-agent-skills-index.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -62,6 +63,7 @@
     "prettier-plugin-tailwindcss": "^0.6.13",
     "simple-git-hooks": "^2.11.1",
     "tailwindcss": "4.2.0",
+    "tsx": "^4.19.0",
     "typescript": "6.0.3"
   }
 }
