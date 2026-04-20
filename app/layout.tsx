@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Newsreader, Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
 import SiteNav from '@/components/site/SiteNav';
 import SiteFooter from '@/components/site/SiteFooter';
+import { Wanderer } from '@/components/scene/Wanderer';
 import './globals.css';
 
 const newsreader = Newsreader({
@@ -89,9 +90,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="agent-skills" href="/.well-known/agent-skills/index.json" />
       </head>
       <body>
-        {/* Companion (Wanderer) mount — the three.js crane renders into this node
-            once the scene slice lands. Empty + aria-hidden is safe until then. */}
-        <div id="companion" className="companion" aria-hidden="true" />
+        {/* Wanderer renders the #companion host with its SVG fallback today.
+            Slice 5.1c layers the Three.js crane on top for `[data-motion="on"]`
+            + no `prefers-reduced-motion`. The SVG stays as the fallback. */}
+        <Wanderer />
         <SiteNav />
         {children}
         <SiteFooter />
