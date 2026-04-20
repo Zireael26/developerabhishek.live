@@ -1,11 +1,12 @@
+import Hero from '@/components/sections/Hero';
+
 /**
  * Home — single-page scroll with eight sections (PRD §5).
  *
- * This file is the section-anchor scaffold. Each <section> carries the
- * `id`, `data-screen-label`, and `data-companion-pose` attributes the
- * reference expects — the Wanderer's IntersectionObserver keys off them
- * (see HANDOFF §5, EPIC-01 §2). Section bodies arrive in per-slice PRs:
- * Hero → About → Services/Process → Work → In the open → Writing → Contact.
+ * Hero (section 01) owns its own markup via `<Hero />`. Sections 02–08 are
+ * section-anchor scaffolds carrying the `id`, `data-screen-label`, and
+ * `data-companion-pose` attrs the Wanderer's IntersectionObserver keys off
+ * (HANDOFF §5, EPIC-01 §2). Their bodies arrive in per-slice PRs.
  */
 
 type SectionPlaceholder = {
@@ -15,8 +16,7 @@ type SectionPlaceholder = {
   className: string;
 };
 
-const SECTIONS: ReadonlyArray<SectionPlaceholder> = [
-  { id: 'hero',     label: '01 Hero',        pose: 'hero',     className: 'hero' },
+const PLACEHOLDER_SECTIONS: ReadonlyArray<SectionPlaceholder> = [
   { id: 'about',    label: '02 About',       pose: 'about',    className: 'about' },
   { id: 'work',     label: '03 Work',        pose: 'work',     className: 'work' },
   { id: 'writing',  label: '04 Writing',     pose: 'writing',  className: 'writing' },
@@ -29,10 +29,11 @@ const SECTIONS: ReadonlyArray<SectionPlaceholder> = [
 export default function Home() {
   return (
     <main id="top">
-      {SECTIONS.map((s) => (
+      <Hero />
+      {PLACEHOLDER_SECTIONS.map((s) => (
         <section
           key={s.id}
-          id={s.id === 'hero' ? undefined : s.id}
+          id={s.id}
           className={s.className}
           data-screen-label={s.label}
           data-companion-pose={s.pose}
