@@ -14,6 +14,7 @@ All notable changes to developerabhishek.live are documented here. The format fo
 - EPIC-01 — pixel-parity plan for Phase 1 (`docs/epm/EPIC-01-pixel-parity.md`).
 - `turbopack.root = process.cwd()` in `next.config.ts` to silence the multi-lockfile warning.
 - `app/layout.tsx`: swapped Google Fonts `<link>` for `next/font/google` (Newsreader + Plus Jakarta Sans + JetBrains Mono). Self-hosted, eliminates external handshake, clears the `@next/next/no-page-custom-font` warning. `app/globals.css` resolves `--serif/--sans/--mono` through the next/font CSS variables.
+- `vercel.json` — pins `framework: "nextjs"`, `buildCommand: "pnpm run build"`, `installCommand: "pnpm install --frozen-lockfile"`, `outputDirectory: ".next"`. Fixes the SvelteKit-era dashboard setting (`outputDirectory: "build"`) that was still live on the Vercel project and made every PR preview fail with `No Output Directory named "build" found after the Build completed`. In-repo config overrides dashboard drift and survives any future framework preset changes.
 
 ### Changed
 - Repository migrated from SvelteKit to Next.js 16.2. Prior state preserved at tag `legacy-v1-final`.
