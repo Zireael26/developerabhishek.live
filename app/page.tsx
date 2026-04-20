@@ -1,12 +1,14 @@
 import Hero from '@/components/sections/Hero';
+import { About } from '@/components/sections/About';
 
 /**
  * Home — single-page scroll with eight sections (PRD §5).
  *
- * Hero (section 01) owns its own markup via `<Hero />`. Sections 02–08 are
- * section-anchor scaffolds carrying the `id`, `data-screen-label`, and
- * `data-companion-pose` attrs the Wanderer's IntersectionObserver keys off
- * (HANDOFF §5, EPIC-01 §2). Their bodies arrive in per-slice PRs.
+ * Sections with a dedicated component render themselves (including their own
+ * <section> element with id / data-screen-label / data-companion-pose).
+ * Sections still awaiting implementation fall back to the placeholder
+ * scaffold so the Wanderer's IntersectionObserver still has live anchors
+ * (HANDOFF §5, EPIC-01 §2).
  */
 
 type SectionPlaceholder = {
@@ -17,7 +19,6 @@ type SectionPlaceholder = {
 };
 
 const PLACEHOLDER_SECTIONS: ReadonlyArray<SectionPlaceholder> = [
-  { id: 'about',    label: '02 About',       pose: 'about',    className: 'about' },
   { id: 'work',     label: '03 Work',        pose: 'work',     className: 'work' },
   { id: 'writing',  label: '04 Writing',     pose: 'writing',  className: 'writing' },
   { id: 'services', label: '05 Services',    pose: 'services', className: 'services' },
@@ -30,6 +31,7 @@ export default function Home() {
   return (
     <main id="top">
       <Hero />
+      <About />
       {PLACEHOLDER_SECTIONS.map((s) => (
         <section
           key={s.id}
