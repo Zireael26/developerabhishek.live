@@ -1,5 +1,6 @@
 import Hero from '@/components/sections/Hero';
 import { About } from '@/components/sections/About';
+import { Services } from '@/components/sections/Services';
 
 /**
  * Home — single-page scroll with eight sections (PRD §5).
@@ -11,40 +12,42 @@ import { About } from '@/components/sections/About';
  * (HANDOFF §5, EPIC-01 §2).
  */
 
-type SectionPlaceholder = {
+function Placeholder({
+  id,
+  label,
+  pose,
+  className,
+}: {
   id: string;
   label: string;
   pose: string;
   className: string;
-};
-
-const PLACEHOLDER_SECTIONS: ReadonlyArray<SectionPlaceholder> = [
-  { id: 'work',     label: '03 Work',        pose: 'work',     className: 'work' },
-  { id: 'writing',  label: '04 Writing',     pose: 'writing',  className: 'writing' },
-  { id: 'services', label: '05 Services',    pose: 'services', className: 'services' },
-  { id: 'process',  label: '06 Process',     pose: 'process',  className: 'process' },
-  { id: 'open',     label: '07 In the open', pose: 'open',     className: 'opensource' },
-  { id: 'contact',  label: '08 Contact',     pose: 'contact',  className: 'contact' },
-];
+}) {
+  return (
+    <section
+      id={id}
+      className={className}
+      data-screen-label={label}
+      data-companion-pose={pose}
+      data-section-placeholder="true"
+      aria-label={label}
+    >
+      {label} — section scaffold · body lands in its slice PR
+    </section>
+  );
+}
 
 export default function Home() {
   return (
     <main id="top">
       <Hero />
       <About />
-      {PLACEHOLDER_SECTIONS.map((s) => (
-        <section
-          key={s.id}
-          id={s.id}
-          className={s.className}
-          data-screen-label={s.label}
-          data-companion-pose={s.pose}
-          data-section-placeholder="true"
-          aria-label={s.label}
-        >
-          {s.label} — section scaffold · body lands in its slice PR
-        </section>
-      ))}
+      <Placeholder id="work" label="03 Work" pose="work" className="work" />
+      <Placeholder id="writing" label="04 Writing" pose="writing" className="writing" />
+      <Services />
+      <Placeholder id="process" label="06 Process" pose="process" className="process" />
+      <Placeholder id="open" label="07 In the open" pose="open" className="opensource" />
+      <Placeholder id="contact" label="08 Contact" pose="contact" className="contact" />
     </main>
   );
 }
