@@ -1,11 +1,14 @@
 import Link from 'next/link';
 import { CASE_STUDIES } from './Work';
+import { Reel, type ReelSlug } from '@/components/work/reels';
 
-type CaseStudyStubProps = {
-  slug: (typeof CASE_STUDIES)[number]['slug'];
-};
-
-export function CaseStudyStub({ slug }: CaseStudyStubProps) {
+/**
+ * Fallback rendered by `app/work/[slug]/page.tsx` when no MDX body exists
+ * yet for a known card slug. Keeps the "Read the case study →" link from
+ * ever 404-ing during the Phase-2 content gap. Phase 2 case-study slices
+ * ship MDX bodies that replace this view; Bluehost keeps it permanently.
+ */
+export function CaseStudyStub({ slug }: { slug: ReelSlug }) {
   const study = CASE_STUDIES.find((c) => c.slug === slug);
   if (!study) {
     return (
@@ -28,6 +31,9 @@ export function CaseStudyStub({ slug }: CaseStudyStubProps) {
       <h1 className="work-stub-title">{study.title}</h1>
       <p className="work-stub-dek">{study.dek}</p>
       <p className="work-stub-lede">{study.lede}</p>
+      <figure className="work-stub-reel" aria-hidden="true">
+        <Reel slug={slug} />
+      </figure>
       <dl className="case-spec">
         {study.spec.map((s) => (
           <div key={s.term}>

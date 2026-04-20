@@ -1,0 +1,38 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { CASE_STUDIES } from '@/components/sections/Work';
+
+export const metadata: Metadata = {
+  title: 'Selected work',
+  description:
+    'Four case studies — Neev, VeriCite, Bluehost agents framework, curat.money — ordered by strategic weight.',
+};
+
+export default function WorkIndex() {
+  return (
+    <main id="top" className="work-index">
+      <div className="work-index-inner">
+        <Link href="/" className="work-stub-back">
+          ← Back to home
+        </Link>
+        <h1 className="work-index-title">Selected work</h1>
+        <p className="work-index-lede">
+          Each case study is a problem in the client&apos;s words, an approach,
+          what shipped, and honest scope on what was and wasn&apos;t included.
+        </p>
+        <ol className="work-index-list" role="list">
+          {CASE_STUDIES.map((c) => (
+            <li key={c.slug} className="work-index-item">
+              <span className="case-index">{c.index}</span>
+              <Link href={`/work/${c.slug}`} className="work-index-link">
+                <h2 className="work-index-item-title">{c.title}</h2>
+                <p className="work-index-item-dek">{c.dek}</p>
+              </Link>
+              <span className="case-year">{c.year}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </main>
+  );
+}

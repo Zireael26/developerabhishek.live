@@ -1,0 +1,152 @@
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
+
+export type ContentType = 'case-studies' | 'writing';
+
+export type CaseStudyFrontmatter = {
+  title: string;
+  dek: string;
+  index: string;
+  tag: string;
+  year: string;
+  role: string;
+  stack: string[];
+  evidenceOf: string;
+  reel?: string;
+};
+
+export type WritingFrontmatter = {
+  title: string;
+  dek: string;
+  date: string;
+  readingTime?: string;
+};
+
+export type FrontmatterFor<T extends ContentType> = T extends 'case-studies'
+  ? CaseStudyFrontmatter
+  : WritingFrontmatter;
+
+export type Post<T extends ContentType> = {
+  slug: string;
+  frontmatter: FrontmatterFor<T>;
+  content: string;
+};
+
+const CONTENT_ROOT = join(process.cwd(), 'content');
+
+function contentDir(type: ContentType): string {
+  return join(CONTENT_ROOT, type);
+}
+
+// Minimal YAML-front-matter parser. Supports the scalar + array shapes our
+// case-study / writing frontmatter actually uses. Intentionally small — pulling
+// gray-matter or js-yaml for this would ship bytes we don't need.
+//
+//   ---
+//   title: Neev
+//   stack: [Next.js, Postgres, multi-tenant monolith]
+//   ---
+//
+// Strings may be quoted or bare. Arrays may be inline `[a, b]` or YAML-list
+// ("- item" per line). Anything more complex gets a clear error.
+function parseFrontmatter(raw: string): {
+  data: Record<string, unknown>;
+  content: string;
+} {
+  const fenced = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/.exec(raw);
+  if (!fenced) return { data: {}, content: raw };
+
+  const yaml = fenced[1] ?? '';
+  const body = fenced[2] ?? '';
+  const data: Record<string, unknown> = {};
+
+  const lines = yaml.split(/\r?\n/);
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i] ?? '';
+    if (!line.trim() || line.trim().startsWith('#')) {
+      i += 1;
+      continue;
+    }
+    const scalar = /^([A-Za-z_][\w-]*)\s*:\s*(.*)$/.exec(line);
+    if (!scalar) {
+      throw new Error(`lib/content: frontmatter parse failure at line ${i + 1}: "${line}"`);
+    }
+    const key = scalar[1] as string;
+    const value = (scalar[2] ?? '').trim();
+    if (value.startsWith('[') && value.endsWith(']')) {
+      const inner = value.slice(1, -1).trim();
+      data[key] = inner.length
+        ? inner.split(',').map((s) => stripQuotes(s.trim()))
+        : [];
+      i += 1;
+      continue;
+    }
+    if (value === '') {
+      const items: string[] = [];
+      let j = i + 1;
+      while (j < lines.length && /^\s+-\s+/.test(lines[j] ?? '')) {
+        items.push(stripQuotes((lines[j] ?? '').replace(/^\s+-\s+/, '').trim()));
+        j += 1;
+      }
+      if (items.length) {
+        data[key] = items;
+        i = j;
+        continue;
+      }
+      data[key] = '';
+      i += 1;
+      continue;
+    }
+    data[key] = stripQuotes(value);
+    i += 1;
+  }
+
+  return { data, content: body };
+}
+
+function stripQuotes(s: string): string {
+  if (
+    (s.startsWith('"') && s.endsWith('"')) ||
+    (s.startsWith("'") && s.endsWith("'"))
+  ) {
+    return s.slice(1, -1);
+  }
+  return s;
+}
+
+export function getPostSlugs(type: ContentType): string[] {
+  const dir = contentDir(type);
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
+    .filter((name) => name.endsWith('.mdx'))
+    .map((name) => name.replace(/\.mdx$/, ''))
+    .sort();
+}
+
+export function getPost<T extends ContentType>(
+  type: T,
+  slug: string,
+): Post<T> | null {
+  const path = join(contentDir(type), `${slug}.mdx`);
+  if (!existsSync(path)) return null;
+  const raw = readFileSync(path, 'utf8');
+  const { data, content } = parseFrontmatter(raw);
+  return {
+    slug,
+    frontmatter: data as FrontmatterFor<T>,
+    content,
+  };
+}
+
+export function getAllPosts<T extends ContentType>(
+  type: T,
+): Array<Omit<Post<T>, 'content'>> {
+  return getPostSlugs(type)
+    .map((slug) => {
+      const post = getPost(type, slug);
+      if (!post) return null;
+      return { slug: post.slug, frontmatter: post.frontmatter };
+    })
+    .filter((p): p is NonNullable<typeof p> => p !== null);
+}
