@@ -73,6 +73,7 @@ A living document. Phases are ordered by dependency, not calendar. Each phase is
 
 - [ ] Calendly / Cal.com URL wired into Contact ghost button (currently `href="#"`)
 - [ ] Portrait photo swap (`/images/abhishek.webp`, 4:5) — SVG placeholder today
+- [~] Case-study reel MP4s — HyperFrames scaffold + 8 compositions + React integration landed (ADR-0008); remaining work is the render pass (`pnpm render:work && pnpm render:posters`) + committing `public/video/work/*.{mp4,webp}`. Blocked in-sandbox on FFmpeg/Chrome availability; runs cleanly on a local dev box
 - [ ] `isitagentready.com` scan against prod + dated PNG into `docs/agent-readiness-snapshots/`
 - [ ] `pnpm analyze` Phase-5 bundle audit — update `docs/BUNDLE_BUDGET.md` with measured initial JS, tighten `lighthouserc.yml` ceiling back toward 150 KiB target (currently 200 KiB `warn`)
 - [ ] Lighthouse category thresholds — flip to `error` severity at PRD §5 targets (0.95 / 1.0 / 0.95 / 1.0) once first prod numbers are in

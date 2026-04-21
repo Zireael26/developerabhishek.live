@@ -1,0 +1,17 @@
+{
+  "$schema": "https://hyperframes.heygen.com/schema/project.json",
+  "name": "bluehost-agents-card",
+  "description": "Bluehost agents — latency curve draw-in over a dashed budget line; waypoint dots ping in sequence.",
+  "composition": {
+    "id": "root",
+    "width": 600,
+    "height": 400,
+    "fps": 30,
+    "duration": 5
+  },
+  "render": {
+    "fps": 30,
+    "quality": "standard",
+    "format": "mp4"
+  }
+}

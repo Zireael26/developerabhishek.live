@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>neev · hero loop</title>
+<link rel="stylesheet" href="../shared/tokens.css" />
+<link rel="stylesheet" href="../shared/base.css" />
+<style>
+  /* 1600×900 ambient hero. Reads as a page background — never competes with
+     the copy above it, just a slow-breathing node graph with drifting traffic. */
+
+  #root {
+    background:
+      repeating-linear-gradient(
+        45deg,
+        transparent 0 48px,
+        var(--accent-05) 48px 49px
+      ),
+      var(--bg);
+  }
+  svg.stage { display: block; width: 100%; height: 100%; opacity: 0.55; }
+
+  .pulse-ring {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .orbit { transform-box: fill-box; transform-origin: 800px 450px; }
+</style>
+</head>
+<body>
+  <div id="root" data-composition-id="root" data-width="1600" data-height="900" data-start="0" data-duration="10">
+    <div class="clip" data-start="0" data-duration="10" data-track-index="0">
+      <svg class="stage" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <!-- six edges radiate from primary; amplitude tuned for widescreen -->
+        <g class="orbit">
+          <line class="edge" x1="500" y1="460" x2="900"  y2="260" />
+          <line class="edge" x1="500" y1="460" x2="1000" y2="680" />
+          <line class="edge" x1="500" y1="460" x2="1220" y2="420" />
+          <line class="edge" x1="900" y1="260" x2="1220" y2="420" />
+          <line class="edge" x1="1000" y1="680" x2="1220" y2="420" />
+          <line class="edge is-dashed" x1="900" y1="260" x2="1000" y2="680" />
+        </g>
+
+        <!-- primary node + pulse rings -->
+        <g id="primary-node">
+          <circle class="pulse-ring" id="pulse-1" cx="500" cy="460" r="72" />
+          <circle class="pulse-ring" id="pulse-2" cx="500" cy="460" r="72" />
+          <circle class="node-core is-primary" cx="500" cy="460" r="72" />
+        </g>
+
+        <!-- three satellites, varied radii (same vocabulary as the card) -->
+        <g class="orbit">
+          <circle class="node-core" cx="900"  cy="260" r="44" />
+          <circle class="node-core" cx="1000" cy="680" r="52" />
+          <circle class="node-core" cx="1220" cy="420" r="38" />
+        </g>
+
+        <!-- four drifting packets across the primary spokes + the lateral dashed hop -->
+        <circle class="packet" id="packet-a" cx="500" cy="460" r="6" />
+        <circle class="packet" id="packet-b" cx="500" cy="460" r="6" />
+        <circle class="packet" id="packet-c" cx="500" cy="460" r="6" />
+        <circle class="packet" id="packet-d" cx="900" cy="260" r="5" />
+      </svg>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/MotionPathPlugin.min.js"></script>
+  <script>
+    gsap.registerPlugin(MotionPathPlugin);
+
+    const P  = { x: 500,  y: 460 };
+    const S1 = { x: 900,  y: 260 };
+    const S2 = { x: 1000, y: 680 };
+    const S3 = { x: 1220, y: 420 };
+
+    const tl = gsap.timeline({ paused: true });
+
+    // 10s loop — packets drift lazily; three overlapping rhythms so it never
+    // resolves to a single beat.
+    tl.fromTo('#packet-a', { x: 0, y: 0 },
+      { motionPath: { path: [P, S1, P], curviness: 0 }, duration: 5,   ease: 'none' }, 0);
+    tl.fromTo('#packet-b', { x: 0, y: 0 },
+      { motionPath: { path: [P, S2, P], curviness: 0 }, duration: 5,   ease: 'none' }, 2.5);
+    tl.fromTo('#packet-c', { x: 0, y: 0 },
+      { motionPath: { path: [P, S3, P], curviness: 0 }, duration: 6.67, ease: 'none', repeat: 0 }, 0);
+    tl.fromTo('#packet-d', { x: 0, y: 0 },
+      { motionPath: { path: [S1, S3, S1], curviness: 0 }, duration: 10, ease: 'none' }, 0);
+
+    // Twin pulses — full 10s breath so the motion reads as a slow heartbeat
+    tl.fromTo('#pulse-1', { scale: 1, opacity: 0.5 },
+      { scale: 1.9, opacity: 0, duration: 5, ease: 'power1.out', repeat: 1 }, 0);
+    // pulse-2 duration sized so offset(2.5) + 2×duration = 10s — lands at
+    // opacity 0 on the render boundary, no pulse seam under <video loop>.
+    tl.fromTo('#pulse-2', { scale: 1, opacity: 0.35 },
+      { scale: 2.3, opacity: 0, duration: 3.75, ease: 'power1.out', repeat: 1 }, 2.5);
+
+    // Very slow orbit drift — 3° each way, 10s to sweep back
+    tl.to('.orbit', { rotate: 3, duration: 5, ease: 'sine.inOut', yoyo: true, repeat: 1 }, 0);
+
+    window.__timelines = window.__timelines || {};
+    window.__timelines['root'] = tl;
+  </script>
+</body>
+</html>

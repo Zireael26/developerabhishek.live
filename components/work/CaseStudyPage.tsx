@@ -48,7 +48,7 @@ export function CaseStudyPage({
       </header>
       {slug ? (
         <figure className="work-detail-reel" aria-hidden="true">
-          <Reel slug={slug} />
+          <Reel slug={slug} variant="hero" />
         </figure>
       ) : null}
       <article className="work-detail-body">

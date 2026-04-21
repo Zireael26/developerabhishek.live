@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>curat-money · card reel</title>
+<link rel="stylesheet" href="../shared/tokens.css" />
+<link rel="stylesheet" href="../shared/base.css" />
+<style>
+  /* 600×400 — compare-table rows reveal top-down; a selection highlight glides
+     down and settles on the "best" row (row 3 by design). */
+
+  svg.stage { display: block; width: 100%; height: 100%; }
+
+  .header-bar {
+    fill: var(--accent);
+    opacity: 0.08;
+  }
+  .header-tick {
+    stroke: var(--ink-25);
+    stroke-width: 1;
+  }
+
+  .cmp-row {
+    fill: var(--ink-05);
+    stroke: var(--ink-15);
+    stroke-width: 1;
+  }
+
+  .cmp-bar {
+    fill: var(--accent-40);
+  }
+
+  .selector {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    rx: 4;
+  }
+</style>
+</head>
+<body>
+  <div id="root" data-composition-id="root" data-width="600" data-height="400" data-start="0" data-duration="5">
+    <div class="clip" data-start="0" data-duration="5" data-track-index="0">
+      <svg class="stage" viewBox="0 0 600 400" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <!-- compare table header -->
+        <rect class="header-bar" x="70" y="70" width="460" height="34" rx="3" />
+        <line class="header-tick" x1="240" y1="70" x2="240" y2="104" />
+        <line class="header-tick" x1="360" y1="70" x2="360" y2="104" />
+        <line class="header-tick" x1="460" y1="70" x2="460" y2="104" />
+
+        <!-- five rows, staggered widths to hint at differing offer shapes -->
+        <g id="row-1">
+          <rect class="cmp-row" x="70"  y="118" width="460" height="26" rx="3" />
+          <rect class="cmp-bar" x="250" y="124" width="72"  height="14" rx="2" />
+        </g>
+        <g id="row-2">
+          <rect class="cmp-row" x="70"  y="156" width="460" height="26" rx="3" />
+          <rect class="cmp-bar" x="250" y="162" width="50"  height="14" rx="2" />
+        </g>
+        <g id="row-3">
+          <rect class="cmp-row" x="70"  y="194" width="460" height="26" rx="3" />
+          <rect class="cmp-bar" x="250" y="200" width="96"  height="14" rx="2" />
+        </g>
+        <g id="row-4">
+          <rect class="cmp-row" x="70"  y="232" width="460" height="26" rx="3" />
+          <rect class="cmp-bar" x="250" y="238" width="60"  height="14" rx="2" />
+        </g>
+        <g id="row-5">
+          <rect class="cmp-row" x="70"  y="270" width="460" height="26" rx="3" />
+          <rect class="cmp-bar" x="250" y="276" width="40"  height="14" rx="2" />
+        </g>
+
+        <!-- selector rectangle — starts hidden, glides from row 1 to row 3 -->
+        <rect class="selector" id="selector"
+              x="66" y="114" width="468" height="34" rx="4" opacity="0" />
+      </svg>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    // Act 1 (0–1.5s) — rows fade in top-to-bottom with small y offset
+    tl.from('#row-1', { y: 8, opacity: 0, duration: 0.35, ease: 'power2.out' }, 0.05);
+    tl.from('#row-2', { y: 8, opacity: 0, duration: 0.35, ease: 'power2.out' }, 0.20);
+    tl.from('#row-3', { y: 8, opacity: 0, duration: 0.35, ease: 'power2.out' }, 0.35);
+    tl.from('#row-4', { y: 8, opacity: 0, duration: 0.35, ease: 'power2.out' }, 0.50);
+    tl.from('#row-5', { y: 8, opacity: 0, duration: 0.35, ease: 'power2.out' }, 0.65);
+
+    // Act 2 (1.5–3s) — selector appears on row 1 and glides to row 3 (best)
+    tl.to('#selector', { opacity: 1, duration: 0.3, ease: 'power2.out' }, 1.5);
+    tl.fromTo('#selector',
+      { attr: { y: 114 } },
+      { attr: { y: 190 }, duration: 1.2, ease: 'power2.inOut' },
+      1.8
+    );
+
+    // Act 3 (3–3.5s) — best-row bar gives a small nudge to signal selection
+    tl.to('#row-3 .cmp-bar', {
+      attr: { width: 112 },
+      duration: 0.5,
+      ease: 'power2.out',
+      yoyo: true,
+      repeat: 1,
+    }, 3.0);
+
+    // Reset (4.3–5s) — selector fades so the loop starts clean
+    tl.to('#selector', { opacity: 0, duration: 0.5, ease: 'power1.in' }, 4.3);
+
+    window.__timelines = window.__timelines || {};
+    window.__timelines['root'] = tl;
+  </script>
+</body>
+</html>

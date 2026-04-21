@@ -1,0 +1,17 @@
+{
+  "$schema": "https://hyperframes.heygen.com/schema/project.json",
+  "name": "curat-money-hero",
+  "description": "curat.money — case-study hero band. Wider compare matrix; selector walks from top to best row across 10s.",
+  "composition": {
+    "id": "root",
+    "width": 1600,
+    "height": 900,
+    "fps": 30,
+    "duration": 10
+  },
+  "render": {
+    "fps": 30,
+    "quality": "standard",
+    "format": "mp4"
+  }
+}

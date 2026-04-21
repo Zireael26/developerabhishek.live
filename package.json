@@ -19,6 +19,8 @@
     "prepare": "simple-git-hooks || true",
     "process:check": "node scripts/process-gate.mjs",
     "stats:fetch": "node scripts/fetch-github-stats.mjs",
+    "render:work": "node scripts/hyperframes/render-all.mjs",
+    "render:posters": "node scripts/hyperframes/generate-posters.mjs",
     "analyze": "ANALYZE=true next build --webpack",
     "test:e2e": "playwright test",
     "test:e2e:install": "playwright install --with-deps"

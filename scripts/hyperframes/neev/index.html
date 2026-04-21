@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>neev · card reel</title>
+<link rel="stylesheet" href="../shared/tokens.css" />
+<link rel="stylesheet" href="../shared/base.css" />
+<style>
+  /* 600×400 card reel — Neev: modular monolith as anchored node graph.
+     Port of components/work/reels.tsx :: neev SVG + 5s loop of packet traffic
+     across the 3 edges, a soft orbit rotation, and a primary-node pulse. */
+
+  #root {
+    background:
+      /* 45° diagonal accent stripes, matching the placeholder SVG */
+      repeating-linear-gradient(
+        45deg,
+        transparent 0 18px,
+        var(--accent-05) 18px 19px
+      ),
+      var(--bg);
+  }
+
+  svg.stage { display: block; width: 100%; height: 100%; }
+
+  /* primary node pulse ring — separate element so it doesn't disturb fill */
+  .pulse-ring {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.2;
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  /* orbit group — 3 satellites + connecting edges rotate very slowly */
+  .orbit { transform-box: fill-box; transform-origin: 300px 200px; }
+</style>
+</head>
+<body>
+  <div id="root" data-composition-id="root" data-width="600" data-height="400" data-start="0" data-duration="5">
+    <div class="clip" data-start="0" data-duration="5" data-track-index="0">
+      <svg class="stage" viewBox="0 0 600 400" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <!-- static base grid stripes are in CSS; SVG carries the live objects -->
+
+        <!-- edges: primary -> sat1, primary -> sat2, sat1 -> sat2 -->
+        <g class="orbit">
+          <line class="edge" id="edge-a" x1="180" y1="200" x2="360" y2="130" />
+          <line class="edge" id="edge-b" x1="180" y1="200" x2="420" y2="280" />
+          <line class="edge" id="edge-c" x1="360" y1="130" x2="420" y2="280" />
+        </g>
+
+        <!-- primary node + pulse rings -->
+        <g id="primary-node">
+          <circle class="pulse-ring" id="pulse-1" cx="180" cy="200" r="38" />
+          <circle class="pulse-ring" id="pulse-2" cx="180" cy="200" r="38" />
+          <circle class="node-core is-primary" cx="180" cy="200" r="38" />
+        </g>
+
+        <!-- satellite nodes (inside orbit so they co-rotate with their edges) -->
+        <g class="orbit">
+          <circle class="node-core" cx="360" cy="130" r="22" />
+          <circle class="node-core" cx="420" cy="280" r="26" />
+        </g>
+
+        <!-- packets: three dots that travel along the edges -->
+        <circle class="packet" id="packet-a" cx="180" cy="200" r="4" />
+        <circle class="packet" id="packet-b" cx="180" cy="200" r="4" />
+        <circle class="packet" id="packet-c" cx="360" cy="130" r="4" />
+      </svg>
+    </div>
+  </div>
+
+  <!-- GSAP — HyperFrames mirrors window.performance.now, so deterministic playback -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/MotionPathPlugin.min.js"></script>
+  <script>
+    gsap.registerPlugin(MotionPathPlugin);
+
+    // Endpoints mirror the SVG coordinates above. Keeping them in JS lets the
+    // timeline stay declarative without re-reading the DOM every frame.
+    const P = { x: 180, y: 200 };   // primary
+    const S1 = { x: 360, y: 130 };  // satellite top-right
+    const S2 = { x: 420, y: 280 };  // satellite bottom-right
+
+    const tl = gsap.timeline({ paused: true });
+
+    // Edge A: primary -> sat1 (and return), loops every 2.5s
+    tl.fromTo('#packet-a',
+      { x: 0, y: 0 },
+      { motionPath: { path: [P, S1, P], curviness: 0 }, duration: 2.5, ease: 'none' },
+      0
+    );
+
+    // Edge B: primary -> sat2 (offset so packets don't collide at origin)
+    tl.fromTo('#packet-b',
+      { x: 0, y: 0 },
+      { motionPath: { path: [P, S2, P], curviness: 0 }, duration: 2.5, ease: 'none' },
+      1.25
+    );
+
+    // Edge C: sat1 <-> sat2 — independent rhythm, full 5s sweep
+    tl.fromTo('#packet-c',
+      { x: 0, y: 0 },
+      { motionPath: { path: [S1, S2, S1], curviness: 0 }, duration: 5, ease: 'none' },
+      0
+    );
+
+    // Primary node pulse rings — stagger so there's always one mid-expand
+    tl.fromTo('#pulse-1',
+      { scale: 1, opacity: 0.6 },
+      { scale: 1.9, opacity: 0, duration: 2.5, ease: 'power1.out', repeat: 1 },
+      0
+    );
+    // pulse-2 duration sized so offset(1.25) + 2×duration = 5s exactly — lands
+    // at opacity 0 at the render boundary, so <video loop> has no pulse seam.
+    tl.fromTo('#pulse-2',
+      { scale: 1, opacity: 0.4 },
+      { scale: 2.2, opacity: 0, duration: 1.875, ease: 'power1.out', repeat: 1 },
+      1.25
+    );
+
+    // Whole orbit drifts 2deg clockwise and back — barely perceptible, but
+    // enough that the still frame never reads as a freeze-frame.
+    tl.to('.orbit',
+      { rotate: 2, duration: 2.5, ease: 'sine.inOut', yoyo: true, repeat: 1 },
+      0
+    );
+
+    // Register for HyperFrames. `paused: true` is required — the renderer seeks
+    // frame-by-frame and calls timeline.totalTime(t) itself.
+    window.__timelines = window.__timelines || {};
+    window.__timelines['root'] = tl;
+  </script>
+</body>
+</html>
