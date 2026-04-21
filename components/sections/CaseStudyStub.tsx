@@ -32,7 +32,7 @@ export function CaseStudyStub({ slug }: { slug: ReelSlug }) {
       <p className="work-stub-dek">{study.dek}</p>
       <p className="work-stub-lede">{study.lede}</p>
       <figure className="work-stub-reel" aria-hidden="true">
-        <Reel slug={slug} />
+        <Reel slug={slug} variant="hero" />
       </figure>
       <dl className="case-spec">
         {study.spec.map((s) => (

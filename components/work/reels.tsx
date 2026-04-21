@@ -1,14 +1,26 @@
 import type { ReactNode } from 'react';
 
 /**
- * SVG reel placeholders — ported verbatim from `_reference/portfolio/index.html`
- * lines 1261–1376. One per case study. Swapped for real HyperFrames video when
- * Abhishek provides the assets (post-launch).
+ * Case-study reels — one per work slug, two variants:
+ *   - `variant="card"`: 600×400, 5s loop, used by the home Work cards.
+ *   - `variant="hero"`: 1600×900, 10s loop, used by the case-study hero band.
+ *
+ * Each reel renders the original SVG as the static floor AND a <video> of the
+ * HyperFrames render on top. The `<video>` is hidden when either:
+ *   - `prefers-reduced-motion: reduce`, or
+ *   - `[data-motion="off"]` (set by the tweaks panel)
+ * …so motion-disabled users never see (or pay bytes for) the animated clip.
+ * Server-only, no client JS — the gate is pure CSS (see `app/globals.css`).
+ *
+ * The MP4s live at `public/video/work/<slug>[-hero].mp4` and are authored
+ * under `scripts/hyperframes/`. See `docs/adr/0008-hyperframes-rendering-pipeline.md`.
  */
+
+type ReelVariant = 'card' | 'hero';
 
 function NeevReel() {
   return (
-    <svg viewBox="0 0 600 400" className="placeholder placeholder-reel">
+    <svg viewBox="0 0 600 400" className="placeholder placeholder-reel reel-fallback">
       <defs>
         <pattern
           id="stripes-neev"
@@ -33,16 +45,13 @@ function NeevReel() {
           fill="none"
         />
       </g>
-      <text x="300" y="370" textAnchor="middle" className="placeholder-label">
-        neev/reel.mp4 · hyperframes
-      </text>
     </svg>
   );
 }
 
 function VeriCiteReel() {
   return (
-    <svg viewBox="0 0 600 400" className="placeholder placeholder-reel">
+    <svg viewBox="0 0 600 400" className="placeholder placeholder-reel reel-fallback">
       <rect width="600" height="400" fill="var(--ink-05)" />
       <g stroke="var(--ink-25)" strokeWidth="0.8" fill="none">
         <path d="M0 120 H600 M0 200 H600 M0 280 H600" />
@@ -52,16 +61,13 @@ function VeriCiteReel() {
         <rect x="230" y="160" width="140" height="80" fill="var(--accent-40)" />
         <rect x="400" y="240" width="140" height="80" fill="var(--ink-15)" />
       </g>
-      <text x="300" y="370" textAnchor="middle" className="placeholder-label">
-        vericite/retrieval-trace.mp4
-      </text>
     </svg>
   );
 }
 
 function BluehostReel() {
   return (
-    <svg viewBox="0 0 600 400" className="placeholder placeholder-reel">
+    <svg viewBox="0 0 600 400" className="placeholder placeholder-reel reel-fallback">
       <rect width="600" height="400" fill="var(--ink-05)" />
       <g>
         <path
@@ -83,16 +89,13 @@ function BluehostReel() {
         <circle cx="280" cy="180" r="4" />
         <circle cx="560" cy="100" r="4" />
       </g>
-      <text x="300" y="380" textAnchor="middle" className="placeholder-label">
-        bluehost/latency-budget.mp4
-      </text>
     </svg>
   );
 }
 
 function CuratReel() {
   return (
-    <svg viewBox="0 0 600 400" className="placeholder placeholder-reel">
+    <svg viewBox="0 0 600 400" className="placeholder placeholder-reel reel-fallback">
       <rect width="600" height="400" fill="var(--ink-05)" />
       <g>
         <rect x="40" y="60" width="520" height="40" fill="var(--ink-15)" />
@@ -102,9 +105,6 @@ function CuratReel() {
         <rect x="40" y="240" width="480" height="28" fill="var(--ink-10)" />
         <rect x="40" y="280" width="380" height="28" fill="var(--ink-10)" />
       </g>
-      <text x="300" y="370" textAnchor="middle" className="placeholder-label">
-        curat.money/compare-table.mp4
-      </text>
     </svg>
   );
 }
@@ -118,7 +118,55 @@ export const REELS: Record<ReelSlug, () => ReactNode> = {
   'curat-money': CuratReel,
 };
 
-export function Reel({ slug }: { slug: ReelSlug }) {
-  const Component = REELS[slug];
-  return <Component />;
+/**
+ * Resolve the MP4 + poster path for a slug/variant. Hero variants append
+ * `-hero`; paths are relative to `/public`.
+ */
+function reelAssetPath(slug: ReelSlug, variant: ReelVariant): { mp4: string; poster: string } {
+  const base = variant === 'hero' ? `${slug}-hero` : slug;
+  return {
+    mp4: `/video/work/${base}.mp4`,
+    poster: `/video/work/${base}.webp`,
+  };
+}
+
+/**
+ * Reel — renders the SVG floor + (when motion is allowed) the HyperFrames
+ * video on top. The video lives behind a `.reel-video` class that `globals.css`
+ * hides under `prefers-reduced-motion: reduce` and `[data-motion="off"]`.
+ */
+export function Reel({
+  slug,
+  variant = 'card',
+}: {
+  slug: ReelSlug;
+  variant?: ReelVariant;
+}) {
+  const Fallback = REELS[slug];
+  const { mp4, poster } = reelAssetPath(slug, variant);
+  // width/height are the intrinsic aspect — the parent figure sizes it via CSS.
+  const w = variant === 'hero' ? 1600 : 600;
+  const h = variant === 'hero' ? 900 : 400;
+
+  return (
+    <>
+      <Fallback />
+      <video
+        className="reel-video"
+        data-variant={variant}
+        data-slug={slug}
+        width={w}
+        height={h}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="none"
+        poster={poster}
+        aria-hidden="true"
+      >
+        <source src={mp4} type="video/mp4" />
+      </video>
+    </>
+  );
 }

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>vericite · card reel</title>
+<link rel="stylesheet" href="../shared/tokens.css" />
+<link rel="stylesheet" href="../shared/base.css" />
+<style>
+  /* 600×400 — citation rows over a faint grid; the center row resolves as a
+     canonical match (fills with --accent-40 and a quiet checkmark trace). */
+
+  svg.stage { display: block; width: 100%; height: 100%; }
+
+  .grid-line {
+    stroke: var(--ink-25);
+    stroke-width: 1;
+  }
+
+  .cite-row {
+    fill: var(--ink-10);
+    stroke: var(--ink-25);
+    stroke-width: 1;
+  }
+  .cite-row.is-match {
+    fill: var(--accent-40);
+    stroke: var(--accent);
+  }
+
+  /* scan line — scans top-to-bottom once per loop, suggesting check in progress */
+  .scan-line {
+    stroke: var(--accent);
+    stroke-width: 1.2;
+    opacity: 0.35;
+  }
+
+  .check-mark {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+</style>
+</head>
+<body>
+  <div id="root" data-composition-id="root" data-width="600" data-height="400" data-start="0" data-duration="5">
+    <div class="clip" data-start="0" data-duration="5" data-track-index="0">
+      <svg class="stage" viewBox="0 0 600 400" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <!-- three baseline grid rules, matching placeholder -->
+        <line class="grid-line" x1="80"  y1="140" x2="520" y2="140" />
+        <line class="grid-line" x1="80"  y1="200" x2="520" y2="200" />
+        <line class="grid-line" x1="80"  y1="260" x2="520" y2="260" />
+
+        <!-- scanning cursor — horizontal beam -->
+        <line class="scan-line" id="scan" x1="80" y1="120" x2="520" y2="120" />
+
+        <!-- three citation candidates -->
+        <rect class="cite-row" id="row-top"
+              x="100" y="110" width="400" height="36" rx="3" />
+        <rect class="cite-row is-match" id="row-mid"
+              x="100" y="174" width="400" height="36" rx="3" />
+        <rect class="cite-row" id="row-bot"
+              x="100" y="238" width="400" height="36" rx="3" />
+
+        <!-- checkmark overlaid on the match — starts hidden, drawn in after pulse -->
+        <path class="check-mark" id="check"
+              d="M 470 190 L 482 202 L 502 182"
+              pathLength="1"
+              stroke-dasharray="1" stroke-dashoffset="1" />
+      </svg>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    // Act 1 (0–1s) — rows slide in from the left, staggered
+    tl.from('#row-top', { x: -60, opacity: 0, duration: 0.6, ease: 'power2.out' }, 0.0);
+    tl.from('#row-mid', { x: -60, opacity: 0, duration: 0.6, ease: 'power2.out' }, 0.15);
+    tl.from('#row-bot', { x: -60, opacity: 0, duration: 0.6, ease: 'power2.out' }, 0.30);
+
+    // Act 2 (1–3s) — scan line sweeps from row-top to row-bot
+    tl.fromTo('#scan',
+      { attr: { y1: 120, y2: 120 }, opacity: 0 },
+      { attr: { y1: 290, y2: 290 }, opacity: 0.35, duration: 2.0, ease: 'none' },
+      1.0
+    );
+
+    // Act 3 (3–3.6s) — match pulse on the middle row
+    tl.to('#row-mid', {
+      scale: 1.03,
+      transformOrigin: '50% 50%',
+      duration: 0.3,
+      ease: 'power1.out',
+      yoyo: true,
+      repeat: 1,
+    }, 3.0);
+
+    // Act 4 (3.4–4s) — checkmark draws in
+    tl.to('#check', { strokeDashoffset: 0, duration: 0.6, ease: 'power2.out' }, 3.4);
+
+    // Reset (4.4–5s) — fade check so the loop can start clean
+    tl.to('#check', { strokeDashoffset: 1, duration: 0.5, ease: 'power2.in' }, 4.4);
+    tl.to('#scan', { opacity: 0, duration: 0.4, ease: 'power1.in' }, 4.5);
+
+    window.__timelines = window.__timelines || {};
+    window.__timelines['root'] = tl;
+  </script>
+</body>
+</html>

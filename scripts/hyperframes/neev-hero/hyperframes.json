@@ -1,0 +1,17 @@
+{
+  "$schema": "https://hyperframes.heygen.com/schema/project.json",
+  "name": "neev-hero",
+  "description": "Neev — case-study hero band. Wider crop, longer drift, low-opacity ambient graph.",
+  "composition": {
+    "id": "root",
+    "width": 1600,
+    "height": 900,
+    "fps": 30,
+    "duration": 10
+  },
+  "render": {
+    "fps": 30,
+    "quality": "standard",
+    "format": "mp4"
+  }
+}

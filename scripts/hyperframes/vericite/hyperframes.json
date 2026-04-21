@@ -1,0 +1,17 @@
+{
+  "$schema": "https://hyperframes.heygen.com/schema/project.json",
+  "name": "vericite-card",
+  "description": "VeriCite — home Work card reel. Citation rows slide in; center row resolves as the canonical match.",
+  "composition": {
+    "id": "root",
+    "width": 600,
+    "height": 400,
+    "fps": 30,
+    "duration": 5
+  },
+  "render": {
+    "fps": 30,
+    "quality": "standard",
+    "format": "mp4"
+  }
+}

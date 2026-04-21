@@ -1,0 +1,37 @@
+/* =====================================================================
+   scripts/hyperframes/shared/tokens.css
+   --------------------------------------------------------------------
+   Design tokens mirrored from app/globals.css so HyperFrames compositions
+   render in the same parchment-on-forest palette as the live site.
+   Intentionally a SUBSET of globals.css — only the tokens a reel or hero
+   loop actually references. If a token drifts here, drift it in globals.
+   --------------------------------------------------------------------- */
+
+:root {
+  /* parchment base */
+  --bg: #F5F1E8;
+  --bg-2: #EEE8D9;
+  --ink: #1A1A1E;
+  --ink-90: #2A2A2E;
+  --ink-70: rgba(26, 26, 30, 0.72);
+  --ink-60: rgba(26, 26, 30, 0.55);
+  --ink-40: rgba(26, 26, 30, 0.38);
+  --ink-25: rgba(26, 26, 30, 0.22);
+  --ink-15: rgba(26, 26, 30, 0.13);
+  --ink-10: rgba(26, 26, 30, 0.08);
+  --ink-05: rgba(26, 26, 30, 0.045);
+  --hairline: rgba(26, 26, 30, 0.18);
+
+  /* single forest accent */
+  --accent: #13423D;
+  --accent-60: color-mix(in oklab, var(--accent) 60%, transparent);
+  --accent-40: color-mix(in oklab, var(--accent) 40%, transparent);
+  --accent-15: color-mix(in oklab, var(--accent) 15%, transparent);
+  --accent-05: color-mix(in oklab, var(--accent) 5%, transparent);
+
+  --motion-node: oklch(0.78 0.11 150);
+
+  /* typography — self-hosted on the site, remote here for rendering */
+  --serif: 'Newsreader', ui-serif, Georgia, serif;
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+}

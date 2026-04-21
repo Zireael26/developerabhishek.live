@@ -1,0 +1,67 @@
+/* =====================================================================
+   scripts/hyperframes/shared/base.css
+   --------------------------------------------------------------------
+   Composition-level reset + helpers. Each composition's #root is sized
+   via data-width / data-height attributes; this file just normalises
+   the box model and exposes a few layout helpers shared across reels.
+   --------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--serif);
+  /* HyperFrames captures from a headless viewport — antialiasing matters */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+#root {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+/* Every timed element uses the HyperFrames `clip` class so the renderer
+   knows to seek it frame-by-frame. Our timelines live on GSAP, so the
+   class is mostly a signal. */
+.clip {
+  position: absolute;
+  inset: 0;
+  will-change: transform, opacity;
+}
+
+/* Reusable node/edge primitives — shared vocabulary across the 4 reels */
+.node-core {
+  fill: var(--accent);
+}
+.node-core.is-primary {
+  fill: var(--accent);
+}
+.edge {
+  stroke: var(--accent-60);
+  stroke-width: 1.2;
+  fill: none;
+}
+.edge.is-dashed {
+  stroke: var(--ink-40);
+  stroke-dasharray: 3 4;
+  stroke-width: 1;
+}
+
+/* packet — small dot that rides an edge */
+.packet {
+  fill: var(--motion-node);
+}
+
+/* reduced-motion is not the renderer's concern — the consumer swaps to
+   the static SVG fallback at the React layer. Compositions always animate. */

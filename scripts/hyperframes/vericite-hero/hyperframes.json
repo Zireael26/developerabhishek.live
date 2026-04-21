@@ -1,0 +1,17 @@
+{
+  "$schema": "https://hyperframes.heygen.com/schema/project.json",
+  "name": "vericite-hero",
+  "description": "VeriCite — case-study hero band. Column of candidate rows; scan sweeps top-to-bottom; one match per cycle.",
+  "composition": {
+    "id": "root",
+    "width": 1600,
+    "height": 900,
+    "fps": 30,
+    "duration": 10
+  },
+  "render": {
+    "fps": 30,
+    "quality": "standard",
+    "format": "mp4"
+  }
+}

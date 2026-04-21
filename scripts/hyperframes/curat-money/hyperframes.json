@@ -1,0 +1,17 @@
+{
+  "$schema": "https://hyperframes.heygen.com/schema/project.json",
+  "name": "curat-money-card",
+  "description": "curat.money — compare-table rows reveal top-down; a selection cursor settles on the best row.",
+  "composition": {
+    "id": "root",
+    "width": 600,
+    "height": 400,
+    "fps": 30,
+    "duration": 5
+  },
+  "render": {
+    "fps": 30,
+    "quality": "standard",
+    "format": "mp4"
+  }
+}
