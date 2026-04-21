@@ -24,12 +24,18 @@ test.describe('hero canvas + wanderer', () => {
     page,
   }) => {
     await page.goto('/');
-    // SVG fallback ships on SSR, always present.
+    // SVG fallback ships on SSR, always attached. Once the R3F canvas mounts,
+    // AgentGraphClient flags the scene-frame with `data-canvas-active="true"`
+    // and the SVG is hidden (display: none) so the two layers don't composite
+    // through the transparent WebGL canvas — so assert presence, not paint.
     const sceneFrame = page.locator('.scene-frame');
     await expect(sceneFrame).toBeVisible();
-    await expect(sceneFrame.locator('.scene-svg')).toBeVisible();
+    await expect(sceneFrame.locator('.scene-svg')).toBeAttached();
     // Canvas host is injected client-side by AgentGraphClient.
     await expect(sceneFrame.locator('.scene-canvas-host')).toBeAttached({
+      timeout: 5000,
+    });
+    await expect(sceneFrame).toHaveAttribute('data-canvas-active', 'true', {
       timeout: 5000,
     });
   });
@@ -41,8 +47,9 @@ test.describe('hero canvas + wanderer', () => {
     await expect(page.locator('#companion')).toBeAttached();
     await expect(page.locator('#companion .companion-svg')).toBeAttached();
     // WandererCrane appends its canvas to #companion on successful WebGL
-    // init. If WebGL fails the 80ms bail-out removes it and re-shows the
-    // SVG. Either way, no console errors.
+    // init. If WebGL fails the try/catch around `new THREE.WebGLRenderer`
+    // tears the canvas down and the SVG fallback stays. Either way, no
+    // console errors.
     await page.waitForTimeout(1500);
   });
 
