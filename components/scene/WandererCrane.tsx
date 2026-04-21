@@ -14,7 +14,7 @@ import * as THREE from 'three';
 //
 // Design invariants:
 //   - bails out to the SVG fallback if `prefers-reduced-motion`,
-//     `[data-motion="off"]`, WebGL fails, or first-frame > 80ms
+//     `[data-motion="off"]`, or WebGL context creation throws
 //   - canvas sits inside `#companion` (the Wanderer server component
 //     ships the host div + fallback SVG)
 //   - eight POSES drive per-section placement; lerp toward target each
@@ -314,20 +314,10 @@ export default function WandererCrane() {
       rafId = requestAnimationFrame(frame);
     };
 
-    // WebGL bail-out: if first frame takes > 80ms, fall back to the SVG.
-    const t0 = performance.now();
+    // Warm-up render so the first visible frame has shaders compiled before
+    // the SVG fallback is hidden. WebGL context creation above is already
+    // guarded by try/catch — the correct failure mode for unavailable WebGL.
     renderer.render(scene, camera);
-    if (performance.now() - t0 > 80) {
-      observer.disconnect();
-      mo.disconnect();
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('pointermove', onPointerMove);
-      window.removeEventListener('resize', resize);
-      crane.dispose();
-      renderer.dispose();
-      host.removeChild(canvas);
-      return;
-    }
     rafId = requestAnimationFrame(frame);
 
     // When the canvas is mounted, hide the SVG fallback so both don't
