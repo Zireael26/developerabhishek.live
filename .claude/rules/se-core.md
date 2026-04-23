@@ -1,0 +1,1 @@
+/Users/abhishek/Documents/Claude/Projects/Software Engineering Core/core-rules/CLAUDE.md

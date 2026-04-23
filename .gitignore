@@ -39,6 +39,8 @@ next-env.d.ts
 
 # local agent/tooling config (personal, not project-shared)
 .claude/
+!.claude/rules/
+!.claude/rules/se-core.md
 context-log.md
 
 # Playwright
