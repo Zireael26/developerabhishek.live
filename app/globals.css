@@ -506,9 +506,24 @@ code { font-family: var(--mono); font-size: 0.92em; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 900px) {
-  .hero-grid { grid-template-columns: 1fr; min-height: auto; }
-  .hero-scene { order: -1; max-width: 520px; }
-  .hero-facts { grid-template-columns: 1fr; gap: 16px; }
+  .hero-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    min-height: auto;
+  }
+  .hero-copy { display: contents; }
+  .hero-scene {
+    order: 1;
+    max-width: 520px;
+    margin: 0 0 32px;
+  }
+  .hero-facts {
+    order: 2;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 }
 
 /* ---------- about (02) ---------- */
