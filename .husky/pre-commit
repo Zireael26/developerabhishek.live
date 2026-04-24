@@ -1,34 +1,27 @@
 #!/usr/bin/env sh
 # SE Core canonical pre-commit.
-# Runs lint-staged if installed; else project `lint` script; else skips.
+# Runs lint-staged if installed; otherwise skips.
+# Project-specific appendix below runs the process-gate.
 
 set -e
 
 command -v node >/dev/null 2>&1 || { echo "[pre-commit] node unavailable; skipping"; exit 0; }
 
-if   [ -f pnpm-lock.yaml ];                 then PM=pnpm
-elif [ -f bun.lock ] || [ -f bun.lockb ];   then PM=bun
-elif [ -f yarn.lock ];                      then PM=yarn
-else                                             PM=npm
-fi
-
 has_script() {
   node -e "const p=require('./package.json');process.exit((p.scripts||{})['$1']?0:1)" 2>/dev/null
 }
 run_script() {
-  case "$PM" in
-    pnpm|bun|yarn) "$PM" run "$1" ;;
-    npm)           npm run "$1" ;;
-  esac
+  if   [ -f pnpm-lock.yaml ];                 then pnpm run "$1"
+  elif [ -f bun.lock ] || [ -f bun.lockb ];   then bun run "$1"
+  elif [ -f yarn.lock ];                      then yarn run "$1"
+  else                                             npm run "$1"
+  fi
 }
 
 if [ -x ./node_modules/.bin/lint-staged ]; then
   ./node_modules/.bin/lint-staged
-elif has_script lint; then
-  echo "[pre-commit] no lint-staged; running project 'lint' script"
-  run_script lint
 else
-  echo "[pre-commit] no lint-staged or lint script configured - skipping"
+  echo "[pre-commit] lint-staged not installed - skipping (install + configure lint-staged for per-file linting)"
 fi
 
 # Project-specific: migrated from simple-git-hooks on 2026-04-24.
