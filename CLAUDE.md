@@ -1,6 +1,6 @@
 # akaushik.org
 
-Personal portfolio site. Next.js 16 + React 19 + Tailwind 4 + Three.js / Framer Motion for motion work. Domain history: this repo lived under `developerabhishek.live` until 2026-04-20; canonical is now `akaushik.org` (`akaushik.dev` redirects). Decision in `docs/adr/0003-domain-and-canonical-url.md`. The repo + directory rename happens post Phase-1 handoff; until then the on-disk path stays `developerabhishek.live` — do not assume otherwise.
+Personal portfolio site. Next.js 16 + React 19 + Tailwind 4 + Three.js / Framer Motion for motion work. Domain history: this repo lived under `developerabhishek.live` until 2026-04-20; canonical is now `akaushik.org` (`akaushik.dev` redirects). Decision in `docs/adr/0003-domain-and-canonical-url.md`. Directory + GitHub repo rename landed 2026-04-24; on-disk path and remote are both `akaushik.org` now.
 
 ---
 

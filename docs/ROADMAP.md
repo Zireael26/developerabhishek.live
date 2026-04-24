@@ -80,4 +80,4 @@ A living document. Phases are ordered by dependency, not calendar. Each phase is
 - [ ] `/api/docs` human-readable page rendering the OpenAPI spec (deferred with note in Phase 4.4 PR)
 - [ ] MCP server for v1.1 — `/api/mcp` with `lookup_case_study` + `get_availability` tools
 - [ ] Abhishek's edit pass on `About.tsx` prose + case-study honest-scope paragraphs + curat.money framing check
-- [ ] Directory + repo rename `developerabhishek.live` → `akaushik.org`; flip repo visibility to public; Cloudflare Email Routing for `hello@akaushik.org`; legacy-domain 308 via `vercel.json`; social-bio sync
+- [x] Directory + repo rename `developerabhishek.live` → `akaushik.org` (2026-04-24); flip repo visibility to public; Cloudflare Email Routing for `hello@akaushik.org`; legacy-domain 308 via `vercel.json`; social-bio sync
