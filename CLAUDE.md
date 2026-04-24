@@ -8,7 +8,7 @@ Personal portfolio site. Next.js 16 + React 19 + Tailwind 4 + Three.js / Framer 
 
 Inherit the full Software Engineering Core rule set:
 
-@/Users/abhishek/Documents/Claude/Projects/Software Engineering Core/core-rules/CLAUDE.md
+@/Users/abhishek/projects/se-core/core-rules/CLAUDE.md
 
 Everything below is **project-specific** and extends the parent. If a rule below conflicts with the parent, the parent wins — raise the conflict with me instead of working around it.
 
