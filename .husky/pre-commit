@@ -1,8 +1,5 @@
 #!/usr/bin/env sh
-# SE Core canonical pre-commit.
-# Runs lint-staged if installed; otherwise skips.
-# Project-specific appendix below runs the process-gate.
-
+# SE Core canonical pre-commit + akaushik.org project appendix.
 set -e
 
 command -v node >/dev/null 2>&1 || { echo "[pre-commit] node unavailable; skipping"; exit 0; }
@@ -21,11 +18,7 @@ run_script() {
 if [ -x ./node_modules/.bin/lint-staged ]; then
   ./node_modules/.bin/lint-staged
 else
-  echo "[pre-commit] lint-staged not installed - skipping (install + configure lint-staged for per-file linting)"
+  echo "[pre-commit] lint-staged not installed - skipping"
 fi
 
-# Project-specific: migrated from simple-git-hooks on 2026-04-24.
-# Runs process-gate check (node scripts/process-gate.mjs).
-if has_script process:check; then
-  run_script process:check
-fi
+if has_script process:check; then run_script process:check; fi
