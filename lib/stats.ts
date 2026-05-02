@@ -4,8 +4,8 @@ export type StatsRepo = {
   name: string;
   label: string;
   url: string;
-  commits12mo: number;
-  lastCommit: string;
+  commits12mo: number | null;
+  lastCommit: string | null;
 };
 
 export type Stats = {
