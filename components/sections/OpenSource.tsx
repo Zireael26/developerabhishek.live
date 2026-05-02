@@ -21,7 +21,10 @@ function formatRelativeDays(iso: string): string {
 export function OpenSource() {
   const stats = getStats();
   const max = Math.max(...stats.weeks, 1);
-  const maxCommits = Math.max(...stats.repos.map((r) => r.commits12mo), 1);
+  const maxCommits = Math.max(
+    ...stats.repos.map((r) => r.commits12mo ?? 0),
+    1,
+  );
 
   return (
     <section
@@ -97,7 +100,8 @@ export function OpenSource() {
         </figure>
         <ul className="os-repos" role="list">
           {stats.repos.map((repo) => {
-            const percent = (repo.commits12mo / maxCommits) * 100;
+            const commits = repo.commits12mo ?? 0;
+            const percent = (commits / maxCommits) * 100;
             return (
               <li className="os-repo" key={repo.name}>
                 <span className="os-repo-name">
@@ -113,8 +117,7 @@ export function OpenSource() {
                   <span style={{ width: `${percent}%` }} />
                 </div>
                 <span className="os-repo-count">
-                  <em>{repo.commits12mo.toLocaleString('en-US')}</em> commits ·
-                  last 12mo
+                  <em>{commits.toLocaleString('en-US')}</em> commits · last 12mo
                 </span>
               </li>
             );
