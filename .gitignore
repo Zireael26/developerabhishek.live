@@ -48,3 +48,7 @@ context-log.md
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+!.claude/skills/
+!.claude/skills/process-gate
+!.claude/skills/process-gate-local/
+!.claude/skills/process-gate-local/local.config.sh
