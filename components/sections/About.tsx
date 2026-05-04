@@ -22,9 +22,6 @@ export function About() {
             sizes="(max-width: 800px) 320px, 34vw"
             className="about-portrait-image"
           />
-          <figcaption>
-            Abhishek, 2026 — candid, working-at-desk framing.
-          </figcaption>
         </figure>
         <div className="about-prose">
           <p className="about-kicker">The short version</p>
