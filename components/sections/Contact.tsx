@@ -58,9 +58,18 @@ export function Contact() {
               →
             </span>
           </a>
-          <a className="btn btn-ghost" href="#">
+          <button
+            type="button"
+            className="btn btn-ghost btn-calendar-disabled"
+            disabled
+            aria-disabled="true"
+            aria-describedby="calendar-placeholder-status"
+          >
             Book a 20-minute call
-          </a>
+            <span id="calendar-placeholder-status" className="btn-status">
+              Calendar pending
+            </span>
+          </button>
         </div>
         <dl className="contact-links">
           {CONTACT_LINKS.map((link) => (

@@ -1,0 +1,24 @@
+/* Local copy for HyperFrames validate/render, which serves the project dir. */
+:root {
+  --bg: #f5f1e8;
+  --bg-2: #eee8d9;
+  --ink: #1a1a1e;
+  --ink-90: #2a2a2e;
+  --ink-70: rgba(26, 26, 30, 0.72);
+  --ink-60: rgba(26, 26, 30, 0.55);
+  --ink-40: rgba(26, 26, 30, 0.38);
+  --ink-25: rgba(26, 26, 30, 0.22);
+  --ink-15: rgba(26, 26, 30, 0.13);
+  --ink-10: rgba(26, 26, 30, 0.08);
+  --ink-05: rgba(26, 26, 30, 0.045);
+  --hairline: rgba(26, 26, 30, 0.18);
+  --accent: #13423d;
+  --accent-ink: #f5f1e8;
+  --accent-60: color-mix(in oklab, var(--accent) 60%, transparent);
+  --accent-40: color-mix(in oklab, var(--accent) 40%, transparent);
+  --accent-15: color-mix(in oklab, var(--accent) 15%, transparent);
+  --accent-05: color-mix(in oklab, var(--accent) 5%, transparent);
+  --motion-node: oklch(0.78 0.11 150);
+  --serif: 'Newsreader', ui-serif, Georgia, serif;
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+}

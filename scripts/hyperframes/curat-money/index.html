@@ -2,111 +2,202 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>curat-money · card reel</title>
-<link rel="stylesheet" href="../shared/tokens.css" />
-<link rel="stylesheet" href="../shared/base.css" />
+<title>curat.money · card reel</title>
 <style>
-  /* 600×400 — compare-table rows reveal top-down; a selection highlight glides
-     down and settles on the "best" row (row 3 by design). */
+  :root {
+    --bg: #f5f1e8;
+    --bg-2: #eee8d9;
+    --ink: #1a1a1e;
+    --ink-70: rgba(26, 26, 30, 0.72);
+    --ink-60: rgba(26, 26, 30, 0.55);
+    --hairline: rgba(26, 26, 30, 0.18);
+    --accent: #13423d;
+    --accent-60: color-mix(in oklab, var(--accent) 60%, transparent);
+    --motion-node: oklch(0.78 0.11 150);
+    --mono: 'JetBrains Mono', monospace;
+  }
+  *,
+  *::before,
+  *::after { box-sizing: border-box; }
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+  }
+  #root {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    background:
+      linear-gradient(90deg, rgba(19, 66, 61, 0.07) 0 1px, rgba(19, 66, 61, 0) 1px 78px),
+      linear-gradient(0deg, rgba(26, 26, 30, 0.052) 0 1px, rgba(26, 26, 30, 0) 1px 60px),
+      var(--bg);
+  }
 
   svg.stage { display: block; width: 100%; height: 100%; }
+  .clip { position: absolute; inset: 0; will-change: transform, opacity; }
 
-  .header-bar {
-    fill: var(--accent);
-    opacity: 0.08;
+  .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 650;
+    fill: var(--ink);
+    letter-spacing: 0.02em;
   }
-  .header-tick {
-    stroke: var(--ink-25);
+  .micro {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    fill: var(--ink-70);
+    letter-spacing: 0.02em;
+  }
+  .provider,
+  .normalizer,
+  .table,
+  .verify {
+    fill: var(--bg-2);
+    stroke: var(--hairline);
     stroke-width: 1;
   }
-
-  .cmp-row {
-    fill: var(--ink-05);
-    stroke: var(--ink-15);
+  .row {
+    fill: var(--bg);
+    stroke: var(--hairline);
     stroke-width: 1;
   }
-
-  .cmp-bar {
-    fill: var(--accent-40);
+  .row.is-selected,
+  .verify.is-active {
+    fill: rgba(19, 66, 61, 0.14);
+    stroke: var(--accent);
   }
-
+  .edge-flow {
+    fill: none;
+    stroke: rgba(19, 66, 61, 0.45);
+    stroke-width: 1.4;
+    stroke-linecap: round;
+  }
+  .packet { fill: var(--motion-node); }
+  .check {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
   .selector {
     fill: none;
     stroke: var(--accent);
     stroke-width: 1.5;
-    rx: 4;
   }
 </style>
 </head>
 <body>
-  <div id="root" data-composition-id="root" data-width="600" data-height="400" data-start="0" data-duration="5">
-    <div class="clip" data-start="0" data-duration="5" data-track-index="0">
+  <div id="root" data-composition-id="root" data-width="600" data-height="400" data-start="0" data-duration="5" data-track-index="0">
+    <div id="curat-money-card-scene" class="clip" data-start="0" data-duration="5" data-track-index="1">
       <svg class="stage" viewBox="0 0 600 400" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-        <!-- compare table header -->
-        <rect class="header-bar" x="70" y="70" width="460" height="34" rx="3" />
-        <line class="header-tick" x1="240" y1="70" x2="240" y2="104" />
-        <line class="header-tick" x1="360" y1="70" x2="360" y2="104" />
-        <line class="header-tick" x1="460" y1="70" x2="460" y2="104" />
+        <path class="edge-flow" id="scrape-a" d="M150 82 C190 92 210 112 244 138" />
+        <path class="edge-flow" id="scrape-b" d="M150 174 C190 168 214 158 244 144" />
+        <path class="edge-flow" id="scrape-c" d="M150 266 C192 236 216 186 244 150" />
+        <path class="edge-flow" id="normalized" d="M348 144 C388 158 414 178 438 208" />
+        <path class="edge-flow" id="verified" d="M438 282 C396 320 336 332 274 316" />
 
-        <!-- five rows, staggered widths to hint at differing offer shapes -->
-        <g id="row-1">
-          <rect class="cmp-row" x="70"  y="118" width="460" height="26" rx="3" />
-          <rect class="cmp-bar" x="250" y="124" width="72"  height="14" rx="2" />
-        </g>
-        <g id="row-2">
-          <rect class="cmp-row" x="70"  y="156" width="460" height="26" rx="3" />
-          <rect class="cmp-bar" x="250" y="162" width="50"  height="14" rx="2" />
-        </g>
-        <g id="row-3">
-          <rect class="cmp-row" x="70"  y="194" width="460" height="26" rx="3" />
-          <rect class="cmp-bar" x="250" y="200" width="96"  height="14" rx="2" />
-        </g>
-        <g id="row-4">
-          <rect class="cmp-row" x="70"  y="232" width="460" height="26" rx="3" />
-          <rect class="cmp-bar" x="250" y="238" width="60"  height="14" rx="2" />
-        </g>
-        <g id="row-5">
-          <rect class="cmp-row" x="70"  y="270" width="460" height="26" rx="3" />
-          <rect class="cmp-bar" x="250" y="276" width="40"  height="14" rx="2" />
+        <g id="providers">
+          <rect class="provider" x="48" y="54" width="102" height="56" rx="7" />
+          <text class="label" x="70" y="84">BANK</text>
+          <text class="micro" x="70" y="102">scrape</text>
+          <rect class="provider" x="48" y="146" width="102" height="56" rx="7" />
+          <text class="label" x="70" y="176">BROKER</text>
+          <text class="micro" x="70" y="194">feed</text>
+          <rect class="provider" x="48" y="238" width="102" height="56" rx="7" />
+          <text class="label" x="70" y="268">AMC</text>
+          <text class="micro" x="70" y="286">facts</text>
         </g>
 
-        <!-- selector rectangle — starts hidden, glides from row 1 to row 3 -->
-        <rect class="selector" id="selector"
-              x="66" y="114" width="468" height="34" rx="4" opacity="0" />
+        <g id="normalizer">
+          <rect class="normalizer" x="244" y="104" width="104" height="86" rx="8" />
+          <text class="label" x="266" y="136">NORMAL</text>
+          <text class="label" x="266" y="154">FORM</text>
+          <text class="micro" x="266" y="176">fees -> bps</text>
+        </g>
+
+        <g id="table">
+          <rect class="table" x="420" y="190" width="132" height="120" rx="8" />
+          <text class="label" x="446" y="216">CUSTODY</text>
+          <rect class="row" x="438" y="230" width="94" height="18" rx="3" />
+          <text class="micro" x="448" y="243">direct 12bps</text>
+          <rect class="row" x="438" y="254" width="94" height="18" rx="3" />
+          <text class="micro" x="448" y="267">held by bank</text>
+          <rect class="row is-selected" x="438" y="278" width="94" height="18" rx="3" />
+          <text class="micro" x="448" y="291">verified</text>
+          <rect class="selector" id="selector" x="434" y="226" width="102" height="26" rx="4" opacity="0" />
+        </g>
+
+        <g id="verify">
+          <rect class="verify" x="182" y="286" width="112" height="62" rx="7" />
+          <text class="label" x="206" y="316">CHECKS</text>
+          <path class="check" id="verify-check" d="M206 332 L214 340 L232 322" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" />
+          <text class="micro" x="238" y="337">source ok</text>
+        </g>
+
+        <circle class="packet" id="packet-a" cx="150" cy="82" r="5" data-layout-allow-overflow />
+        <circle class="packet" id="packet-b" cx="150" cy="174" r="5" data-layout-allow-overflow />
+        <circle class="packet" id="packet-c" cx="150" cy="266" r="5" data-layout-allow-overflow />
+        <circle class="packet" id="packet-d" cx="348" cy="144" r="5" data-layout-allow-overflow />
+        <circle class="packet" id="packet-e" cx="438" cy="282" r="5" data-layout-allow-overflow />
       </svg>
     </div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/MotionPathPlugin.min.js"></script>
   <script>
+    gsap.registerPlugin(MotionPathPlugin);
+
     const tl = gsap.timeline({ paused: true });
+    tl.from('#providers .provider', { x: -22, opacity: 0, duration: 0.38, stagger: 0.12, ease: 'power3.out' }, 0.15);
+    tl.from('#normalizer', { scale: 0.94, opacity: 0, duration: 0.48, ease: 'back.out(1.35)' }, 0.62);
+    tl.from('#table', { x: 24, opacity: 0, duration: 0.5, ease: 'expo.out' }, 0.96);
+    tl.from('#verify', { y: 20, opacity: 0, duration: 0.44, ease: 'power2.out' }, 1.22);
 
-    // Act 1 (0–1.5s) — rows fade in top-to-bottom with small y offset
-    tl.from('#row-1', { y: 8, opacity: 0, duration: 0.35, ease: 'power2.out' }, 0.05);
-    tl.from('#row-2', { y: 8, opacity: 0, duration: 0.35, ease: 'power2.out' }, 0.20);
-    tl.from('#row-3', { y: 8, opacity: 0, duration: 0.35, ease: 'power2.out' }, 0.35);
-    tl.from('#row-4', { y: 8, opacity: 0, duration: 0.35, ease: 'power2.out' }, 0.50);
-    tl.from('#row-5', { y: 8, opacity: 0, duration: 0.35, ease: 'power2.out' }, 0.65);
-
-    // Act 2 (1.5–3s) — selector appears on row 1 and glides to row 3 (best)
-    tl.to('#selector', { opacity: 1, duration: 0.3, ease: 'power2.out' }, 1.5);
-    tl.fromTo('#selector',
-      { attr: { y: 114 } },
-      { attr: { y: 190 }, duration: 1.2, ease: 'power2.inOut' },
-      1.8
-    );
-
-    // Act 3 (3–3.5s) — best-row bar gives a small nudge to signal selection
-    tl.to('#row-3 .cmp-bar', {
-      attr: { width: 112 },
-      duration: 0.5,
-      ease: 'power2.out',
-      yoyo: true,
-      repeat: 1,
-    }, 3.0);
-
-    // Reset (4.3–5s) — selector fades so the loop starts clean
-    tl.to('#selector', { opacity: 0, duration: 0.5, ease: 'power1.in' }, 4.3);
+    tl.fromTo('#packet-a', { opacity: 0 }, {
+      opacity: 1,
+      motionPath: { path: '#scrape-a', align: '#scrape-a', alignOrigin: [0.5, 0.5] },
+      duration: 0.72,
+      ease: 'power1.inOut',
+    }, 1.25);
+    tl.fromTo('#packet-b', { opacity: 0 }, {
+      opacity: 1,
+      motionPath: { path: '#scrape-b', align: '#scrape-b', alignOrigin: [0.5, 0.5] },
+      duration: 0.72,
+      ease: 'power2.inOut',
+    }, 1.48);
+    tl.fromTo('#packet-c', { opacity: 0 }, {
+      opacity: 1,
+      motionPath: { path: '#scrape-c', align: '#scrape-c', alignOrigin: [0.5, 0.5] },
+      duration: 0.72,
+      ease: 'power3.inOut',
+    }, 1.72);
+    tl.to('#normalizer .normalizer', { fill: 'rgba(19, 66, 61, 0.14)', stroke: '#13423D', duration: 0.25 }, 2.35);
+    tl.fromTo('#packet-d', { opacity: 0 }, {
+      opacity: 1,
+      motionPath: { path: '#normalized', align: '#normalized', alignOrigin: [0.5, 0.5] },
+      duration: 0.9,
+      ease: 'power1.inOut',
+    }, 2.48);
+    tl.to('#selector', { opacity: 1, duration: 0.25, ease: 'power2.out' }, 3.18);
+    tl.to('#selector', { attr: { y: 274 }, duration: 0.58, ease: 'power2.inOut' }, 3.45);
+    tl.fromTo('#packet-e', { opacity: 0 }, {
+      opacity: 1,
+      motionPath: { path: '#verified', align: '#verified', alignOrigin: [0.5, 0.5] },
+      duration: 0.72,
+      ease: 'power3.inOut',
+    }, 3.78);
+    tl.to('#verify .verify', { fill: 'rgba(19, 66, 61, 0.14)', stroke: '#13423D', duration: 0.24 }, 4.22);
+    tl.to('#verify-check', { strokeDashoffset: 0, duration: 0.38, ease: 'power2.out' }, 4.32);
+    tl.to(['#packet-a', '#packet-b', '#packet-c', '#packet-d', '#packet-e'], { opacity: 0, duration: 0.2 }, 4.7);
 
     window.__timelines = window.__timelines || {};
     window.__timelines['root'] = tl;

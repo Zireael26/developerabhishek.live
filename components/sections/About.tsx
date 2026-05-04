@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 import { SectionHeader } from './SectionHeader';
 
 export function About() {
@@ -11,43 +13,15 @@ export function About() {
     >
       <SectionHeader num="02" title="About" />
       <div className="about-grid">
-        <figure className="about-portrait" aria-hidden="true">
-          <svg
-            viewBox="0 0 320 400"
-            className="placeholder placeholder-portrait"
-          >
-            <defs>
-              <pattern
-                id="stripes-portrait"
-                width="8"
-                height="8"
-                patternUnits="userSpaceOnUse"
-                patternTransform="rotate(45)"
-              >
-                <line
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2="8"
-                  stroke="var(--ink-15)"
-                  strokeWidth="3"
-                />
-              </pattern>
-            </defs>
-            <rect width="320" height="400" fill="var(--ink-05)" />
-            <rect width="320" height="400" fill="url(#stripes-portrait)" />
-            <text x="160" y="200" textAnchor="middle" className="placeholder-label">
-              portrait.jpg
-            </text>
-            <text
-              x="160"
-              y="222"
-              textAnchor="middle"
-              className="placeholder-sublabel"
-            >
-              about/abhishek.webp · 4:5
-            </text>
-          </svg>
+        <figure className="about-portrait">
+          <Image
+            src="/images/about/abhishek.webp"
+            alt="Portrait of Abhishek Kaushik"
+            width={768}
+            height={960}
+            sizes="(max-width: 800px) 320px, 34vw"
+            className="about-portrait-image"
+          />
           <figcaption>
             Abhishek, 2026 — candid, working-at-desk framing.
           </figcaption>

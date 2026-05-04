@@ -294,6 +294,23 @@ code { font-family: var(--mono); font-size: 0.92em; }
   border-color: var(--hairline);
 }
 .btn-ghost:hover { border-color: var(--ink); }
+.btn:disabled {
+  cursor: not-allowed;
+  color: var(--ink-60);
+  border-color: var(--hairline);
+  opacity: 0.76;
+}
+.btn:disabled:hover { border-color: var(--hairline); }
+.btn-calendar-disabled { background: transparent; }
+.btn-status {
+  padding-left: 10px;
+  border-left: 1px solid var(--hairline);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-55);
+}
 .btn-lg { padding: 18px 26px; font-size: 16px; }
 
 /* ---------- footer ---------- */
@@ -535,6 +552,18 @@ code { font-family: var(--mono); font-size: 0.92em; }
   grid-template-columns: minmax(240px, 1fr) minmax(0, 1.8fr);
   gap: clamp(32px, 6vw, 88px);
   align-items: start;
+}
+.about-portrait {
+  margin: 0;
+}
+.about-portrait-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border: 1px solid var(--hairline);
+  filter: saturate(0.9) contrast(1.02);
 }
 .about-portrait figcaption {
   margin-top: 12px;
@@ -1115,13 +1144,44 @@ code { font-family: var(--mono); font-size: 0.92em; }
   display: block;
 }
 
+.media-loop {
+  position: relative;
+  margin: 0 0 clamp(32px, 5vw, 56px);
+  border: 1px solid var(--hairline);
+  overflow: hidden;
+  aspect-ratio: 300 / 169;
+  background: var(--bg);
+}
+.media-loop-fallback,
+.media-loop-video {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.media-loop-fallback { object-fit: cover; }
+.media-loop-video {
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+}
+.writing-detail-loop {
+  max-width: 960px;
+  margin-inline: auto;
+}
+.work-inline-loop {
+  max-width: 1040px;
+  margin-inline: auto;
+}
+
 /* Motion gating: hide the reel videos under either gate. The SVG floor
    underneath stays visible, so motion-off users get the same static
-   vocabulary they had before HyperFrames was wired in. preload="none" on
-   the <video> means no bytes are pulled when hidden. */
-[data-motion='off'] .reel-video { display: none; }
+   vocabulary they had before HyperFrames was wired in. The <source media>
+   query prevents OS reduced-motion browsers from selecting MP4 bytes. */
+[data-motion='off'] .reel-video,
+[data-motion='off'] .media-loop-video { display: none; }
 @media (prefers-reduced-motion: reduce) {
-  .reel-video { display: none; }
+  .reel-video,
+  .media-loop-video { display: none; }
 }
 .work-detail-body {
   max-width: 68ch;
@@ -1397,4 +1457,3 @@ code { font-family: var(--mono); font-size: 0.92em; }
   font-family: var(--mono); font-size: 13px;
   color: var(--ink-70);
 }
-
