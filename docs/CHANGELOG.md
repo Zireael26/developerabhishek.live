@@ -5,6 +5,7 @@ All notable changes to akaushik.org (legacy host: developerabhishek.live, sunset
 ## [Unreleased]
 
 ### Changed
+- 2026-05-04 — Dependency vulnerability remediation from the SE Core scheduled audit (`audits/2026-05-04-dep-vulnerabilities.md`): raise the direct `postcss` floor to `^8.5.10` and pin the pnpm override to `8.5.10`, clearing GHSA-qx2v-qp2m-jg93 without changing the app surface. This is a mechanical patch within the existing Next/Tailwind/PostCSS stack governed by ADR-0001 and the process-gate policy in ADR-0002.
 - 2026-05-02 — Patch-chase: `next` `16.2.0 → 16.2.4`, `tailwindcss` `4.2.0 → 4.2.4`, `@tailwindcss/postcss` `4.2.0 → 4.2.4`, `eslint-config-next` `16.2.0 → 16.2.4` (root `package.json` + `pnpm-lock.yaml`). All four bumps are within-minor patches; `eslint-config-next` and `@tailwindcss/postcss` advance with their parents to keep the lint + PostCSS pipelines aligned with the runtime versions. Per the SE Core 2026-05-02 dep-major-upgrade-watch audit (`audits/2026-05-02-dep-major-upgrade-watch.md`, info findings) — no major bumps required, just keep the patch floor moving so the lockfile doesn't drift before the next major lands. `pnpm typecheck` + `pnpm lint` + `pnpm build` clean on the bumped tree.
 
 ### Fixed
