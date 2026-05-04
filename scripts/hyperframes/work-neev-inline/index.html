@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>work · neev inline</title>
+    <link rel="stylesheet" href="shared/tokens.css" />
+    <link rel="stylesheet" href="shared/base.css" />
+    <style>
+      #root {
+        background:
+          repeating-linear-gradient(45deg, transparent 0 18px, var(--accent-05) 18px 19px),
+          var(--bg);
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-columns: 330px 1fr;
+        gap: 42px;
+        padding: 58px 68px;
+      }
+      .copy {
+        align-self: center;
+      }
+      .eyebrow {
+        margin: 0 0 16px;
+        font-family: var(--mono);
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-70);
+      }
+      h1 {
+        margin: 0;
+        font-family: var(--serif);
+        font-size: 53px;
+        font-weight: 400;
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+      .board {
+        position: relative;
+        align-self: center;
+        min-height: 470px;
+        border-left: 1px solid var(--hairline);
+        padding-left: 34px;
+      }
+      svg {
+        width: 100%;
+        height: 470px;
+      }
+      .card {
+        fill: var(--bg-2);
+        stroke: var(--hairline);
+      }
+      .card.is-active {
+        stroke: var(--accent);
+        fill: rgba(19, 66, 61, 0.1);
+      }
+      .flow {
+        stroke: var(--accent-60);
+        stroke-width: 1.5;
+        fill: none;
+        stroke-dasharray: 220;
+      }
+      .label {
+        font-family: var(--mono);
+        font-size: 17px;
+        fill: var(--ink);
+      }
+      .sub {
+        font-family: var(--mono);
+        font-size: 12px;
+        fill: var(--ink-60);
+      }
+      .amount {
+        font-family: var(--serif);
+        font-size: 35px;
+        fill: var(--accent);
+      }
+      .dot {
+        fill: var(--motion-node);
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="root"
+      data-start="0"
+      data-duration="8"
+      data-track-index="0"
+      data-width="1200"
+      data-height="676"
+    >
+      <div
+        id="neev-inline-scene"
+        class="clip"
+        data-start="0"
+        data-duration="8"
+        data-track-index="1"
+      >
+        <div class="scene">
+          <div class="copy">
+            <p class="eyebrow">MSME operating flow</p>
+            <h1>WhatsApp order to invoice without changing the day</h1>
+          </div>
+          <div class="board">
+            <svg viewBox="0 0 740 470" aria-hidden="true">
+              <path id="flow-a" class="flow" d="M96 108 H282" />
+              <path id="flow-b" class="flow" d="M430 108 C 500 108, 528 180, 528 238" />
+              <path id="flow-c" class="flow" d="M528 302 C 528 374, 438 390, 360 390" />
+              <path id="flow-d" class="flow" d="M244 390 C 170 390, 96 306, 96 236" />
+
+              <rect class="card is-active" x="22" y="48" width="148" height="120" />
+              <text class="label" x="46" y="92">WhatsApp</text>
+              <text class="sub" x="46" y="120">"12 rolls grey"</text>
+
+              <rect class="card" x="282" y="48" width="148" height="120" />
+              <text class="label" x="306" y="92">Order</text>
+              <text class="sub" x="306" y="120">party + items</text>
+
+              <rect class="card" x="454" y="238" width="148" height="120" />
+              <text class="label" x="478" y="282">Inventory</text>
+              <text class="sub" x="478" y="310">reserve stock</text>
+
+              <rect class="card" x="244" y="330" width="148" height="120" />
+              <text class="label" x="268" y="374">Invoice</text>
+              <text class="sub" x="268" y="402">GST-ready PDF</text>
+
+              <rect class="card" x="22" y="176" width="148" height="120" />
+              <text class="label" x="46" y="220">Ledger</text>
+              <text class="amount" x="46" y="256">Rs 42k</text>
+
+              <circle id="dot-a" class="dot" cx="96" cy="108" r="8" />
+              <circle id="dot-b" class="dot" cx="356" cy="108" r="8" />
+              <circle id="dot-c" class="dot" cx="528" cy="302" r="8" />
+              <circle id="dot-d" class="dot" cx="318" cy="390" r="8" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/MotionPathPlugin.min.js"></script>
+    <script>
+      gsap.registerPlugin(MotionPathPlugin);
+
+      const tl = gsap.timeline({ paused: true });
+      tl.from('.eyebrow', { y: 16, opacity: 0, duration: 0.4, ease: 'power2.out' }, 0);
+      tl.from('h1', { y: 28, opacity: 0, duration: 0.55, ease: 'power3.out' }, 0.12);
+      tl.from(
+        '.card',
+        { y: 18, opacity: 0, duration: 0.45, stagger: 0.1, ease: 'power2.out' },
+        0.35,
+      );
+      tl.fromTo(
+        '.flow',
+        { strokeDashoffset: 220 },
+        { strokeDashoffset: 0, duration: 1.0, stagger: 0.12, ease: 'power1.out' },
+        0.8,
+      );
+
+      tl.to('#dot-a', { opacity: 1, duration: 0.08 }, 1.35);
+      tl.to(
+        '#dot-a',
+        {
+          motionPath: { path: '#flow-a', align: '#flow-a', alignOrigin: [0.5, 0.5] },
+          duration: 1.25,
+          ease: 'none',
+          repeat: 1,
+        },
+        1.35,
+      );
+      tl.to('#dot-b', { opacity: 1, duration: 0.08 }, 2.15);
+      tl.to(
+        '#dot-b',
+        {
+          motionPath: { path: '#flow-b', align: '#flow-b', alignOrigin: [0.5, 0.5] },
+          duration: 1.2,
+          ease: 'none',
+          repeat: 1,
+        },
+        2.15,
+      );
+      tl.to('#dot-c', { opacity: 1, duration: 0.08 }, 2.95);
+      tl.to(
+        '#dot-c',
+        {
+          motionPath: { path: '#flow-c', align: '#flow-c', alignOrigin: [0.5, 0.5] },
+          duration: 1.25,
+          ease: 'none',
+          repeat: 1,
+        },
+        2.95,
+      );
+      tl.to('#dot-d', { opacity: 1, duration: 0.08 }, 3.75);
+      tl.to(
+        '#dot-d',
+        {
+          motionPath: { path: '#flow-d', align: '#flow-d', alignOrigin: [0.5, 0.5] },
+          duration: 1.25,
+          ease: 'none',
+          repeat: 1,
+        },
+        3.75,
+      );
+      tl.to(
+        '.card.is-active',
+        {
+          scale: 1.035,
+          transformOrigin: 'center',
+          duration: 0.55,
+          yoyo: true,
+          repeat: 4,
+          ease: 'sine.inOut',
+        },
+        2.15,
+      );
+      tl.to(['#dot-a', '#dot-b', '#dot-c', '#dot-d'], { opacity: 0, duration: 0.35 }, 7.35);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines['root'] = tl;
+    </script>
+  </body>
+</html>

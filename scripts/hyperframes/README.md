@@ -1,10 +1,10 @@
 # scripts/hyperframes
 
 Pre-rendered motion reels that live where a loop beats a live scene: the four
-case-study cards on the home `Work` section and the hero band on each
-`/work/[slug]` detail page. Ported verbatim from the SVG placeholders in
-`components/work/reels.tsx`, rendered via HeyGen's HyperFrames HTML-to-video
-pipeline, and committed as MP4s under `public/video/work/`.
+case-study cards on the home `Work` section, the hero band on each
+`/work/[slug]` detail page, selected writing article loops, and inline work
+explainers. Rendered via HeyGen's HyperFrames HTML-to-video pipeline and
+committed as MP4s under `public/video/`.
 
 See `docs/adr/0008-hyperframes-rendering-pipeline.md` for the decision
 rationale (why HyperFrames, why commit the MP4s, why this layout).
@@ -25,19 +25,24 @@ scripts/hyperframes/
 ```
 
 One project per composition trades a little duplication for a very simple
-render step (`cd <slug> && npx hyperframes render …`) and means a broken
-composition never blocks the others. The eight slugs:
+render step (`cd <slug> && npx hyperframes render ...`) and means a broken
+composition never blocks the others. Current slugs:
 
-| Slug                      | Aspect  | Duration | Target                                           |
-| ------------------------- | ------- | -------- | ------------------------------------------------ |
-| `neev`                    | 600×400 | 5s loop  | Home Work card · `components/work/reels.tsx`     |
-| `vericite`                | 600×400 | 5s loop  | Home Work card                                   |
-| `bluehost-agents`         | 600×400 | 5s loop  | Home Work card                                   |
-| `curat-money`             | 600×400 | 5s loop  | Home Work card                                   |
-| `neev-hero`               | 1600×900| 10s loop | `/work/neev` hero band                           |
-| `vericite-hero`           | 1600×900| 10s loop | `/work/vericite` hero band                       |
-| `bluehost-agents-hero`    | 1600×900| 10s loop | `/work/bluehost-agents` hero band                |
-| `curat-money-hero`        | 1600×900| 10s loop | `/work/curat-money` hero band                    |
+| Slug                         | Aspect   | Duration | Target                                       |
+| ---------------------------- | -------- | -------- | -------------------------------------------- |
+| `neev`                       | 600×400  | 5s loop  | Home Work card · `components/work/reels.tsx` |
+| `vericite`                   | 600×400  | 5s loop  | Home Work card                               |
+| `bluehost-agents`            | 600×400  | 5s loop  | Home Work card                               |
+| `curat-money`                | 600×400  | 5s loop  | Home Work card                               |
+| `neev-hero`                  | 1600×900 | 10s loop | `/work/neev` hero band                       |
+| `vericite-hero`              | 1600×900 | 10s loop | `/work/vericite` hero band                   |
+| `bluehost-agents-hero`       | 1600×900 | 10s loop | `/work/bluehost-agents` hero band            |
+| `curat-money-hero`           | 1600×900 | 10s loop | `/work/curat-money` hero band                |
+| `writing-micrograd-makemore` | 1200×676 | 8s loop  | `/writing/micrograd-makemore` detail art     |
+| `writing-fastembed-tei`      | 1200×676 | 8s loop  | `/writing/fastembed-to-tei` detail art       |
+| `writing-building-this-portfolio` | 1200×676 | 8s loop | `/writing/building-this-portfolio` detail art |
+| `writing-ai-for-msme`        | 1200×676 | 8s loop  | `/writing/ai-for-msme` detail art            |
+| `work-neev-inline`           | 1200×676 | 8s loop  | `/work/neev` inline workflow art             |
 
 ## Prerequisites
 
@@ -55,19 +60,20 @@ Run `npx hyperframes doctor` from any composition dir to self-check.
 From the repo root:
 
 ```bash
-# render every composition → public/video/work/<slug>.mp4
+# render every composition → public/video/<target>/<asset>.mp4
 pnpm render:work
 
 # render a single composition (faster iteration)
 pnpm render:work -- --only neev
+pnpm render:work -- --only writing-fastembed-tei
 
 # regenerate posters from existing MP4s (does not re-render)
 pnpm render:posters
 ```
 
 CI doesn't render videos. The MP4s are committed artifacts — re-render only
-when a composition changes, then commit the updated `public/video/work/*.mp4`
-alongside the composition diff.
+when a composition changes, then commit the updated `public/video/**/*.mp4`
+and `public/video/**/*.webp` alongside the composition diff.
 
 ## Authoring a new composition
 
@@ -79,14 +85,15 @@ alongside the composition diff.
 5. Add `<new-slug>` to the `SLUGS` array in `render-all.mjs`
 6. Add a `<Reel slug="<new-slug>">` consumer somewhere in `components/`
 7. `pnpm render:work -- --only <new-slug>` then commit both the HTML and
-   the resulting `public/video/work/<new-slug>.mp4`
+   the resulting `public/video/.../<asset>.mp4`
 
 ## Reduced-motion + video gating
 
 The React side (`components/work/reels.tsx`) renders `<video autoplay muted
 loop playsinline poster="…">` under a `prefers-reduced-motion: no-preference`
-+ `[data-motion="on"]` gate. The original SVG stays as the fallback when
-either gate is off, so no network cost is paid for motion-disabled users.
+
+- `[data-motion="on"]` gate. The original SVG stays as the fallback when
+  either gate is off, so no network cost is paid for motion-disabled users.
 
 The MP4s ship with `-movflags +faststart` so the first frame is served with
 the mdat atom available, letting `<video>` paint before the stream finishes

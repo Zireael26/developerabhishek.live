@@ -6,11 +6,10 @@ import * as THREE from 'three';
 // Full port of `_reference/portfolio/companion.js` (221 LOC) to a React
 // effect-mounted Three.js scene. Why not R3F: the Wanderer lives inside a
 // fixed-position `#companion` host, not a bounded canvas — the parallax +
-// pose choreography is driven by document-level scroll + IntersectionObserver
-// on every `[data-companion-pose]` anchor. A direct `useEffect` port is a
-// much cleaner read than wrapping the whole document scroll loop in R3F
-// primitives, and the scene is single-instance so we don't need framework-
-// managed declarative scenes.
+// pose choreography is driven by document-level scroll + `[data-companion-pose]`
+// section geometry. A direct `useEffect` port is a much cleaner read than
+// wrapping the whole document scroll loop in R3F primitives, and the scene is
+// single-instance so we don't need framework-managed declarative scenes.
 //
 // Design invariants:
 //   - bails out to the SVG fallback if `prefers-reduced-motion`,
@@ -19,10 +18,11 @@ import * as THREE from 'three';
 //     ships the host div + fallback SVG)
 //   - eight POSES drive per-section placement; lerp toward target each
 //     frame via `damp = 1 - exp(-dt * 3.2)`
-//   - scroll velocity modulates rotation + wing flap
+//   - section visibility + scroll progress select the pose; scroll velocity
+//     only adds bounded secondary motion
 //   - MutationObserver on `<html>` resyncs the accent hex on theme swap
 
-type Pose = {
+export type Pose = {
   x: number;
   y: number;
   z: number;
@@ -33,15 +33,87 @@ type Pose = {
   spin: number;
 };
 
-const POSES: Record<string, Pose> = {
-  hero: { x: 0.55, y: 0.15, z: 0, rotY: 0.3, rotX: -0.1, scale: 1.0, flap: 0.35, spin: 0.08 },
-  work: { x: -0.55, y: 0.0, z: 0.5, rotY: -0.5, rotX: 0.0, scale: 0.9, flap: 0.55, spin: 0.15 },
-  about: { x: 0.65, y: -0.05, z: 0.8, rotY: -1.2, rotX: 0.1, scale: 0.85, flap: 0.15, spin: 0.03 },
-  writing: { x: -0.4, y: 0.25, z: 1.0, rotY: 0.9, rotX: -0.2, scale: 0.75, flap: 0.75, spin: 0.25 },
-  services: { x: 0.0, y: -0.2, z: -0.5, rotY: 0.0, rotX: 0.15, scale: 1.1, flap: 0.45, spin: 0.12 },
-  process: { x: 0.6, y: 0.1, z: 0, rotY: -0.4, rotX: -0.3, scale: 0.95, flap: 0.25, spin: 0.06 },
-  open: { x: -0.55, y: -0.1, z: 0.3, rotY: 0.6, rotX: 0.0, scale: 0.9, flap: 0.5, spin: 0.14 },
-  contact: { x: 0.35, y: -0.35, z: 1.2, rotY: 0.0, rotX: -0.15, scale: 0.7, flap: 0.2, spin: 0.05 },
+export const POSES: Record<string, Pose> = {
+  hero: {
+    x: 0.55,
+    y: 0.15,
+    z: 0,
+    rotY: 0.3,
+    rotX: -0.1,
+    scale: 1.0,
+    flap: 0.35,
+    spin: 0.08,
+  },
+  work: {
+    x: 0.42,
+    y: 0.08,
+    z: 0.5,
+    rotY: -0.5,
+    rotX: 0.0,
+    scale: 0.82,
+    flap: 0.55,
+    spin: 0.15,
+  },
+  about: {
+    x: 0.65,
+    y: -0.05,
+    z: 0.8,
+    rotY: -1.2,
+    rotX: 0.1,
+    scale: 0.85,
+    flap: 0.15,
+    spin: 0.03,
+  },
+  writing: {
+    x: -0.4,
+    y: 0.25,
+    z: 1.0,
+    rotY: 0.9,
+    rotX: -0.2,
+    scale: 0.75,
+    flap: 0.75,
+    spin: 0.25,
+  },
+  services: {
+    x: 0.0,
+    y: -0.2,
+    z: -0.5,
+    rotY: 0.0,
+    rotX: 0.15,
+    scale: 1.1,
+    flap: 0.45,
+    spin: 0.12,
+  },
+  process: {
+    x: 0.6,
+    y: 0.1,
+    z: 0,
+    rotY: -0.4,
+    rotX: -0.3,
+    scale: 0.95,
+    flap: 0.25,
+    spin: 0.06,
+  },
+  open: {
+    x: -0.55,
+    y: -0.1,
+    z: 0.3,
+    rotY: 0.6,
+    rotX: 0.0,
+    scale: 0.9,
+    flap: 0.5,
+    spin: 0.14,
+  },
+  contact: {
+    x: 0.35,
+    y: -0.35,
+    z: 1.2,
+    rotY: 0.0,
+    rotX: -0.15,
+    scale: 0.7,
+    flap: 0.2,
+    spin: 0.05,
+  },
 };
 
 const ACCENT_MAP: Record<string, number> = {
@@ -58,6 +130,184 @@ type Crane = {
   accent: THREE.MeshStandardMaterial;
   dispose: () => void;
 };
+
+export type PoseSectionBox = {
+  key: string;
+  top: number;
+  bottom: number;
+  height: number;
+};
+
+export type CranePoseTarget = {
+  activeKey: string;
+  pose: Pose;
+  progress: number;
+  topReset: boolean;
+};
+
+const TOP_RESET_Y = 48;
+
+function clamp(n: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, n));
+}
+
+export function normalizeScrollVelocity(deltaY: number): number {
+  return clamp(deltaY * 0.003, -0.42, 0.42);
+}
+
+function clonePose(pose: Pose): Pose {
+  return { ...pose };
+}
+
+function mixPose(a: Pose, b: Pose, amount: number): Pose {
+  return {
+    x: lerp(a.x, b.x, amount),
+    y: lerp(a.y, b.y, amount),
+    z: lerp(a.z, b.z, amount),
+    rotY: lerp(a.rotY, b.rotY, amount),
+    rotX: lerp(a.rotX, b.rotX, amount),
+    scale: lerp(a.scale, b.scale, amount),
+    flap: lerp(a.flap, b.flap, amount),
+    spin: lerp(a.spin, b.spin, amount),
+  };
+}
+
+function adaptPoseToViewport(
+  pose: Pose,
+  viewportWidth: number,
+  viewportHeight: number,
+): Pose {
+  const mobile = viewportWidth < 700;
+  const tablet = !mobile && viewportWidth < 940;
+  const xScale = mobile ? 0.9 : tablet ? 0.78 : 1;
+  const yScale = mobile ? 0.76 : tablet ? 0.88 : 1;
+  const objectScale = mobile ? 0.46 : tablet ? 0.82 : 1;
+  const lowerMobileOffset = mobile && viewportHeight < 760 ? -0.04 : 0;
+
+  return {
+    ...pose,
+    x: pose.x * xScale,
+    y: pose.y * yScale + lowerMobileOffset,
+    z: pose.z + (mobile ? 0.18 : 0),
+    scale: pose.scale * objectScale,
+    flap: clamp(pose.flap * (mobile ? 0.9 : 1) + (mobile ? 0.04 : 0), 0, 0.9),
+    spin: pose.spin * (mobile ? 0.75 : 1),
+  };
+}
+
+type ScoredSection = PoseSectionBox & {
+  progress: number;
+  score: number;
+  topAlignment: number;
+  visibility: number;
+};
+
+function scoreSection(
+  section: PoseSectionBox,
+  viewportHeight: number,
+  anchorY: number,
+): ScoredSection {
+  const visiblePx = clamp(
+    Math.min(section.bottom, viewportHeight) - Math.max(section.top, 0),
+    0,
+    Math.min(section.height, viewportHeight),
+  );
+  const visibility = visiblePx / Math.max(1, Math.min(section.height, viewportHeight));
+  const topAlignment = 1 - clamp(Math.abs(section.top - anchorY) / (viewportHeight * 0.55), 0, 1);
+  const containsAnchor = section.top <= anchorY && section.bottom >= anchorY;
+  const progress = clamp(
+    (anchorY - section.top) / Math.max(1, section.height),
+    0,
+    1,
+  );
+  const score = visibility * 1.2 + topAlignment * 1.6 + (containsAnchor ? 0.9 : 0);
+
+  return {
+    ...section,
+    progress,
+    score,
+    topAlignment,
+    visibility,
+  };
+}
+
+function applyProgressDrift(pose: Pose, section: ScoredSection): Pose {
+  if (section.topAlignment > 0.82) return pose;
+
+  const drift = (section.progress - 0.5) * (1 - section.topAlignment);
+  return {
+    ...pose,
+    y: pose.y + drift * 0.12,
+    z: pose.z + drift * 0.18,
+    rotX: pose.rotX + drift * 0.16,
+    rotY: pose.rotY + drift * 0.12,
+  };
+}
+
+export function computeCranePoseTarget({
+  sections,
+  scrollY,
+  viewportWidth,
+  viewportHeight,
+}: {
+  sections: PoseSectionBox[];
+  scrollY: number;
+  viewportWidth: number;
+  viewportHeight: number;
+}): CranePoseTarget {
+  const heroPose = clonePose(POSES.hero as Pose);
+  if (scrollY <= TOP_RESET_Y) {
+    return {
+      activeKey: 'hero',
+      pose: adaptPoseToViewport({ ...heroPose, spin: 0 }, viewportWidth, viewportHeight),
+      progress: 0,
+      topReset: true,
+    };
+  }
+
+  const anchorY = clamp(viewportHeight * 0.14, 72, 136);
+  const scored = sections
+    .filter((section) => POSES[section.key])
+    .map((section) => scoreSection(section, viewportHeight, anchorY))
+    .sort((a, b) => b.score - a.score);
+
+  const active = scored[0];
+  if (!active) {
+    return {
+      activeKey: 'hero',
+      pose: adaptPoseToViewport(heroPose, viewportWidth, viewportHeight),
+      progress: 0,
+      topReset: false,
+    };
+  }
+
+  const base = adaptPoseToViewport(
+    applyProgressDrift(clonePose(POSES[active.key] as Pose), active),
+    viewportWidth,
+    viewportHeight,
+  );
+  const neighbor = scored.find(
+    (section) => section.key !== active.key && section.visibility > 0.12,
+  );
+  const blend =
+    neighbor && active.topAlignment < 0.45
+      ? clamp(neighbor.visibility * (0.45 - active.topAlignment), 0, 0.22)
+      : 0;
+  const pose = neighbor
+    ? mixPose(
+        base,
+        adaptPoseToViewport(clonePose(POSES[neighbor.key] as Pose), viewportWidth, viewportHeight),
+        blend,
+      )
+    : base;
+
+  return {
+    activeKey: active.key,
+    pose,
+    progress: active.progress,
+    topReset: false,
+  };
+}
 
 function buildCrane(): Crane {
   const group = new THREE.Group();
@@ -212,38 +462,50 @@ export default function WandererCrane() {
 
     const current: Pose = { ...(POSES.hero as Pose) };
     const target: Pose = { ...(POSES.hero as Pose) };
-
     const sections = Array.from(
-      document.querySelectorAll('[data-companion-pose]'),
+      document.querySelectorAll<HTMLElement>('[data-companion-pose]'),
     );
-    const observer = new IntersectionObserver(
-      (entries) => {
-        let best: IntersectionObserverEntry | null = null;
-        entries.forEach((e) => {
-          if (
-            e.isIntersecting &&
-            (!best || e.intersectionRatio > best.intersectionRatio)
-          ) {
-            best = e;
-          }
-        });
-        if (!best) return;
-        const k = (best as IntersectionObserverEntry).target.getAttribute(
-          'data-companion-pose',
-        );
-        if (k && POSES[k]) Object.assign(target, POSES[k]);
-      },
-      { threshold: [0.2, 0.45, 0.7] },
-    );
-    sections.forEach((s) => observer.observe(s));
+
+    const readSectionBoxes = (): PoseSectionBox[] =>
+      sections.flatMap((section) => {
+        const key = section.getAttribute('data-companion-pose');
+        if (!key || !POSES[key]) return [];
+
+        const rect = section.getBoundingClientRect();
+        return [
+          {
+            key,
+            top: rect.top,
+            bottom: rect.bottom,
+            height: rect.height,
+          },
+        ];
+      });
+
+    const syncTarget = (): CranePoseTarget => {
+      const model = computeCranePoseTarget({
+        sections: readSectionBoxes(),
+        scrollY: window.scrollY,
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+      });
+      Object.assign(target, model.pose);
+      return model;
+    };
+    const initialTarget = syncTarget();
+    if (initialTarget.topReset) Object.assign(current, target);
 
     const pointer = { x: 0, y: 0 };
     let lastScrollY = window.scrollY;
     let scrollVel = 0;
 
     const onScroll = () => {
-      scrollVel = (window.scrollY - lastScrollY) * 0.004;
-      lastScrollY = window.scrollY;
+      const nextScrollY = window.scrollY;
+      scrollVel =
+        nextScrollY <= TOP_RESET_Y
+          ? 0
+          : normalizeScrollVelocity(nextScrollY - lastScrollY);
+      lastScrollY = nextScrollY;
     };
     const onPointerMove = (e: PointerEvent) => {
       pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -258,6 +520,7 @@ export default function WandererCrane() {
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
+      syncTarget();
     };
     resize();
     window.addEventListener('resize', resize);
@@ -280,7 +543,10 @@ export default function WandererCrane() {
     const frame = () => {
       const dt = Math.min(clock.getDelta(), 0.05);
       t += dt;
-      const damp = 1 - Math.exp(-dt * 3.2);
+      const model = syncTarget();
+      const mobile = window.innerWidth < 700;
+      const damp = 1 - Math.exp(-dt * (model.topReset ? 7.5 : 3.6));
+      if (model.topReset) scrollVel = 0;
 
       current.x = lerp(current.x, target.x, damp);
       current.y = lerp(current.y, target.y, damp);
@@ -293,22 +559,32 @@ export default function WandererCrane() {
 
       const halfH = Math.tan(((camera.fov * Math.PI) / 180) / 2) * camera.position.z;
       const halfW = halfH * camera.aspect;
-      crane.group.position.x = current.x * halfW + pointer.x * 0.25;
+      const pointerX = mobile ? 0.07 : 0.25;
+      const pointerY = mobile ? 0.05 : 0.15;
+      const bob = mobile ? 0.045 : 0.08;
+      crane.group.position.x = current.x * halfW + pointer.x * pointerX;
       crane.group.position.y =
-        current.y * halfH + pointer.y * 0.15 + Math.sin(t * 1.1) * 0.08;
+        current.y * halfH + pointer.y * pointerY + Math.sin(t * 1.1) * bob;
       crane.group.position.z = current.z;
 
-      crane.group.rotation.y = current.rotY + t * current.spin + scrollVel * 2.2;
+      const spinMotion = Math.sin(t * 0.8) * current.spin;
+      crane.group.rotation.y =
+        current.rotY + spinMotion + scrollVel * (mobile ? 1.1 : 1.8);
       crane.group.rotation.x = current.rotX + Math.sin(t * 0.7) * 0.06;
-      crane.group.rotation.z = Math.sin(t * 0.9) * 0.04 - scrollVel * 1.1;
+      crane.group.rotation.z =
+        Math.sin(t * 0.9) * 0.04 - scrollVel * (mobile ? 0.55 : 0.9);
 
       const flapSpeed = 4 + current.flap * 10;
-      const flapAmt = current.flap * 0.9 + Math.abs(scrollVel) * 1.5;
+      const flapAmt = clamp(
+        current.flap * 0.9 + Math.abs(scrollVel) * (mobile ? 0.8 : 1.1),
+        0,
+        1.15,
+      );
       crane.wingL.rotation.z = Math.sin(t * flapSpeed) * flapAmt;
       crane.wingR.rotation.z = -Math.sin(t * flapSpeed) * flapAmt;
 
       crane.group.scale.setScalar(current.scale);
-      scrollVel *= 0.9;
+      scrollVel *= model.topReset ? 0 : 0.86;
 
       renderer.render(scene, camera);
       rafId = requestAnimationFrame(frame);
@@ -328,7 +604,6 @@ export default function WandererCrane() {
 
     return () => {
       cancelAnimationFrame(rafId);
-      observer.disconnect();
       mo.disconnect();
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('pointermove', onPointerMove);

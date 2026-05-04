@@ -1,0 +1,17 @@
+{
+  "$schema": "https://hyperframes.heygen.com/schema/project.json",
+  "name": "writing-ai-for-msme",
+  "description": "Writing art — AI fitting existing MSME workflows across WhatsApp, ledgers, Tally, and spreadsheets.",
+  "composition": {
+    "id": "root",
+    "width": 1200,
+    "height": 676,
+    "fps": 30,
+    "duration": 8
+  },
+  "render": {
+    "fps": 30,
+    "quality": "standard",
+    "format": "mp4"
+  }
+}

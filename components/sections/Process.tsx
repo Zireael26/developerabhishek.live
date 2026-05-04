@@ -4,13 +4,39 @@ type Artifact = {
   href: string;
 };
 
+const GITHUB_BLOB = 'https://github.com/Zireael26/akaushik.org/blob/main';
+
 const ARTIFACTS: ReadonlyArray<Artifact> = [
-  { code: 'PRD.md', description: 'Product requirements, v0.1 → live', href: '#' },
-  { code: 'ADR-0001-stack.md', description: 'Stack decision · Next.js 16 · pinned', href: '#' },
-  { code: 'ROADMAP.md', description: 'Phased delivery plan', href: '#' },
-  { code: 'AGENT_READINESS.md', description: 'Cloudflare isitagentready checks', href: '#' },
-  { code: 'CHANGELOG.md', description: 'Every shipped change', href: '#' },
-  { code: '/llms-full.txt', description: 'Whole site, one Markdown file', href: '#' },
+  {
+    code: 'PRD.md',
+    description: 'Product requirements, v0.1 → live',
+    href: `${GITHUB_BLOB}/docs/PRD.md`,
+  },
+  {
+    code: 'ADR-0001-stack.md',
+    description: 'Stack decision · Next.js 16 · pinned',
+    href: `${GITHUB_BLOB}/docs/adr/0001-nextjs-over-sveltekit.md`,
+  },
+  {
+    code: 'ROADMAP.md',
+    description: 'Phased delivery plan',
+    href: `${GITHUB_BLOB}/docs/ROADMAP.md`,
+  },
+  {
+    code: 'AGENT_READINESS.md',
+    description: 'Cloudflare isitagentready checks',
+    href: `${GITHUB_BLOB}/docs/AGENT_READINESS.md`,
+  },
+  {
+    code: 'CHANGELOG.md',
+    description: 'Every shipped change',
+    href: `${GITHUB_BLOB}/docs/CHANGELOG.md`,
+  },
+  {
+    code: '/llms-full.txt',
+    description: 'Whole site, one Markdown file',
+    href: 'https://akaushik.org/llms-full.txt',
+  },
 ];
 
 export function Process() {

@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function SiteFooter() {
   const year = new Date().getFullYear();
   const sha = process.env.VERCEL_GIT_COMMIT_SHA;
@@ -20,7 +22,7 @@ export default function SiteFooter() {
           {shortSha ? ` · ${shortSha}` : ''}.
         </span>
         <span className="foot-links">
-          <a href="#process">/process</a>
+          <Link href="/#process">/process</Link>
           <a href="/llms.txt">/llms.txt</a>
           <a href="/sitemap.xml">/sitemap.xml</a>
         </span>

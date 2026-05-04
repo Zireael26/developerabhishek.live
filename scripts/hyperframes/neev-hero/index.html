@@ -32,8 +32,8 @@
 </style>
 </head>
 <body>
-  <div id="root" data-composition-id="root" data-width="1600" data-height="900" data-start="0" data-duration="10">
-    <div class="clip" data-start="0" data-duration="10" data-track-index="0">
+  <div id="root" data-composition-id="root" data-width="1600" data-height="900" data-start="0" data-duration="10" data-track-index="0">
+    <div id="neev-hero-scene" class="clip" data-start="0" data-duration="10" data-track-index="1">
       <svg class="stage" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
         <!-- six edges radiate from primary; amplitude tuned for widescreen -->
         <g class="orbit">
@@ -46,7 +46,7 @@
         </g>
 
         <!-- primary node + pulse rings -->
-        <g id="primary-node">
+        <g id="primary-node" data-layout-allow-overflow>
           <circle class="pulse-ring" id="pulse-1" cx="500" cy="460" r="72" />
           <circle class="pulse-ring" id="pulse-2" cx="500" cy="460" r="72" />
           <circle class="node-core is-primary" cx="500" cy="460" r="72" />
@@ -60,10 +60,10 @@
         </g>
 
         <!-- four drifting packets across the primary spokes + the lateral dashed hop -->
-        <circle class="packet" id="packet-a" cx="500" cy="460" r="6" />
-        <circle class="packet" id="packet-b" cx="500" cy="460" r="6" />
-        <circle class="packet" id="packet-c" cx="500" cy="460" r="6" />
-        <circle class="packet" id="packet-d" cx="900" cy="260" r="5" />
+        <circle class="packet" id="packet-a" cx="500" cy="460" r="6" data-layout-allow-overflow />
+        <circle class="packet" id="packet-b" cx="500" cy="460" r="6" data-layout-allow-overflow />
+        <circle class="packet" id="packet-c" cx="500" cy="460" r="6" data-layout-allow-overflow />
+        <circle class="packet" id="packet-d" cx="900" cy="260" r="5" data-layout-allow-overflow />
       </svg>
     </div>
   </div>

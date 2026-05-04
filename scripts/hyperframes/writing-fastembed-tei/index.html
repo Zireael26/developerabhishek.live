@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>writing · fastembed tei</title>
+    <link rel="stylesheet" href="shared/tokens.css" />
+    <link rel="stylesheet" href="shared/base.css" />
+    <style>
+      #root {
+        background:
+          linear-gradient(90deg, rgba(19, 66, 61, 0.08) 0 1px, transparent 1px 132px),
+          linear-gradient(0deg, rgba(26, 26, 30, 0.045) 0 1px, transparent 1px 75px), var(--bg);
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        padding: 58px 66px;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        gap: 42px;
+      }
+      .head {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: end;
+        gap: 40px;
+      }
+      h1 {
+        margin: 0;
+        font-family: var(--serif);
+        font-weight: 400;
+        font-size: 55px;
+        line-height: 0.98;
+        letter-spacing: 0;
+        max-width: 13ch;
+      }
+      .metric {
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--ink-70);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        text-align: right;
+      }
+      .metric strong {
+        display: block;
+        margin-top: 6px;
+        font-family: var(--serif);
+        font-size: 38px;
+        font-weight: 400;
+        color: var(--accent);
+        letter-spacing: 0;
+        text-transform: none;
+      }
+      .pipeline {
+        position: relative;
+        border-top: 1px solid var(--hairline);
+        border-bottom: 1px solid var(--hairline);
+        padding: 46px 0;
+      }
+      svg {
+        width: 100%;
+        height: 100%;
+      }
+      .box {
+        fill: var(--bg-2);
+        stroke: var(--hairline);
+        stroke-width: 1;
+      }
+      .box.is-hot {
+        fill: rgba(19, 66, 61, 0.1);
+        stroke: var(--accent);
+      }
+      .label {
+        font-family: var(--mono);
+        font-size: 17px;
+        fill: var(--ink);
+        text-anchor: middle;
+        dominant-baseline: middle;
+      }
+      .sub {
+        font-family: var(--mono);
+        font-size: 12px;
+        fill: var(--ink-60);
+        text-anchor: middle;
+        dominant-baseline: middle;
+      }
+      .pipe {
+        stroke: var(--accent-60);
+        stroke-width: 1.4;
+        fill: none;
+        stroke-dasharray: 220;
+      }
+      .trace {
+        fill: var(--motion-node);
+        opacity: 0;
+      }
+      .citation {
+        fill: var(--bg);
+        stroke: var(--hairline);
+      }
+      .citation.is-selected {
+        stroke: var(--accent);
+        fill: rgba(19, 66, 61, 0.08);
+      }
+      .rank {
+        font-family: var(--mono);
+        font-size: 13px;
+        fill: var(--ink-70);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="root"
+      data-start="0"
+      data-duration="8"
+      data-track-index="0"
+      data-width="1200"
+      data-height="676"
+    >
+      <div id="retrieval-scene" class="clip" data-start="0" data-duration="8" data-track-index="1">
+        <div class="scene">
+          <div class="head">
+            <h1>Retrieval quality moved to the reranker</h1>
+            <div class="metric">cross-encoder pass<strong>top 6 -> cited 2</strong></div>
+          </div>
+          <div class="pipeline">
+            <svg viewBox="0 0 1068 410" aria-hidden="true">
+              <path id="pipe-a" class="pipe" d="M96 178 H286" />
+              <path id="pipe-b" class="pipe" d="M386 178 H574" />
+              <path id="pipe-c" class="pipe" d="M674 178 H852" />
+              <path id="pipe-d" class="pipe" d="M900 218 C 866 292, 742 326, 606 326" />
+              <path id="pipe-e" class="pipe" d="M900 218 C 938 292, 984 326, 1028 326" />
+
+              <rect class="box" x="20" y="126" width="152" height="104" />
+              <text class="label" x="96" y="166">query</text>
+              <text class="sub" x="96" y="194">low overlap</text>
+
+              <rect class="box" x="286" y="126" width="146" height="104" />
+              <text class="label" x="359" y="166">Fastembed</text>
+              <text class="sub" x="359" y="194">CPU baseline</text>
+
+              <rect class="box is-hot" x="574" y="126" width="146" height="104" />
+              <text class="label" x="647" y="166">TEI</text>
+              <text class="sub" x="647" y="194">GPU batches</text>
+
+              <rect class="box" x="852" y="126" width="152" height="104" />
+              <text class="label" x="928" y="166">rerank</text>
+              <text class="sub" x="928" y="194">query + passage</text>
+
+              <rect class="citation is-selected" x="496" y="300" width="220" height="52" />
+              <text class="rank" x="518" y="330">#1 cited passage</text>
+              <rect class="citation" x="776" y="300" width="220" height="52" />
+              <text class="rank" x="798" y="330">#2 cited passage</text>
+
+              <circle id="trace-a" class="trace" cx="96" cy="178" r="8" />
+              <circle id="trace-b" class="trace" cx="359" cy="178" r="8" />
+              <circle id="trace-c" class="trace" cx="647" cy="178" r="8" />
+              <circle id="trace-d" class="trace" cx="928" cy="218" r="8" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/MotionPathPlugin.min.js"></script>
+    <script>
+      gsap.registerPlugin(MotionPathPlugin);
+
+      const tl = gsap.timeline({ paused: true });
+      tl.from('h1', { y: 26, opacity: 0, duration: 0.55, ease: 'power3.out' }, 0);
+      tl.from('.metric', { y: 18, opacity: 0, duration: 0.45, ease: 'power2.out' }, 0.15);
+      tl.from(
+        '.box',
+        { y: 18, opacity: 0, duration: 0.42, stagger: 0.1, ease: 'power2.out' },
+        0.35,
+      );
+      tl.fromTo(
+        '.pipe',
+        { strokeDashoffset: 220 },
+        { strokeDashoffset: 0, duration: 1.0, stagger: 0.12, ease: 'power1.out' },
+        0.65,
+      );
+      tl.from(
+        '.citation',
+        { y: 18, opacity: 0, duration: 0.45, stagger: 0.14, ease: 'power2.out' },
+        1.2,
+      );
+
+      tl.to('#trace-a', { opacity: 1, duration: 0.08 }, 1.35);
+      tl.to(
+        '#trace-a',
+        {
+          motionPath: { path: '#pipe-a', align: '#pipe-a', alignOrigin: [0.5, 0.5] },
+          duration: 1.15,
+          ease: 'none',
+          repeat: 1,
+        },
+        1.35,
+      );
+      tl.to('#trace-b', { opacity: 1, duration: 0.08 }, 2.0);
+      tl.to(
+        '#trace-b',
+        {
+          motionPath: { path: '#pipe-b', align: '#pipe-b', alignOrigin: [0.5, 0.5] },
+          duration: 1.2,
+          ease: 'none',
+          repeat: 1,
+        },
+        2.0,
+      );
+      tl.to('#trace-c', { opacity: 1, duration: 0.08 }, 2.65);
+      tl.to(
+        '#trace-c',
+        {
+          motionPath: { path: '#pipe-c', align: '#pipe-c', alignOrigin: [0.5, 0.5] },
+          duration: 1.15,
+          ease: 'none',
+          repeat: 1,
+        },
+        2.65,
+      );
+      tl.to('#trace-d', { opacity: 1, duration: 0.08 }, 3.45);
+      tl.to(
+        '#trace-d',
+        {
+          motionPath: { path: '#pipe-d', align: '#pipe-d', alignOrigin: [0.5, 0.5] },
+          duration: 1.35,
+          ease: 'none',
+          repeat: 1,
+        },
+        3.45,
+      );
+      tl.to(
+        '.box.is-hot',
+        {
+          scale: 1.03,
+          transformOrigin: 'center',
+          duration: 0.55,
+          yoyo: true,
+          repeat: 3,
+          ease: 'sine.inOut',
+        },
+        3.0,
+      );
+      tl.to(
+        '.citation.is-selected',
+        { backgroundColor: 'rgba(19, 66, 61, 0.16)', duration: 0.4, yoyo: true, repeat: 3 },
+        4.7,
+      );
+      tl.to(['#trace-a', '#trace-b', '#trace-c', '#trace-d'], { opacity: 0, duration: 0.35 }, 7.35);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines['root'] = tl;
+    </script>
+  </body>
+</html>

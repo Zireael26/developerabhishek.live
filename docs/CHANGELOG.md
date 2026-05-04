@@ -4,10 +4,14 @@ All notable changes to akaushik.org (legacy host: developerabhishek.live, sunset
 
 ## [Unreleased]
 
+### Added
+- 2026-05-04 — Reference-plus parity and cross-harness gate rollout. Process artifacts now link to durable public/GitHub targets, the contact calendar affordance is intentionally disabled until a real booking URL exists, and `docs/reference-parity.md` records accepted drift from `_reference/portfolio`. HyperFrames authoring now has root `DESIGN.md`, three new committed loops (`writing/micrograd-makemore`, `writing/fastembed-to-tei`, `work/inline/neev`) plus reusable server-rendered media plumbing with SVG floors, WebP posters, muted MP4s, `preload="none"`, and CSS reduced-motion gates. Codex/Claude process-gate compatibility adds `.agents` inheritance, portable `.codex` hooks, `PROCESS_GATE_CHANGELOG_FILE="docs/CHANGELOG.md"`, and canonical SE Core config discovery that works for both harnesses.
+
 ### Changed
 - 2026-05-02 — Patch-chase: `next` `16.2.0 → 16.2.4`, `tailwindcss` `4.2.0 → 4.2.4`, `@tailwindcss/postcss` `4.2.0 → 4.2.4`, `eslint-config-next` `16.2.0 → 16.2.4` (root `package.json` + `pnpm-lock.yaml`). All four bumps are within-minor patches; `eslint-config-next` and `@tailwindcss/postcss` advance with their parents to keep the lint + PostCSS pipelines aligned with the runtime versions. Per the SE Core 2026-05-02 dep-major-upgrade-watch audit (`audits/2026-05-02-dep-major-upgrade-watch.md`, info findings) — no major bumps required, just keep the patch floor moving so the lockfile doesn't drift before the next major lands. `pnpm typecheck` + `pnpm lint` + `pnpm build` clean on the bumped tree.
 
 ### Fixed
+- 2026-05-04 — Removed the visible caption under the About portrait so the image reads cleanly without editorial framing text.
 - 2026-05-02 — `lib/stats.ts` `StatsRepo.commits12mo` and `StatsRepo.lastCommit` widened from `number` / `string` to `number | null` / `string | null`. The 2026-04-27 regen of `public/data/stats.json` started emitting `null` for both fields when the per-repo commit-fetch step in `scripts/fetch-github-stats.mjs` couldn't read the repo (private 404 / empty branch / pagination cap) — the script's `null` return path was already there but the type contract claimed those fields were always present, so `pnpm typecheck` failed at `getStats()` cast. `components/sections/OpenSource.tsx` coalesces `commits12mo ?? 0` once at the top of the per-repo render and reuses the local for both the `maxCommits` reduce and the bar-width math, so a missing-data repo renders as a zero-width bar with `0 commits · last 12mo` rather than `NaN%` width or a runtime `Cannot read .toLocaleString of null`. `lastCommit` isn't currently rendered (the section shows the windowed total + per-repo commit count, not per-repo recency), so widening the type is enough — no consumer guard needed yet.
 
 ### Changed

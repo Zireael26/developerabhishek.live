@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>writing · building this portfolio</title>
+    <link rel="stylesheet" href="shared/tokens.css" />
+    <link rel="stylesheet" href="shared/base.css" />
+    <style>
+      #root {
+        background:
+          linear-gradient(90deg, rgba(19, 66, 61, 0.08) 0 1px, rgba(19, 66, 61, 0) 1px 132px),
+          linear-gradient(0deg, rgba(26, 26, 30, 0.045) 0 1px, rgba(26, 26, 30, 0) 1px 75px), var(--bg);
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        padding: 56px 66px 54px;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        gap: 38px;
+      }
+      .head {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: end;
+        gap: 42px;
+      }
+      h1 {
+        margin: 0;
+        font-family: 'Newsreader', serif;
+        font-size: 58px;
+        font-weight: 400;
+        line-height: 1;
+        letter-spacing: 0;
+        max-width: 16ch;
+      }
+      .metric {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        color: var(--ink-70);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        text-align: right;
+      }
+      .metric strong {
+        display: block;
+        margin-top: 7px;
+        font-family: 'Newsreader', serif;
+        font-size: 38px;
+        font-weight: 400;
+        color: var(--accent);
+        letter-spacing: 0;
+        text-transform: none;
+      }
+      .board {
+        border-top: 1px solid var(--hairline);
+        border-bottom: 1px solid var(--hairline);
+        padding: 36px 0 34px;
+      }
+      svg {
+        width: 100%;
+        height: 100%;
+      }
+      .doc,
+      .gate,
+      .site,
+      .agent {
+        fill: var(--bg-2);
+        stroke: var(--hairline);
+        stroke-width: 1;
+      }
+      .gate.is-hot,
+      .agent.is-hot {
+        fill: rgba(19, 66, 61, 0.12);
+        stroke: var(--accent);
+      }
+      .label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 17px;
+        fill: var(--ink);
+        text-anchor: middle;
+        dominant-baseline: middle;
+      }
+      .sub {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        fill: var(--ink-60);
+        text-anchor: middle;
+        dominant-baseline: middle;
+      }
+      .path {
+        fill: none;
+        stroke: var(--accent-60);
+        stroke-width: 1.5;
+        stroke-linecap: round;
+      }
+      .packet {
+        opacity: 0;
+      }
+      .check {
+        fill: none;
+        stroke: var(--accent);
+        stroke-width: 2.2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="root"
+      data-start="0"
+      data-duration="8"
+      data-track-index="0"
+      data-width="1200"
+      data-height="676"
+    >
+      <div id="portfolio-scene" class="clip" data-start="0" data-duration="8" data-track-index="1">
+        <div class="scene">
+          <div class="head">
+            <h1>The portfolio ships with receipts</h1>
+            <div class="metric">same process as client work<strong>PRD -> ADR -> gate</strong></div>
+          </div>
+          <div class="board">
+            <svg viewBox="0 0 1068 408" aria-hidden="true">
+              <path id="flow-prd" class="path" d="M178 88 C260 102 316 128 386 170" />
+              <path id="flow-adr" class="path" d="M178 188 C256 188 316 184 386 180" />
+              <path id="flow-roadmap" class="path" d="M178 288 C260 270 316 224 386 190" />
+              <path id="flow-gate" class="path" d="M536 180 H684" />
+              <path id="flow-agent" class="path" d="M812 180 C850 218 878 250 914 288" />
+
+              <rect class="doc" x="28" y="48" width="150" height="80" rx="8" />
+              <text class="label" x="103" y="82">PRD</text>
+              <text class="sub" x="103" y="108">requirements</text>
+
+              <rect class="doc" x="28" y="148" width="150" height="80" rx="8" />
+              <text class="label" x="103" y="182">ADRs</text>
+              <text class="sub" x="103" y="208">decisions</text>
+
+              <rect class="doc" x="28" y="248" width="150" height="80" rx="8" />
+              <text class="label" x="103" y="282">ROADMAP</text>
+              <text class="sub" x="103" y="308">phases</text>
+
+              <rect class="gate is-hot" x="386" y="124" width="150" height="112" rx="10" />
+              <text class="label" x="461" y="166">PROCESS</text>
+              <text class="label" x="461" y="190">GATE</text>
+              <text class="sub" x="461" y="214">commit checks</text>
+              <path id="gate-check" class="check" d="M432 236 L448 252 L486 216" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" />
+
+              <rect class="site" x="684" y="124" width="128" height="112" rx="10" />
+              <text class="label" x="748" y="166">PUBLIC</text>
+              <text class="label" x="748" y="190">SITE</text>
+              <text class="sub" x="748" y="214">case evidence</text>
+
+              <rect class="agent is-hot" x="874" y="260" width="166" height="84" rx="10" />
+              <text class="label" x="957" y="294">AGENT</text>
+              <text class="label" x="957" y="318">READY</text>
+              <text class="sub" x="957" y="340">llms + markdown</text>
+
+              <circle id="packet-a" class="packet" cx="178" cy="88" r="8" />
+              <circle id="packet-b" class="packet" cx="178" cy="188" r="8" />
+              <circle id="packet-c" class="packet" cx="178" cy="288" r="8" />
+              <circle id="packet-d" class="packet" cx="536" cy="180" r="8" />
+              <circle id="packet-e" class="packet" cx="812" cy="180" r="8" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/MotionPathPlugin.min.js"></script>
+    <script>
+      gsap.registerPlugin(MotionPathPlugin);
+
+      const tl = gsap.timeline({ paused: true });
+      tl.from('h1', { y: 28, opacity: 0, duration: 0.55, ease: 'power3.out' }, 0.18);
+      tl.from('.metric', { x: 24, opacity: 0, duration: 0.45, ease: 'power2.out' }, 0.32);
+      tl.from('.doc', { x: -26, opacity: 0, duration: 0.42, stagger: 0.12, ease: 'power4.out' }, 0.55);
+      tl.from('.gate', { scale: 0.94, opacity: 0, duration: 0.5, ease: 'back.out(1.35)' }, 0.95);
+      tl.from('.site', { y: -18, opacity: 0, duration: 0.45, ease: 'expo.out' }, 1.22);
+      tl.from('.agent', { y: 22, opacity: 0, duration: 0.48, ease: 'power2.out' }, 1.42);
+
+      tl.fromTo('#packet-a', { opacity: 0 }, { opacity: 1, motionPath: { path: '#flow-prd', align: '#flow-prd', alignOrigin: [0.5, 0.5] }, duration: 1.1, ease: 'power1.inOut' }, 1.7);
+      tl.fromTo('#packet-b', { opacity: 0 }, { opacity: 1, motionPath: { path: '#flow-adr', align: '#flow-adr', alignOrigin: [0.5, 0.5] }, duration: 1.1, ease: 'power2.inOut' }, 1.95);
+      tl.fromTo('#packet-c', { opacity: 0 }, { opacity: 1, motionPath: { path: '#flow-roadmap', align: '#flow-roadmap', alignOrigin: [0.5, 0.5] }, duration: 1.1, ease: 'power3.inOut' }, 2.2);
+      tl.to('#gate-check', { strokeDashoffset: 0, duration: 0.48, ease: 'power2.out' }, 3.28);
+      tl.fromTo('#packet-d', { opacity: 0 }, { opacity: 1, motionPath: { path: '#flow-gate', align: '#flow-gate', alignOrigin: [0.5, 0.5] }, duration: 1.0, ease: 'power1.inOut' }, 3.55);
+      tl.to('.site', { fill: 'rgba(19, 66, 61, 0.12)', stroke: '#13423D', duration: 0.32 }, 4.38);
+      tl.fromTo('#packet-e', { opacity: 0 }, { opacity: 1, motionPath: { path: '#flow-agent', align: '#flow-agent', alignOrigin: [0.5, 0.5] }, duration: 1.15, ease: 'power2.inOut' }, 4.62);
+      tl.to('.agent', { scale: 1.03, transformOrigin: 'center', duration: 0.55, yoyo: true, repeat: 3, ease: 'sine.inOut' }, 5.55);
+      tl.to(['#packet-a', '#packet-b', '#packet-c', '#packet-d', '#packet-e'], { opacity: 0, duration: 0.35 }, 7.35);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines['root'] = tl;
+    </script>
+  </body>
+</html>

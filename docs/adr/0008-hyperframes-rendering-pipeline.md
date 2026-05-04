@@ -21,21 +21,24 @@ Adopt HyperFrames (https://hyperframes.heygen.com/introduction) as the rendering
 **Specifically:**
 
 - **One HyperFrames project per composition.** Eight projects total — four card reels (600×400, 5s loop) and four hero bands (1600×900, 10s loop). The alternative (one big project with eight compositions) looked appealing but the HyperFrames CLI's multi-composition selection story is underdocumented and one project per composition means a broken timeline never blocks the others rendering. See `scripts/hyperframes/README.md`.
-- **GSAP as the timeline engine.** HyperFrames mirrors `window.performance.now` to deterministic timestamps and seeks frame-by-frame; GSAP's `{ paused: true, repeat: -1 }` timeline registered on `window.__timelines["root"]` is the supported integration shape. We already depend on `gsap@^3.13.0` in the main bundle (framer-motion adjacent) — adding it to HTML `<script>` via a CDN inside a HyperFrames project costs nothing at runtime on the site.
+- **GSAP as the timeline engine.** HyperFrames mirrors `window.performance.now` to deterministic timestamps and seeks frame-by-frame; a GSAP timeline created with `{ paused: true }` and registered on `window.__timelines["root"]` is the supported integration shape. Infinite repeats are not allowed in authoring because they can break frame capture. Loops must either land cleanly at `data-duration` or use finite repeats calculated from the composition duration. We already depend on `gsap@^3.13.0` in the main bundle (framer-motion adjacent) — adding it to HTML `<script>` via a CDN inside a HyperFrames project costs nothing at runtime on the site.
 - **CSS mirrored from `app/globals.css`, not imported.** `scripts/hyperframes/shared/tokens.css` carries the subset of design tokens the reels actually use (parchment, forest, ink shades, Newsreader/JetBrains Mono). Pulling the site's full `globals.css` into a 600×400 headless viewport would be wasteful and would re-introduce Tailwind's JIT into the render sandbox. Drift risk flagged explicitly in the file header.
 - **Commit the MP4s.** `public/video/work/*.mp4` are author-time artifacts, not CI-generated. CI does **not** run `pnpm render:work`. Rationale: a) FFmpeg + headless Chrome on GitHub Actions adds ~90s of cold-start every run for assets that change on the order of "once per composition edit," b) deterministic builds benefit from pinned binaries rather than whatever Chrome HyperFrames bootstraps in a given month, c) a one-off local render then `git add public/video/work/` is the same pattern the repo already uses for OG images + agent-skills digest. The tradeoff is that a composition edit has a manual render step — accepted, because "edit composition, run `pnpm render:work -- --only neev`, commit both the HTML and the MP4" is still just two commits of muscle memory.
-- **React integration layers video over SVG.** `components/work/reels.tsx` now renders both `<svg class="reel-fallback">` and `<video class="reel-video">` in the same parent. `app/globals.css` hides `.reel-video` under `@media (prefers-reduced-motion: reduce)` and `[data-motion="off"]`. `<video preload="none">` means motion-disabled users never pay bytes for the MP4; the poster WebP is the only cost, and it's proportional to the reel's visible footprint. Gating is pure CSS — no client component, no hydration cost.
+- **React integration layers video over SVG.** `components/work/reels.tsx` and `components/media/hyperframes-loop.tsx` render an SVG floor plus a muted looping video in the same parent. `MotionVideo` keeps the `<source>` element unmounted when `prefers-reduced-motion: reduce` or `[data-motion="off"]` is active, so motion-disabled users do not fetch MP4 bytes. CSS still hides the video layer as the visual fallback gate; the small client component exists only to prevent network fetches.
 - **Two variants per reel.** `variant="card"` resolves to `/video/work/<slug>.mp4` (600×400, 5s). `variant="hero"` resolves to `/video/work/<slug>-hero.mp4` (1600×900, 10s, lower opacity, longer cadence). `CaseStudyPage.tsx` + `CaseStudyStub.tsx` both pass `variant="hero"` so the detail-page band reads as an ambient header, not a loud widget.
 
 ## Consequences
 
 **Good:**
+
 - Each of the four case studies gets a 5s card reel + a 10s ambient hero band that extend the existing design vocabulary rather than replacing it. The SVG fallback is a literal port of the current placeholder, so motion-off users see exactly the same composition they see today.
 - Render pipeline is fully local — `pnpm render:work` on a dev box, no HeyGen credentials or SaaS dependency. `npx hyperframes doctor` is the only self-check needed.
-- `<video preload="none">` + CSS-only motion gate means the cost-of-motion is paid by the users who want it, not stamped on every page.
+- `<video preload="none">` + source mounting gated by `MotionVideo` means the cost-of-motion is paid by the users who want it, not stamped on every page.
 - One project per composition caps the blast radius of a broken timeline — a regression in `curat-money-hero` doesn't block shipping the Neev card.
+- The 2026-05-04 reference-plus pass intentionally exceeds the default PR-size hard cap because the reviewable unit is source plus author-time media: HyperFrames HTML, generated MP4/WebP outputs, integration components, reduced-motion tests, and process-gate compatibility need to land together so source/output pairs and the verification contract cannot drift across split PRs.
 
 **Costs:**
+
 - Eight MP4s committed to the repo. Ballpark: card reels at 600×400 standard quality run ~200 KB, hero bands at 1600×900 run ~900 KB. ~4.5 MB total on disk, served from Vercel's CDN (not in the JS bundle, not counted against the 160 KB initial-script ceiling). Posters add ~15-40 KB each. Acceptable.
 - Re-rendering eight compositions takes ~3-5 minutes on a dev box (headless Chrome seek + FFmpeg encode). Not a CI-critical path, but it's the cost of a composition edit.
 - Token drift risk — `scripts/hyperframes/shared/tokens.css` duplicates a subset of `app/globals.css:root`. Flagged in the file header; the subset is small enough that a quarterly audit catches drift.
@@ -62,6 +65,7 @@ Adopt HyperFrames (https://hyperframes.heygen.com/introduction) as the rendering
 - `scripts/hyperframes/render-all.mjs` — orchestrator; wraps `npx hyperframes render` + ffmpeg `+faststart` pass
 - `scripts/hyperframes/generate-posters.mjs` — pulls frame @ t=0.5s as WebP
 - `package.json` scripts — `render:work` + `render:posters`
-- `components/work/reels.tsx` — video+SVG stacking, `variant: 'card' | 'hero'` prop
+- `components/work/reels.tsx` — video+SVG stacking, work-card reel variants
+- `components/media/{MotionVideo,hyperframes-loop}.tsx` — reduced-motion source gate and writing/case inline loops
 - `components/work/CaseStudyPage.tsx` + `components/sections/CaseStudyStub.tsx` — pass `variant="hero"`
 - `app/globals.css` — `.reel-video` positioning + motion gating rules
