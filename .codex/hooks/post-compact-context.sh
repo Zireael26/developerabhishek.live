@@ -15,14 +15,12 @@ set -u
 
 INPUT=$(cat 2>/dev/null || true)
 
-if ! command -v jq >/dev/null 2>&1; then
-  if [ "${SE_CORE_NO_JQ_DEGRADE:-0}" = "1" ]; then
-    echo "post-compact-context: jq not found; SE_CORE_NO_JQ_DEGRADE=1 — degrading to no-op (install jq: brew install jq | apt-get install -y jq)" >&2
-    exit 0
-  fi
-  echo "post-compact-context: jq required but not found — install jq (brew install jq | apt-get install -y jq) or set SE_CORE_NO_JQ_DEGRADE=1 to allow degradation" >&2
-  exit 1
-fi
+# Source shared lib (sibling to this script) + enforce jq dependency.
+__se_lib="$(dirname "${BASH_SOURCE[0]}")/lib/deps.sh"
+[ -f "$__se_lib" ] || { echo "post-compact-context: missing sibling lib at $__se_lib — re-run sync-hooks" >&2; exit 1; }
+# shellcheck source=lib/deps.sh disable=SC1090
+. "$__se_lib"
+_se_require_jq "post-compact-context"
 
 SOURCE=$(printf '%s' "$INPUT" | jq -r '.source // empty')
 if [ "$SOURCE" != "compact" ]; then
