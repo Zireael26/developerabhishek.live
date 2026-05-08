@@ -26,8 +26,12 @@ set -u
 INPUT=$(cat)
 
 if ! command -v jq >/dev/null 2>&1; then
-  echo "stop-verify: jq not found; skipping" >&2
-  exit 0
+  if [ "${SE_CORE_NO_JQ_DEGRADE:-0}" = "1" ]; then
+    echo "stop-verify: jq not found; SE_CORE_NO_JQ_DEGRADE=1 — degrading to no-op (install jq: brew install jq | apt-get install -y jq)" >&2
+    exit 0
+  fi
+  echo "stop-verify: jq required but not found — install jq (brew install jq | apt-get install -y jq) or set SE_CORE_NO_JQ_DEGRADE=1 to allow degradation" >&2
+  exit 1
 fi
 
 # --- Guard 1: stop_hook_active ---
@@ -39,19 +43,6 @@ fi
 PROJECT_DIR="${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$PWD}}"
 cd "$PROJECT_DIR" 2>/dev/null || exit 0
 
-# --- Guard 2: no file edits this turn → pure chat; skip.
-# Best-effort: check git worktree dirtiness. If git isn't here, fall through
-# and let downstream steps no-op when no config files exist.
-if command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  # Porcelain output is empty iff worktree matches HEAD (no staged, unstaged, or untracked changes).
-  # NOTE: earlier versions used `grep -c '^' || echo 0` here — that doubles output to "0\n0"
-  # when empty (grep -c prints 0 AND exits non-zero), breaking the numeric test.
-  if [ -z "$(git status --porcelain 2>/dev/null)" ]; then
-    # Nothing changed this turn → treat as pure chat and skip checks.
-    exit 0
-  fi
-fi
-
 emit_block() {
   local step="$1"
   local output="$2"
@@ -60,7 +51,9 @@ emit_block() {
   exit 2
 }
 
-# --- Step 1: TodoWrite check ---
+# --- Step 1: TodoWrite check (runs before the dirty-tree skip — pure-chat turns
+# can close todos via TodoWrite without touching files; receipts-required must
+# still hold). ---
 if [ -z "${TODOS_FILE:-}" ]; then
   if [ -f "${PROJECT_DIR}/.codex/todos.json" ]; then
     TODOS_FILE="${PROJECT_DIR}/.codex/todos.json"
@@ -79,6 +72,19 @@ if [ -f "$TODOS_FILE" ]; then
   if [ -n "$OPEN_TODOS" ]; then
     emit_block "TodoWrite" "open tasks remain — complete, defer with reason, or abandon with reason:
 ${OPEN_TODOS}"
+  fi
+fi
+
+# --- Guard 2: no file edits this turn → pure chat; skip typecheck/lint/test.
+# Best-effort: check git worktree dirtiness. If git isn't here, fall through
+# and let downstream steps no-op when no config files exist.
+if command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  # Porcelain output is empty iff worktree matches HEAD (no staged, unstaged, or untracked changes).
+  # NOTE: earlier versions used `grep -c '^' || echo 0` here — that doubles output to "0\n0"
+  # when empty (grep -c prints 0 AND exits non-zero), breaking the numeric test.
+  if [ -z "$(git status --porcelain 2>/dev/null)" ]; then
+    # Nothing changed this turn → treat as pure chat and skip checks.
+    exit 0
   fi
 fi
 
