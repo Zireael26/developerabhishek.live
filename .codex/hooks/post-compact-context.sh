@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# post-compact-context.sh — SessionStart (source=compact). Re-inject context-log.md.
-# Source: Software Engineering Core / core-rules / hooks.md
+# post-compact-context.sh — Codex SessionStart (source=compact). Re-inject context-log.md.
+# Source: Software Engineering Core / core-rules / codex hooks.
 #
 # Contract:
 #   - Runs only when SessionStart.source == "compact".
@@ -39,6 +39,6 @@ fi
 
 jq -nc \
   --arg ctx "$CONTENT" \
-  '{hookSpecificOutput: {hookEventName: "SessionStart", additionalContext: $ctx}}'
+  '{additionalContext: $ctx}'
 
 exit 0

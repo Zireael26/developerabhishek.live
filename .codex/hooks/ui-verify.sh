@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# ui-verify.sh — Stop. Screenshot verification on UI-touching turns.
-# Source: Software Engineering Core / core-rules / hooks.md
+# ui-verify.sh — Codex Stop. Screenshot verification on UI-touching turns.
+# Source: Software Engineering Core / core-rules / codex hooks.
 #
 # Contract:
 #   - Guard: stop_hook_active → exit 0.
@@ -54,7 +54,10 @@ emit_block() {
 
 # --- Dev-server probe ---
 # Source optional project-level hook config (UI_PORT, UI_PATH, etc.)
-if [ -f "${PROJECT_DIR}/.claude/hooks/config.sh" ]; then
+if [ -f "${PROJECT_DIR}/.codex/hooks/config.sh" ]; then
+  # shellcheck disable=SC1091
+  . "${PROJECT_DIR}/.codex/hooks/config.sh"
+elif [ -f "${PROJECT_DIR}/.claude/hooks/config.sh" ]; then
   # shellcheck disable=SC1091
   . "${PROJECT_DIR}/.claude/hooks/config.sh"
 fi
@@ -74,11 +77,11 @@ if ! server_up; then
   # The spec says "starts it via the monitor tool". That's a Claude-side
   # affordance not available from a pure shell hook. We report the failure
   # and let Claude start it next turn.
-  emit_block "Dev server not reachable at ${UI_URL}. Start it (e.g., \`npm run dev\`) and retry, or set UI_PORT/UI_PATH in .claude/hooks/config.sh."
+  emit_block "Dev server not reachable at ${UI_URL}. Start it (e.g., \`npm run dev\`) and retry, or set UI_PORT/UI_PATH in .codex/hooks/config.sh."
 fi
 
 # --- Screenshot ---
-SHOT_DIR="${PROJECT_DIR}/.claude/screenshots"
+SHOT_DIR="${PROJECT_DIR}/.codex/screenshots"
 mkdir -p "$SHOT_DIR" 2>/dev/null || true
 SHOT_PATH="${SHOT_DIR}/ui-verify-$(date +%Y%m%d-%H%M%S).png"
 

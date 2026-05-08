@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
-# session-context.sh — SessionStart (startup|resume). Inject repo context header.
-# Source: Software Engineering Core / core-rules / hooks.md
+# session-context.sh — Codex SessionStart. Inject repo context header.
+# Source: Software Engineering Core / core-rules / codex hooks.
 #
 # Contract:
 #   - Runs on SessionStart with source=startup or source=resume.
 #   - Assembles: current branch, last 5 commits, dirty-file count,
 #     context-log.md (if present), unresolved gotchas.md entries.
-#   - Emits {"hookSpecificOutput":{"hookEventName":"SessionStart",
-#            "additionalContext":"..."}}.
+#   - Emits {"additionalContext":"..."}.
 #   - Output trimmed to ≤ 2000 chars. Never blocks. Exit 0 always.
 #
 # Dependencies: jq (required), git (optional — skips git section if absent).
@@ -83,6 +82,6 @@ fi
 
 jq -nc \
   --arg ctx "$CTX" \
-  '{hookSpecificOutput: {hookEventName: "SessionStart", additionalContext: $ctx}}'
+  '{additionalContext: $ctx}'
 
 exit 0

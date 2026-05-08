@@ -55,7 +55,7 @@
         ]
       }
     ],
-    "PreCompact": [
+    "Stop": [
       {
         "hooks": [
           {
@@ -63,13 +63,7 @@
             "command": "${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$PWD}}/.codex/hooks/save-context-log.sh",
             "timeout": 10,
             "statusMessage": "Saving session context..."
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
+          },
           {
             "type": "command",
             "command": "${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$PWD}}/.codex/hooks/stop-verify.sh",

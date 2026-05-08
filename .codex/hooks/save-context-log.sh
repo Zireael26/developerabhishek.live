@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# save-context-log.sh — PreCompact. Dumps a session summary to context-log.md.
-# Source: Software Engineering Core / core-rules / hooks.md
+# save-context-log.sh — Codex Stop. Dumps a session summary to context-log.md.
+# Source: Software Engineering Core / core-rules / codex hooks.
 #
 # Contract:
-#   - Runs on PreCompact.
+#   - Runs on Stop because Codex does not expose the Claude PreCompact event.
 #   - Writes (overwrites) context-log.md in the project root with:
 #     branch, files touched this session, open todos, last two user asks,
 #     last two assistant decisions.
@@ -13,9 +13,9 @@
 #
 # Status: new in this core-rules layer.
 #
-# Note: Claude Code exposes a `transcript_path` field on PreCompact pointing
-# at the JSONL conversation log. We parse it for user/assistant messages.
-# Todo state comes from $CLAUDE_PROJECT_DIR/.claude/todos.json when present.
+# Note: when the event payload exposes a `transcript_path`, we parse it for
+# user/assistant messages. Todo state is checked in both Codex and Claude
+# locations when present.
 
 set -u
 
@@ -50,7 +50,14 @@ OUT="${PROJECT_DIR}/context-log.md"
   fi
 
   # --- Open todos ---
-  TODOS_FILE="${PROJECT_DIR}/.claude/todos.json"
+  TODOS_FILE="${TODOS_FILE:-}"
+  if [ -z "$TODOS_FILE" ]; then
+    if [ -f "${PROJECT_DIR}/.codex/todos.json" ]; then
+      TODOS_FILE="${PROJECT_DIR}/.codex/todos.json"
+    else
+      TODOS_FILE="${PROJECT_DIR}/.claude/todos.json"
+    fi
+  fi
   if [ -f "$TODOS_FILE" ]; then
     OPEN=$(jq -r '
       (.. | objects | select(.status? == "in_progress" or .status? == "pending"))

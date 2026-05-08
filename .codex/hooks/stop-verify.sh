@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# stop-verify.sh — Stop. TodoWrite → typecheck → lint → test, auto-detected.
-# Source: Software Engineering Core / core-rules / hooks.md
+# stop-verify.sh — Codex Stop. Todo state → typecheck → lint → test, auto-detected.
+# Source: Software Engineering Core / core-rules / codex hooks.
 #
 # Contract:
 #   - stop_hook_active guard: if set, exit 0 immediately (infinite-loop guard).
@@ -12,10 +12,9 @@
 #
 # Dependencies: jq (required). Toolchains are detected; absence → skip that step.
 #
-# Todo state: read from $CLAUDE_PROJECT_DIR/.claude/todos.json. If missing or
-# unparseable, we pass that step (don't block). This matches Claude Code's
-# current persistence location; if that location changes, override via
-# project `.claude/hooks/config.sh` exporting TODOS_FILE.
+# Todo state: read from $CODEX_PROJECT_DIR/.codex/todos.json when present,
+# falling back to the Claude Code location for shared projects. If missing or
+# unparseable, we pass that step. Override via TODOS_FILE.
 #
 # Base: github.com/iamfakeguru/claude-md (MIT). Extensions vs upstream:
 #   - Step 1: TodoWrite state check (receipts-required enforcement).
@@ -62,7 +61,13 @@ emit_block() {
 }
 
 # --- Step 1: TodoWrite check ---
-TODOS_FILE="${TODOS_FILE:-${PROJECT_DIR}/.claude/todos.json}"
+if [ -z "${TODOS_FILE:-}" ]; then
+  if [ -f "${PROJECT_DIR}/.codex/todos.json" ]; then
+    TODOS_FILE="${PROJECT_DIR}/.codex/todos.json"
+  else
+    TODOS_FILE="${PROJECT_DIR}/.claude/todos.json"
+  fi
+fi
 if [ -f "$TODOS_FILE" ]; then
   # Grab any pending/in_progress task content. If jq errors, we silently pass.
   OPEN_TODOS=$(jq -r '

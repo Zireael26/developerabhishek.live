@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# code-review-subagent.sh — Stop. Advisory review on edit-heavy turns.
-# Source: Software Engineering Core / core-rules / hooks.md
+# code-review-subagent.sh — Codex Stop. Advisory review on edit-heavy turns.
+# Source: Software Engineering Core / core-rules / codex hooks.
 #
 # Contract:
 #   - Guard: stop_hook_active → exit 0.
 #   - Runs only on edit-heavy turns: ≥3 files changed OR ≥200 lines added/changed
 #     in `git diff HEAD`. Threshold overridable via REVIEW_MIN_FILES /
-#     REVIEW_MIN_LINES env vars from project .claude/hooks/config.sh.
+#     REVIEW_MIN_LINES env vars from project hook config.
 #   - Dispatches a code-review subagent against the diff; findings are advisory.
 #   - Blocks only on severity=critical returned by the subagent.
 #   - Budget: 60s soft cap.
@@ -18,7 +18,7 @@
 # invoking the Agent tool from inside a hook; that surface area is not yet
 # standardized. Wire it up once Claude Code exposes a stable subagent-from-hook
 # entrypoint (today options are: an HTTP callback, a `claude` CLI invocation,
-# or a project-local script at $CLAUDE_PROJECT_DIR/.claude/agents/code-reviewer).
+# or a project-local script at $CODEX_PROJECT_DIR/.codex/agents/code-reviewer).
 
 set -u
 
@@ -89,14 +89,14 @@ fi
 #
 # Implementation options (pick at Phase 2 wiring time):
 #   a) `claude -p "Review this diff: ..." --agent code-reviewer` (CLI one-shot).
-#   b) A project-local script: $CLAUDE_PROJECT_DIR/.claude/agents/code-reviewer.sh
+#   b) A project-local script: $CODEX_PROJECT_DIR/.codex/agents/code-reviewer.sh
 #      reading the diff from stdin and emitting the JSON above.
 #   c) An HTTP callback to a reviewer service.
 #
 # For now the skeleton exits 0 without dispatching, so stop flow is never blocked.
 # -----------------------------------------------------------------------------
 
-REVIEWER="${CODE_REVIEWER_CMD:-${PROJECT_DIR}/.claude/agents/code-reviewer.sh}"
+REVIEWER="${CODE_REVIEWER_CMD:-${PROJECT_DIR}/.codex/agents/code-reviewer.sh}"
 
 if [ -x "$REVIEWER" ]; then
   FINDINGS=$(printf '%s' "$DIFF" | timeout 60 "$REVIEWER" 2>/dev/null || true)
