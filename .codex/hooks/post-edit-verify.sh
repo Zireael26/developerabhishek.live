@@ -22,8 +22,12 @@ set -u
 INPUT=$(cat)
 
 if ! command -v jq >/dev/null 2>&1; then
-  echo "post-edit-verify: jq not found; skipping" >&2
-  exit 0
+  if [ "${SE_CORE_NO_JQ_DEGRADE:-0}" = "1" ]; then
+    echo "post-edit-verify: jq not found; SE_CORE_NO_JQ_DEGRADE=1 — degrading to no-op (install jq: brew install jq | apt-get install -y jq)" >&2
+    exit 0
+  fi
+  echo "post-edit-verify: jq required but not found — install jq (brew install jq | apt-get install -y jq) or set SE_CORE_NO_JQ_DEGRADE=1 to allow degradation" >&2
+  exit 1
 fi
 
 FILE_PATH=$(printf '%s' "$INPUT" | jq -r '.tool_input.file_path // .tool_input.filePath // empty')
