@@ -19,14 +19,12 @@ set -u
 INPUT=$(cat)
 
 # Degrade gracefully if jq is missing — surface the problem via stderr, don't block.
-if ! command -v jq >/dev/null 2>&1; then
-  if [ "${SE_CORE_NO_JQ_DEGRADE:-0}" = "1" ]; then
-    echo "block-destructive: jq not found; SE_CORE_NO_JQ_DEGRADE=1 — degrading to no-op (install jq: brew install jq | apt-get install -y jq)" >&2
-    exit 0
-  fi
-  echo "block-destructive: jq required but not found — install jq (brew install jq | apt-get install -y jq) or set SE_CORE_NO_JQ_DEGRADE=1 to allow degradation" >&2
-  exit 1
-fi
+# Source shared lib (sibling to this script) + enforce jq dependency.
+__se_lib="$(dirname "${BASH_SOURCE[0]}")/lib/deps.sh"
+[ -f "$__se_lib" ] || { echo "block-destructive: missing sibling lib at $__se_lib — re-run sync-hooks" >&2; exit 1; }
+# shellcheck source=lib/deps.sh disable=SC1090
+. "$__se_lib"
+_se_require_jq "block-destructive"
 
 COMMAND=$(printf '%s' "$INPUT" | jq -r '.tool_input.command // empty')
 
