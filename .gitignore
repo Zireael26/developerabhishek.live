@@ -52,3 +52,14 @@ context-log.md
 !.claude/skills/process-gate
 !.claude/skills/process-gate-local/
 !.claude/skills/process-gate-local/local.config.sh
+
+# SE Core: keep canonical hook stack + settings tracked (relaxes the .claude/ blanket-ignore)
+!.claude/hooks/
+!.claude/hooks/*
+!.claude/settings.json
+!.claude/skills/security-gate
+.claude/settings.local.json
+
+# SE Core Codex parity (.agents and .codex are NOT under .claude/, just safety)
+!.agents/
+!.codex/
