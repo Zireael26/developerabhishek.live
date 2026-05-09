@@ -1,1 +1,0 @@
-/Users/abhishek/projects/se-core/core-rules/CLAUDE.md
