@@ -4,6 +4,9 @@ All notable changes to akaushik.org (legacy host: developerabhishek.live, sunset
 
 ## [Unreleased]
 
+### Changed
+- 2026-05-11 — Voice pass across all five writing posts (`content/writing/{trellis,micrograd-makemore,ai-for-msme,fastembed-to-tei,building-this-portfolio}.mdx`). Strips repeated AI-scaffolded patterns (rhetorical-pair sentences, em-dash flourishes, principle-naming triplets, summary-moral closers) and varies sentence rhythm so the posts read like a human edited them rather than a model drafted them. No substantive content changes; technical claims and file/path references preserved.
+
 ### Added
 - 2026-05-11 — New writing post: `content/writing/trellis.mdx` ("Trellis: An Engineering Process for AI Coding Agents"). Launch write-up for [`Zireael26/trellis`](https://github.com/Zireael26/trellis), the parent/child engineering-process regime that runs across six of my projects. ~2000 words, hero diagram at `public/images/writing/trellis-architecture.svg`. Auto-picked-up by `getAllPosts('writing')`; no index file changes.
 - 2026-05-04 — Reference-plus parity and cross-harness gate rollout. Process artifacts now link to durable public/GitHub targets, the contact calendar affordance is intentionally disabled until a real booking URL exists, and `docs/reference-parity.md` records accepted drift from `_reference/portfolio`. HyperFrames authoring now has root `DESIGN.md`, three new committed loops (`writing/micrograd-makemore`, `writing/fastembed-to-tei`, `work/inline/neev`) plus reusable server-rendered media plumbing with SVG floors, WebP posters, muted MP4s, `preload="none"`, and CSS reduced-motion gates. Codex/Claude process-gate compatibility adds `.agents` inheritance, portable `.codex` hooks, `PROCESS_GATE_CHANGELOG_FILE="docs/CHANGELOG.md"`, and canonical SE Core config discovery that works for both harnesses.
