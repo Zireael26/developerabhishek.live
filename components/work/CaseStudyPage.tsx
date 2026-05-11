@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import type { Post, CaseStudyFrontmatter } from '@/lib/content';
 import { MDX_OPTIONS } from '@/lib/mdx-options';
+import { HyperframesLoop } from '@/components/media/hyperframes-loop';
 import { Reel, type ReelSlug } from './reels';
 
 export function CaseStudyPage({
@@ -50,6 +51,9 @@ export function CaseStudyPage({
         <figure className="work-detail-reel" aria-hidden="true">
           <Reel slug={slug} variant="hero" />
         </figure>
+      ) : null}
+      {slug === 'neev' ? (
+        <HyperframesLoop kind="work-inline" slug="neev" className="work-inline-loop" />
       ) : null}
       <article className="work-detail-body">
         <MDXRemote source={post.content} options={MDX_OPTIONS} />
