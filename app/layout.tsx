@@ -3,7 +3,7 @@ import { Newsreader, Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google'
 import Script from 'next/script';
 import SiteNav from '@/components/site/SiteNav';
 import SiteFooter from '@/components/site/SiteFooter';
-import { Wanderer } from '@/components/scene/Wanderer';
+// import { Wanderer } from '@/components/scene/Wanderer'; // TODO: temporarily disabled — reinstate when crane returns
 import { TweakBridge } from '@/components/dev/TweakBridge';
 import './globals.css';
 
@@ -102,8 +102,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         {/* Wanderer renders the #companion host with its SVG fallback today.
             Slice 5.1c layers the Three.js crane on top for `[data-motion="on"]`
-            + no `prefers-reduced-motion`. The SVG stays as the fallback. */}
-        <Wanderer />
+            + no `prefers-reduced-motion`. The SVG stays as the fallback.
+            TODO: temporarily disabled — reinstate <Wanderer /> + its import when crane returns. */}
+        {/* <Wanderer /> */}
         <SiteNav />
         {children}
         <SiteFooter />

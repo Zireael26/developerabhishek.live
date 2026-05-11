@@ -5,6 +5,7 @@ All notable changes to akaushik.org (legacy host: developerabhishek.live, sunset
 ## [Unreleased]
 
 ### Changed
+- 2026-05-11 — Temporarily disabled the Wanderer paper-crane companion. Both the Three.js crane and its SVG fallback share a single mount point in `app/layout.tsx` (`<Wanderer />`); commenting out the import and JSX hides both without touching `components/scene/Wanderer*`. Revert path is uncomment-only. No DOM `#companion` host, no `.companion-svg` element, no WebGL context allocated. Reinstate when the redesign of the crane companion ships.
 - 2026-05-11 — Voice pass across all five writing posts (`content/writing/{trellis,micrograd-makemore,ai-for-msme,fastembed-to-tei,building-this-portfolio}.mdx`). Strips repeated AI-scaffolded patterns (rhetorical-pair sentences, em-dash flourishes, principle-naming triplets, summary-moral closers) and varies sentence rhythm so the posts read like a human edited them rather than a model drafted them. No substantive content changes; technical claims and file/path references preserved.
 
 ### Added
