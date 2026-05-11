@@ -38,7 +38,7 @@ next-env.d.ts
 .idea
 
 # local agent/tooling config (personal, not project-shared)
-.claude/
+.claude/*
 !.claude/rules/
 !.claude/rules/se-core.md
 context-log.md
@@ -52,3 +52,6 @@ context-log.md
 !.claude/skills/process-gate
 !.claude/skills/process-gate-local/
 !.claude/skills/process-gate-local/local.config.sh
+!.claude/hooks/
+!.claude/hooks/**
+!.claude/settings.json
