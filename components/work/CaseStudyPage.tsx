@@ -47,13 +47,12 @@ export function CaseStudyPage({
           </dl>
         ) : null}
       </header>
-      {slug ? (
-        <figure className="work-detail-reel" aria-hidden="true">
-          <Reel slug={slug} variant="hero" />
-        </figure>
-      ) : null}
       {slug === 'neev' ? (
         <HyperframesLoop kind="work-inline" slug="neev" className="work-inline-loop" />
+      ) : slug ? (
+        <figure className="work-detail-reel work-detail-reel--card" aria-hidden="true">
+          <Reel slug={slug} variant="card" />
+        </figure>
       ) : null}
       <article className="work-detail-body">
         <MDXRemote source={post.content} options={MDX_OPTIONS} />
