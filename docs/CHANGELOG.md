@@ -4,6 +4,9 @@ All notable changes to akaushik.org (legacy host: developerabhishek.live, sunset
 
 ## [Unreleased]
 
+### Changed
+- 2026-05-11 — Voice pass across all five writing posts (`content/writing/{trellis,micrograd-makemore,ai-for-msme,fastembed-to-tei,building-this-portfolio}.mdx`). Strips repeated AI-scaffolded patterns (rhetorical-pair sentences, em-dash flourishes, principle-naming triplets, summary-moral closers) and varies sentence rhythm so the posts read like a human edited them rather than a model drafted them. No substantive content changes; technical claims and file/path references preserved.
+
 ### Added
 - 2026-05-11 — New writing post: `content/writing/trellis.mdx` ("Trellis: An Engineering Process for AI Coding Agents"). Launch write-up for [`Zireael26/trellis`](https://github.com/Zireael26/trellis), the parent/child engineering-process regime that runs across six of my projects. ~2000 words, hero diagram at `public/images/writing/trellis-architecture.svg`. Auto-picked-up by `getAllPosts('writing')`; no index file changes.
 
