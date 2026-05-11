@@ -1,0 +1,128 @@
+---
+title: "Trellis: An Engineering Process for AI Coding Agents"
+dek: How I run six projects with one rulebook, nine hooks, and a fleet of weekly audits — and why I open-sourced it.
+date: 2026-05-11
+---
+
+# Trellis: An Engineering Process for AI Coding Agents
+
+> How I run six projects with one rulebook, nine hooks, and a fleet of weekly audits — and why I open-sourced it.
+
+## The problem nobody warns you about
+
+The first time you let a coding agent write production code, it feels like a superpower. The second time, you notice it cut a corner. By the tenth time, you realise the corners are a pattern: pushed straight to `main`, marked a task "done" when the tests never ran, summarised what it intended to do instead of what it actually did, force-pushed over an hour of your work to "clean things up."
+
+None of these are bugs in the model. They are gaps in the *process* around the model — the same gaps human engineering teams spent decades closing with branch protection, code review, commit conventions, CI gates, and a thousand small rituals. An agent has none of that scaffolding by default. You have to build it.
+
+For the last three months I have been building exactly that, in the open, across six of my own projects. The result is **Trellis** — a parent/child engineering-process regime for Claude Code and Codex projects. One source of truth for cross-cutting rules, nine canonical hooks that make those rules mechanically enforceable, and a fleet of scheduled audits that keep every project honest week after week.
+
+The name is the metaphor. A trellis is a frame that gives a climbing plant structure to grow on — without it the plant sprawls and breaks; with it, it grows tall and clean. That is exactly what this system is for code an agent writes.
+
+This is the write-up of how it works, why it is shaped the way it is, and what I learned along the way.
+
+The public, forkable template lives here: [github.com/Zireael26/agent-engineering-process](https://github.com/Zireael26/agent-engineering-process).
+
+---
+
+## The shape of the system
+
+![Trellis architecture — parent control plane, project inheritance, three-tier hook enforcement, and the scheduled audit fleet](/images/writing/trellis-architecture.svg)
+
+At the top is a single **control plane** repo. It owns the parent rules (`core-rules/CLAUDE.md`), the hook specifications (`hooks.md`), the inheritance contract (`inheritance.md`), the list of active projects (`registry.md`), and a `deferred.md` for rules that have not yet earned their place.
+
+Every project in the registry inherits from that control plane through symlinks — `.claude/rules/trellis.md` for Claude Code, `.agents/rules/trellis.md` for Codex, both pointing at the same canonical file. Projects only carry what is genuinely project-specific: their own `CLAUDE.md`, a `gotchas.md` of lessons learned, and a `context-log.md` that hooks maintain automatically across sessions.
+
+Inside each project sits a three-tier hook stack. Tier one runs on every agent turn and has a budget of three seconds. Tier two runs on `Stop`, has ninety seconds, and is the place where "done" gets verified. Tier three is the git boundary — pre-commit, commit-msg, pre-push — the last line of defence if the agent slipped past everything above.
+
+And every week, a fleet of ten scheduled audits sweeps the whole registry and writes timestamped reports back into the control plane. Drift, bypasses, vulnerabilities, test rot, dependency posture — all of it surfaces in dated markdown files I can grep, diff, and quote in commit messages.
+
+That is the whole system in one paragraph. The rest of this post unpacks the parts of it that are actually load-bearing.
+
+---
+
+## Five principles I keep coming back to
+
+When I was tempted to add yet another rule, or a clever new automation, these five tests kept me honest.
+
+**1. Parent/child layers, Rule of Three for promotion.** Cross-cutting rules live in the parent. Project-specific rules live in the project. A pattern only becomes a parent rule when a *third independent project* adopts it. `n=2` is the danger zone — enough repetition to feel like a pattern, not enough to confirm it isn't coincidence. Candidates wait in `core-rules/deferred.md` until they earn their third witness, or they get demoted out entirely.
+
+**2. Process is code.** Every rule that can be mechanically enforced becomes a hook. Hooks fail closed. Written rules that depend on good intentions erode in under a month; written rules backed by a hook persist until the hook is deleted. If I can't write a hook for it, I question whether it should be a rule.
+
+**3. Receipts over self-reporting.** "Done" means the agent attaches the verification command, the exit code, and the diff lines that prove the change. "It works" without receipts is not done. The `stop-verify` hook enforces the underlying checks; the presentation discipline is on the agent.
+
+**4. Small surface, deep discipline.** The parent layer is intentionally tiny — under 5 KB for the rules file, nine hooks, ten audits. Anything broader belongs in a project-local file. This keeps the contract legible to both humans and LLMs, and keeps the drift surface narrow enough to actually monitor.
+
+**5. Harness-safe by default.** Everything works in Claude Code *and* Codex. The two harnesses use different hook envelopes, so Trellis keeps separate canonical implementations under `core-rules/hooks/` and `core-rules/codex/`, but the policy intent is identical. The same rule should be enforced the same way regardless of which agent is in the driver's seat.
+
+---
+
+## What the hooks actually do
+
+The nine canonical hooks split across three tiers. The split is about *budget*, not capability.
+
+The **fast-local** tier (every turn, sub-second goal) is where you stop the catastrophic stuff before it ships. `block-destructive` denies the agent on `rm -rf` aimed at your home directory, `git push --force` on any branch, `git reset --hard` against `HEAD~N`, unscoped `DELETE FROM` SQL, and any read of a `.env*` file. `post-edit-verify` lints whatever the agent just wrote, scoped to the touched file so the budget stays under three seconds. `session-context` injects the previous session's state at startup — current branch, last five commits, dirty files, outstanding gotchas, the prior `context-log.md` — so the agent doesn't have to spelunk to figure out where it left off. `save-context-log` and `post-compact-context` close that loop on the way out.
+
+The **heavy-gated** tier (on `Stop`, ≤90s budget) is where "done" gets adjudicated. `stop-verify` enforces the receipts rule: it scans the `TodoWrite` list and blocks if anything is still `in_progress` or `pending`, then runs typecheck → lint → fast tests across the whole repo. If anything fails, the agent gets a sliced error (first 30 lines for compile errors, last 30 for test output) and is told to fix it before claiming completion. `code-review-subagent` dispatches a read-only review agent against the current diff on edit-heavy turns (≥3 files or ≥200 lines) and surfaces findings inline. `ui-verify` boots the dev server, takes a screenshot of the affected route, and blocks if a UI-visible change shipped without that proof.
+
+The **git-boundary** tier is the durable backstop. Husky's pre-commit runs `lint-staged` on staged files. `commit-msg` enforces Conventional Commits with a project-configured scope allowlist. `pre-push` blocks direct pushes to `main` across every registered project, plus reruns the typecheck/lint/test triad. There is an emergency override (`TRELLIS_ALLOW_MAIN_PUSH=1`), and every invocation has to be documented in a commit trailer or `gotchas.md`. For projects without `package.json` — Unity, Rust, Go, Python-only — the same enforcement lands in native git hooks under `.githooks/`.
+
+The point of three tiers isn't redundancy for redundancy's sake. It's that each tier exists for a different failure mode. Fast-local catches mistakes mid-turn while context is still warm. Heavy-gated catches the "claims done but isn't" pattern at session boundaries. Git-boundary catches anything that happened *outside* a Claude turn at all — manual amends, rebases, force-pushes from a different terminal.
+
+---
+
+## The process-gate skill
+
+Hooks fire automatically. Sometimes you also want to ask the agent, explicitly, *is this branch mergeable yet?* — and have it answer in a format you trust.
+
+That's what the **process-gate** skill is. One canonical implementation lives in `core-rules/skills/process-gate/`, symlinked into every project's `.claude/skills/` and `.agents/skills/`. When invoked it runs six gates — PR hygiene, secrets, bypass markers, tests & coverage, docs discipline, and any stack-specific validators the project declares — and emits a fixed-shape verdict block:
+
+```
+PR hygiene:        ✅ pass
+Secrets:           ✅ pass
+Bypass markers:    ❌ fail
+Tests & coverage:  ⚠️ warn
+Docs discipline:   ✅ pass
+Stack profile:     ✅ pass
+
+Overall: BLOCKED
+```
+
+A single `❌` blocks the merge. Warnings can be accepted but the acceptance has to be recorded in the PR description. The skill reads its references at invocation time, so policy changes don't require resyncing every project. The discipline is harness-agnostic — it runs the same way in Claude Code, Codex, `claude -p` headless, or CI.
+
+---
+
+## Audits: the feedback loop that makes the whole thing real
+
+The hooks and the skill enforce policy in the moment. The audits answer a different question: *is the policy still being enforced six weeks from now?*
+
+Ten scheduled audits run on cron against the registered project list. Some hit weekly, some daily, some monthly. They check different things, but they all write dated markdown reports back into `audits/` so I can trend over time.
+
+`cross-project-process-audit` is the headline one — it runs every Monday morning and produces a snapshot of which projects are wired correctly, which have stale hooks, which carry recent `--no-verify` bypasses, and which `CLAUDE.md` files have grown past the 5 KB soft target. `parent-hook-drift` runs Sunday night and SHA256-compares the canonical hook implementations against the deployed copies in every project; deltas surface as drift signatures I can either pull upstream or push downstream. `bypass-tripwire` is silent on clean days and noisy when someone used `--no-verify` or shipped a direct push. `test-health` actually runs each project's fast suite. `dep-vulnerabilities` and `dep-currency` cover security and currency. `gotchas-rollup` is the Rule-of-Three engine — it aggregates project-local `gotchas.md` entries and promotes anything that has hit three independent projects into the parent rules.
+
+The audits aren't just observability. They are the *reason* the system stays disciplined. Every Monday I read a report that tells me, in plain text, where my own engineering process has drifted from its own claims. Then I fix it. The week after, the audit confirms the fix or surfaces the next drift. The loop is what makes the system real.
+
+---
+
+## What I'd tell anyone trying to build this
+
+A few things I didn't fully appreciate when I started.
+
+**Process work is leverage, not overhead.** Every hour I spent making the system catch its own drift was an hour I bought back tenfold over the next month. The pre-push guard alone has saved me from at least three force-push-to-main incidents that would have cost half a day each.
+
+**The Rule of Three matters more than any individual rule.** I had to delete several "obviously good" parent rules in the first month because the second project disagreed about the right shape. Waiting for three witnesses isn't bureaucratic — it's the cheapest way to avoid locking in the wrong abstraction.
+
+**Receipts beat eloquence.** I trust the diff. I trust the exit code. I do not, anymore, trust a trailing summary that says "I've fixed the bug and all tests pass." Half the work of building Trellis was unlearning the instinct to read those summaries and believing them. The hooks force the receipts; my discipline is to *insist on reading them*.
+
+**Open-source it early.** Putting Trellis in public forced me to write `engineering-process.md` — the narrative manual that explains *why* each rule exists. Future-me reading the manual six months from now is the most important audience the repo has.
+
+---
+
+## Try it
+
+The whole thing is MIT-licensed and forkable:
+
+→ **[github.com/Zireael26/trellis](https://github.com/Zireael26/trellis)**
+
+The agent-driven setup in `AGENT_SETUP.md` walks any Claude Code or Codex session through customising it for your machine in about ten minutes. After that, `AGENT_ONBOARD_PROJECT.md` is what you paste into a session inside the bootstrapped repo to onboard each of your projects. The audit fleet ships pre-registered as scheduled-task prompts; wire them into your scheduler of choice.
+
+If you fork it, I'd love to know what you change. The Rule of Three only works with three independent witnesses, and right now I am just one of them.
