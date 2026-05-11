@@ -8,9 +8,9 @@ date: 2026-04-21
 
 > Why the site ships with the same process I'd bring to a client engagement — PRD, ADRs, ROADMAP, process-gate, agent-readiness, the whole thing in the open.
 
-A portfolio is supposed to show the work. The tension is that *showing* the work usually means showing the surface — the typography, the case studies, the tagline. The decisions underneath are what matter, and they don't fit in a screenshot.
+A portfolio is supposed to show the work. The trouble is that *showing* the work usually means showing the surface: the typography, the case studies, the tagline. The decisions underneath are what matter, and they don't fit in a screenshot.
 
-So this one is built a different way: the same process I'd use on a paid client engagement, left in public view, with every decision and trade-off legible to anyone who reads the repo.
+So this one is built differently. Same process I'd use on a paid client engagement, left in public view, every decision and trade-off legible to anyone who reads the repo.
 
 ## The receipts
 
@@ -23,34 +23,32 @@ So this one is built a different way: the same process I'd use on a paid client 
 
 ## Why this way
 
-There are two readers I want to give full signal to.
+I'm writing for two readers.
 
-The **MSME owner** I might work with on Neev is looking for clarity. Can this person explain what they've built? Will it survive contact with the day? The home page and the case studies answer that — in plain English, with honest scope on what worked and what didn't.
+The **MSME owner** I might work with on Neev wants clarity. Can this person explain what they've built? Will it survive contact with the day? The home page and the case studies answer that, in plain English, with honest scope on what worked and what didn't.
 
-The **senior engineer** I might work with on a platform team is looking for rigor. How do they handle change? How do they treat deprecations? Are they the kind of person who ships and forgets, or the kind who leaves a trail? The repo answers that.
+The **senior engineer** I might work with on a platform team wants rigour. How do they handle change? How do they treat deprecations? Are they the kind of person who ships and forgets, or the kind who leaves a trail? The repo answers that.
 
-Both readers can get what they need without the other's material getting in the way. The portfolio is the entry point; everything under `docs/` is the depth.
+Both readers can get what they came for without the other's material getting in the way. The portfolio is the entry point; everything under `docs/` is the depth behind it.
 
 ## The parts that were load-bearing
 
-A handful of choices shaped the rest:
+**Next.js 16 over SvelteKit** (ADR-0001). The Next + Turbopack + R3F ecosystem is where the Vercel-adjacent toolchain lives, and the Phase-4 agent-readiness work needed Route Handlers and middleware at the shape Next provides. SvelteKit is a fine framework. This wasn't the site for it.
 
-**Next.js 16 over SvelteKit** (ADR-0001). The Next + Turbopack + R3F ecosystem is where the Vercel-adjacent toolchain lives, and the agent-readiness work in Phase 4 needed Route Handlers + middleware at the shape Next provides. SvelteKit is a fine framework; this wasn't the site for it.
+**Process-gate as pre-commit** (ADR-0002). Three rules: code needs a CHANGELOG entry, structural changes need an ADR, epic-scale changes need a ROADMAP update. A shell script on `simple-git-hooks` enforces them. Cheap to write, load-bearing against drift.
 
-**Process-gate as pre-commit** (ADR-0002). Three rules: code needs CHANGELOG, structural changes need ADR, epic changes need ROADMAP. Enforced by a shell script running on `simple-git-hooks`. Cheap to implement, load-bearing against drift.
+**MDX with server-only compilation and Shiki bundle isolation** (ADR-0004). `next-mdx-remote@6` compiles MDX inside React Server Components; Shiki never reaches the client bundle. `pnpm analyze` re-verifies the isolation every PR.
 
-**MDX with server-only compilation + Shiki bundle isolation** (ADR-0004). `next-mdx-remote@6` compiles MDX inside React Server Components; Shiki stays out of the client bundle. Every PR re-verifies the isolation with `pnpm analyze`.
+**Content negotiation, Pattern A and Pattern B** (ADR-0006). Every page has a `.md` alternate at `/page.md` (Pattern B, load-bearing) and responds to `Accept: text/markdown` at the canonical URL (Pattern A, additive). Passes isitagentready.com's content-negotiation check on both axes — and loses neither if one misbehaves.
 
-**Content negotiation, Pattern A and Pattern B** (ADR-0006). Every page has a `.md` alternate at `/page.md` (Pattern B, load-bearing) and responds to `Accept: text/markdown` at the canonical URL (Pattern A, additive). Pass isitagentready.com's content-negotiation check on both axes; lose neither if one misbehaves.
-
-**The Wanderer crane port** (slice 5.1c). 221 lines of vanilla Three.js in the reference design, ported directly into a `useEffect`-driven scene (not R3F — the crane is a fixed-position full-document scene driven by document scroll, and wrapping that through R3F primitives reads worse than the direct port). Eight named POSES, IntersectionObserver-driven pose dispatch, damp lerp, scroll-velocity rotation + wing flap, pointer parallax. Bail-out to SVG fallback if first frame takes > 80ms.
+**The Wanderer crane port** (slice 5.1c). 221 lines of vanilla Three.js in the reference design, ported directly into a `useEffect`-driven scene rather than R3F: the crane is a fixed-position full-document scene driven by document scroll, and wrapping that through R3F primitives reads worse than the direct port. Eight named POSES, IntersectionObserver-driven pose dispatch, damp lerp, scroll-velocity rotation, wing flap, pointer parallax. Bail-out to SVG fallback if the first frame takes more than 80 ms.
 
 ## What's still to do
 
-Launch isn't done, it's done enough to ship. The open follow-ups live in `docs/ROADMAP.md` — the honest list, including things like "tighten the JS bundle back toward 150 KiB once the bundle-analyzer audit identifies which preloaded chunk is currently blowing it past target," "write a real `/api/docs` page," and "run the isitagentready.com scan against prod and persist the screenshot to `docs/agent-readiness-snapshots/`."
+Launch isn't done. It's done enough to ship. The open follow-ups live in `docs/ROADMAP.md` — the honest list, with items like "tighten the JS bundle back toward 150 KiB once the bundle-analyzer audit identifies which preloaded chunk is blowing past the target," "write a real `/api/docs` page," and "run the isitagentready.com scan against prod and persist the screenshot to `docs/agent-readiness-snapshots/`."
 
-None of those are in the "you shouldn't launch without this" bucket. They're in the "you should keep shipping past launch" bucket, which is where most real engagements live.
+None of those are in the "shouldn't launch without this" pile. They're the work that comes after launch, which is where most real engagements live anyway.
 
 ## If any of this looks useful
 
-Every file I've referenced is in the public repo. Clone it, read it, take what's useful. If you're starting a portfolio or a product and you want the same process on it, [hello@akaushik.org](mailto:hello@akaushik.org).
+Every file I've referenced is in the public repo. Clone it, read it, take what's useful. If you're starting a portfolio or a product and want the same process on it: [hello@akaushik.org](mailto:hello@akaushik.org).

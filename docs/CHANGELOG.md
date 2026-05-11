@@ -5,6 +5,12 @@ All notable changes to akaushik.org (legacy host: developerabhishek.live, sunset
 ## [Unreleased]
 
 ### Changed
+- 2026-05-11 — Voice pass across all five writing posts (`content/writing/{trellis,micrograd-makemore,ai-for-msme,fastembed-to-tei,building-this-portfolio}.mdx`). Strips repeated AI-scaffolded patterns (rhetorical-pair sentences, em-dash flourishes, principle-naming triplets, summary-moral closers) and varies sentence rhythm so the posts read like a human edited them rather than a model drafted them. No substantive content changes; technical claims and file/path references preserved.
+
+### Added
+- 2026-05-11 — New writing post: `content/writing/trellis.mdx` ("Trellis: An Engineering Process for AI Coding Agents"). Launch write-up for [`Zireael26/trellis`](https://github.com/Zireael26/trellis), the parent/child engineering-process regime that runs across six of my projects. ~2000 words, hero diagram at `public/images/writing/trellis-architecture.svg`. Auto-picked-up by `getAllPosts('writing')`; no index file changes.
+
+### Changed
 - 2026-05-04 — Dependency vulnerability remediation from the SE Core scheduled audit (`audits/2026-05-04-dep-vulnerabilities.md`): raise the direct `postcss` floor to `^8.5.10` and pin the pnpm override to `8.5.10`, clearing GHSA-qx2v-qp2m-jg93 without changing the app surface. This is a mechanical patch within the existing Next/Tailwind/PostCSS stack governed by ADR-0001 and the process-gate policy in ADR-0002.
 - 2026-05-02 — Patch-chase: `next` `16.2.0 → 16.2.4`, `tailwindcss` `4.2.0 → 4.2.4`, `@tailwindcss/postcss` `4.2.0 → 4.2.4`, `eslint-config-next` `16.2.0 → 16.2.4` (root `package.json` + `pnpm-lock.yaml`). All four bumps are within-minor patches; `eslint-config-next` and `@tailwindcss/postcss` advance with their parents to keep the lint + PostCSS pipelines aligned with the runtime versions. Per the SE Core 2026-05-02 dep-major-upgrade-watch audit (`audits/2026-05-02-dep-major-upgrade-watch.md`, info findings) — no major bumps required, just keep the patch floor moving so the lockfile doesn't drift before the next major lands. `pnpm typecheck` + `pnpm lint` + `pnpm build` clean on the bumped tree.
 
