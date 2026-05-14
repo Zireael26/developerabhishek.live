@@ -5,9 +5,9 @@
   "type": "module",
   "engines": {
     "node": ">=22.0.0",
-    "pnpm": ">=10.0.0"
+    "pnpm": ">=11.0.0"
   },
-  "packageManager": "pnpm@10.0.0",
+  "packageManager": "pnpm@11.1.2",
   "scripts": {
     "dev": "next dev --turbo",
     "prebuild": "tsx scripts/build-agent-skills-index.ts",
