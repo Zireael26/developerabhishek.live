@@ -60,6 +60,14 @@ context-log.md
 !.claude/skills/security-gate
 .claude/settings.local.json
 
+# Trellis primer system: INDEX.md and primer files are project-state (tracked)
+!.claude/primers/
+!.claude/primers/*
+!.claude/commands/
+.claude/commands/primer.md
+.claude/commands/primer-refresh.md
+.claude/commands/primer-check.md
+
 # SE Core Codex parity (.agents and .codex are NOT under .claude/, just safety)
 !.agents/
 !.codex/
