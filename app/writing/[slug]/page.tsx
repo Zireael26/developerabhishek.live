@@ -6,6 +6,8 @@ import { getPost, getPostSlugs, type WritingFrontmatter } from '@/lib/content';
 import { getReadingTime } from '@/lib/reading-time';
 import { MDX_OPTIONS } from '@/lib/mdx-options';
 import { formatMonthYear } from '@/lib/dates';
+import { articleGraph, jsonLdString } from '@/lib/structured-data';
+import { JsonLdScript } from '@/components/seo/JsonLdScript';
 import { HyperframesLoop, type WritingLoopSlug } from '@/components/media/hyperframes-loop';
 
 const WRITING_LOOPS: Partial<Record<string, WritingLoopSlug>> = {
@@ -41,6 +43,13 @@ export default async function WritingPost({ params }: { params: Promise<{ slug: 
 
   return (
     <main id="top" className="writing-detail">
+      {/* Article JSON-LD — references the sitewide Person (@id person) +
+          Organization (@id organization) declared in app/layout.tsx so
+          author/publisher cross-link without duplicating those properties. */}
+      <JsonLdScript
+        id={`ld-json-article-${slug}`}
+        json={jsonLdString(articleGraph(slug, fm))}
+      />
       <Link href="/writing" className="work-stub-back">
         ← All writing
       </Link>
