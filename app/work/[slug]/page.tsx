@@ -4,6 +4,8 @@ import { getPost, getPostSlugs, type CaseStudyFrontmatter } from '@/lib/content'
 import { CASE_STUDIES } from '@/components/sections/Work';
 import { CaseStudyStub } from '@/components/sections/CaseStudyStub';
 import { CaseStudyPage } from '@/components/work/CaseStudyPage';
+import { caseStudyGraph, jsonLdString } from '@/lib/structured-data';
+import { JsonLdScript } from '@/components/seo/JsonLdScript';
 import type { ReelSlug } from '@/components/work/reels';
 
 const CARD_SLUGS = CASE_STUDIES.map((c) => c.slug) as ReelSlug[];
@@ -44,18 +46,56 @@ export default async function WorkDetail({
   const { slug } = await params;
 
   const mdx = getPost('case-studies', slug);
+  // Pre-compute the JSON-LD island. Synthesise a minimal frontmatter shape
+  // for stub-only slugs (Bluehost ships permanently as a card without an
+  // MDX body) so they still emit an Article graph.
+  const fm: CaseStudyFrontmatter | null = mdx
+    ? (mdx.frontmatter as CaseStudyFrontmatter)
+    : (() => {
+        const card = CASE_STUDIES.find((c) => c.slug === slug);
+        if (!card) return null;
+        return {
+          title: card.title,
+          dek: card.dek,
+          index: '',
+          tag: card.tag,
+          year: card.year,
+          role: '',
+          stack: [],
+          evidenceOf: card.tag,
+        };
+      })();
+
+  const ldScript = fm ? (
+    <JsonLdScript
+      id={`ld-json-work-${slug}`}
+      json={jsonLdString(caseStudyGraph(slug, fm))}
+    />
+  ) : null;
+
   if (mdx) {
     // An MDX file drives the render. Reuse the CaseStudyPage layout for any
     // slug that also exists as a home-page Work card (so the Reel placeholder
     // is wired up); fall back to a headerless layout for MDX-only entries so
     // `generateStaticParams` doesn't pre-render a route that 404s at request.
-    if (isCardSlug(slug)) {
-      return <CaseStudyPage post={mdx} slug={slug} />;
-    }
-    return <CaseStudyPage post={mdx} slug={null} />;
+    return (
+      <>
+        {ldScript}
+        {isCardSlug(slug) ? (
+          <CaseStudyPage post={mdx} slug={slug} />
+        ) : (
+          <CaseStudyPage post={mdx} slug={null} />
+        )}
+      </>
+    );
   }
   if (isCardSlug(slug)) {
-    return <CaseStudyStub slug={slug} />;
+    return (
+      <>
+        {ldScript}
+        <CaseStudyStub slug={slug} />
+      </>
+    );
   }
   notFound();
 }
