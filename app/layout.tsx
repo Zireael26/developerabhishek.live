@@ -5,6 +5,8 @@ import SiteNav from '@/components/site/SiteNav';
 import SiteFooter from '@/components/site/SiteFooter';
 // import { Wanderer } from '@/components/scene/Wanderer'; // TODO: temporarily disabled — reinstate when crane returns
 import { TweakBridge } from '@/components/dev/TweakBridge';
+import { CANONICAL_ORIGIN } from '@/lib/canonical';
+import { personJsonLd, jsonLdString } from '@/lib/seo/jsonld';
 import './globals.css';
 
 // Cloudflare Web Analytics beacon — cookieless, no consent banner needed
@@ -34,7 +36,10 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://akaushik.org'),
+  metadataBase: new URL(CANONICAL_ORIGIN),
+  // Per-page metadata can override `alternates.canonical` with a deeper
+  // path. Root falls back to the canonical origin.
+  alternates: { canonical: '/' },
   title: {
     default: 'Abhishek Kaushik — AI systems for businesses that haven’t met AI yet',
     template: '%s · Abhishek Kaushik',
@@ -42,11 +47,11 @@ export const metadata: Metadata = {
   description:
     'Independent engineer building agent-native software. Modular monoliths, retrieval systems, and operational AI for teams that care about how things feel.',
   applicationName: 'akaushik.org',
-  authors: [{ name: 'Abhishek Kaushik', url: 'https://akaushik.org' }],
+  authors: [{ name: 'Abhishek Kaushik', url: CANONICAL_ORIGIN }],
   creator: 'Abhishek Kaushik',
   openGraph: {
     type: 'website',
-    url: 'https://akaushik.org',
+    url: CANONICAL_ORIGIN,
     siteName: 'akaushik.org',
     title: 'Abhishek Kaushik — AI systems for businesses that haven’t met AI yet',
     description:
@@ -98,6 +103,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="describedby" type="text/markdown" href="/llms.txt" />
         <link rel="describedby" type="text/markdown" href="/llms-full.txt" />
         <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+        {/* Schema.org Person — identity disambiguation anchor. Next's
+            <Script type="application/ld+json"> passes the child string
+            through unescaped (unlike a raw <script>{json}</script> which
+            React would HTML-entity-escape and corrupt). Strategy
+            "beforeInteractive" guarantees the payload is in the SSR HTML
+            for crawlers. sameAs[] lives in lib/seo/jsonld.ts. */}
+        <Script
+          id="ld-person"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+        >
+          {jsonLdString(personJsonLd())}
+        </Script>
       </head>
       <body>
         {/* Wanderer renders the #companion host with its SVG fallback today.
