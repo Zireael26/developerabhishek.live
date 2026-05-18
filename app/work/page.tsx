@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: 'Selected work',
   description:
     'Four case studies — Neev, VeriCite, Bluehost agents framework, curat.money — ordered by strategic weight.',
+  alternates: { canonical: '/work' },
 };
 
 export default function WorkIndex() {

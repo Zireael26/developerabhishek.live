@@ -30,7 +30,11 @@ export async function generateMetadata({
   const post = getPost('writing', slug);
   if (!post) return {};
   const fm = post.frontmatter as WritingFrontmatter;
-  return { title: fm.title, description: fm.dek };
+  return {
+    title: fm.title,
+    description: fm.dek,
+    alternates: { canonical: `/writing/${slug}` },
+  };
 }
 
 export default async function WritingPost({ params }: { params: Promise<{ slug: string }> }) {
