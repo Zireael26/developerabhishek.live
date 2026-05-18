@@ -5,6 +5,7 @@ import SiteNav from '@/components/site/SiteNav';
 import SiteFooter from '@/components/site/SiteFooter';
 // import { Wanderer } from '@/components/scene/Wanderer'; // TODO: temporarily disabled — reinstate when crane returns
 import { TweakBridge } from '@/components/dev/TweakBridge';
+import { CANONICAL_ORIGIN } from '@/lib/canonical';
 import { JsonLdScript } from '@/components/seo/JsonLdScript';
 import { siteGraph, jsonLdString } from '@/lib/structured-data';
 import './globals.css';
@@ -36,7 +37,10 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://akaushik.org'),
+  metadataBase: new URL(CANONICAL_ORIGIN),
+  // Per-page metadata can override `alternates.canonical` with a deeper
+  // path. Root falls back to the canonical origin.
+  alternates: { canonical: '/' },
   title: {
     default: 'Abhishek Kaushik — AI systems for businesses that haven’t met AI yet',
     template: '%s · Abhishek Kaushik',
@@ -44,11 +48,11 @@ export const metadata: Metadata = {
   description:
     'Independent engineer building agent-native software. Modular monoliths, retrieval systems, and operational AI for teams that care about how things feel.',
   applicationName: 'akaushik.org',
-  authors: [{ name: 'Abhishek Kaushik', url: 'https://akaushik.org' }],
+  authors: [{ name: 'Abhishek Kaushik', url: CANONICAL_ORIGIN }],
   creator: 'Abhishek Kaushik',
   openGraph: {
     type: 'website',
-    url: 'https://akaushik.org',
+    url: CANONICAL_ORIGIN,
     siteName: 'akaushik.org',
     title: 'Abhishek Kaushik — AI systems for businesses that haven’t met AI yet',
     description:

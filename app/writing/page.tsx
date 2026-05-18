@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: 'Writing',
   description:
     'First-principles notes on agent systems and AI for traditional businesses.',
+  alternates: { canonical: '/writing' },
 };
 
 export default function WritingIndex() {

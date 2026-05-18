@@ -29,11 +29,19 @@ export async function generateMetadata({
   const mdx = getPost('case-studies', slug);
   if (mdx) {
     const fm = mdx.frontmatter as CaseStudyFrontmatter;
-    return { title: `${fm.title} · Case study`, description: fm.dek };
+    return {
+      title: `${fm.title} · Case study`,
+      description: fm.dek,
+      alternates: { canonical: `/work/${slug}` },
+    };
   }
   const card = CASE_STUDIES.find((c) => c.slug === slug);
   if (card) {
-    return { title: `${card.title} · Case study`, description: card.dek };
+    return {
+      title: `${card.title} · Case study`,
+      description: card.dek,
+      alternates: { canonical: `/work/${slug}` },
+    };
   }
   return {};
 }
