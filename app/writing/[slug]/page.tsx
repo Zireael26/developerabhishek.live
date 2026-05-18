@@ -1,14 +1,14 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import Script from 'next/script';
 import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { getPost, getPostSlugs, type WritingFrontmatter } from '@/lib/content';
 import { getReadingTime } from '@/lib/reading-time';
 import { MDX_OPTIONS } from '@/lib/mdx-options';
 import { formatMonthYear } from '@/lib/dates';
+import { articleGraph, jsonLdString } from '@/lib/structured-data';
+import { JsonLdScript } from '@/components/seo/JsonLdScript';
 import { HyperframesLoop, type WritingLoopSlug } from '@/components/media/hyperframes-loop';
-import { articleJsonLd, breadcrumbJsonLd, jsonLdString } from '@/lib/seo/jsonld';
 
 const WRITING_LOOPS: Partial<Record<string, WritingLoopSlug>> = {
   'building-this-portfolio': 'building-this-portfolio',
@@ -45,31 +45,15 @@ export default async function WritingPost({ params }: { params: Promise<{ slug: 
   const readingTime = fm.readingTime ?? getReadingTime(post.content);
   const loopSlug = WRITING_LOOPS[slug];
 
-  const jsonLd = jsonLdString([
-    articleJsonLd({
-      headline: fm.title,
-      description: fm.dek,
-      path: `/writing/${slug}`,
-      datePublished: fm.date,
-      section: 'Writing',
-      ogImagePath: `/writing/${slug}/opengraph-image`,
-    }),
-    breadcrumbJsonLd([
-      { name: 'Home', path: '/' },
-      { name: 'Writing', path: '/writing' },
-      { name: fm.title, path: `/writing/${slug}` },
-    ]),
-  ]);
-
   return (
     <main id="top" className="writing-detail">
-      <Script
-        id={`ld-writing-${slug}`}
-        type="application/ld+json"
-        strategy="beforeInteractive"
-      >
-        {jsonLd}
-      </Script>
+      {/* Article JSON-LD — references the sitewide Person (@id person) +
+          Organization (@id organization) declared in app/layout.tsx so
+          author/publisher cross-link without duplicating those properties. */}
+      <JsonLdScript
+        id={`ld-json-article-${slug}`}
+        json={jsonLdString(articleGraph(slug, fm))}
+      />
       <Link href="/writing" className="work-stub-back">
         ← All writing
       </Link>

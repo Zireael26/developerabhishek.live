@@ -31,7 +31,7 @@
 ### Phase 2 — Identity SEO
 - [x] 4.1 `Person` JSON-LD on root + `/about` (landed in spec PR)
 - [x] 4.2 `Article` JSON-LD on every `/writing/*` and `/work/*` (landed in spec PR)
-- [x] 4.3 `BreadcrumbList` schema site-wide (landed in spec PR)
+- [ ] 4.3 `BreadcrumbList` schema site-wide (deferred — superseding `lib/structured-data.ts` ships Person/Org/WebSite/Article only; add `breadcrumbGraph` follow-up)
 - [ ] 4.4 Wikidata entry created + survived first deletion review **(Abhishek)**
 - [ ] 4.5 Profile NAP sync across all 6 platforms **(Abhishek)**
 - [ ] 4.6 GitHub profile: pin top 6 repos + README cross-link akaushik.org **(Abhishek)**

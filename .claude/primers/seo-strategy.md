@@ -22,15 +22,16 @@ Plan written 2026-05-18 after the canonical-host rename (`developerabhishek.live
 - `docs/seo/editorial-calendar.md` — 50-slot publishing calendar (seeded by `seo-weekly-draft` first run).
 - `docs/seo/scheduled-tasks/*.md` — self-contained prompts for the five Cowork scheduled tasks. Edit these files + call `mcp__scheduled-tasks__update_scheduled_task` to change task behavior.
 - `lib/canonical.ts` — helper exporting `canonical(path)` for per-page `alternates.canonical` metadata.
-- `lib/seo/jsonld.ts` — Schema.org JSON-LD builders for `Person`, `Article`, `BreadcrumbList`.
-- `app/layout.tsx` — `Person` + `BreadcrumbList` JSON-LD injection point (root-only).
-- `app/writing/[slug]/page.tsx` + `app/work/[slug]/page.tsx` — `Article` JSON-LD per-page injection.
+- `lib/structured-data.ts` — Schema.org JSON-LD builders for `Person`, `Organization`, `WebSite`, `Article`, and case-study `Article` graphs (landed 2026-05-17, supersedes the parallel `lib/seo/jsonld.ts` draft). `BreadcrumbList` not yet shipped here — see Gotchas.
+- `components/seo/JsonLdScript.tsx` — server-rendered component that emits a literal `<script type="application/ld+json">` into the static HTML head (parse-only crawlers need the tag in SSR HTML, not the RSC payload).
+- `app/layout.tsx` — `Person` + `Organization` + `WebSite` JSON-LD `@graph` injection point (root-only).
+- `app/writing/[slug]/page.tsx` + `app/work/[slug]/page.tsx` — `Article` JSON-LD per-page injection (cross-references the root `@id` URIs).
 
 ## Data flow
 
 How discovery + automation thread together:
 
-1. Crawler hits `akaushik.org/<any-page>`. Receives canonical link (per-page via `alternates.canonical`), `Person` JSON-LD (root), `Article` JSON-LD (on content pages), `BreadcrumbList` JSON-LD. `Link:` headers advertise `llms.txt`, `llms-full.txt`, sitemap, agent-skills, `.md` alternates (per `agent-readiness-contract` primer).
+1. Crawler hits `akaushik.org/<any-page>`. Receives canonical link (per-page via `alternates.canonical`), `Person` + `Organization` + `WebSite` JSON-LD `@graph` (root), `Article` JSON-LD (on content pages). `Link:` headers advertise `llms.txt`, `llms-full.txt`, sitemap, agent-skills, `.md` alternates (per `agent-readiness-contract` primer). `BreadcrumbList` is planned but not yet wired in `lib/structured-data.ts`.
 2. Legacy hosts (`developerabhishek.live`, `akaushik.dev`) **must** 301-redirect to canonical at the Vercel layer. Daily verification by `seo-redirect-health` scheduled task; on failure appends to `STATUS.md > Alerts` and opens a PR with the failure transcript.
 3. Editorial calendar drives content. `seo-weekly-draft` runs Monday 06:00, picks next `status: pending` slot, drafts MDX, opens draft PR labeled `seo:draft`. Abhishek edits + merges.
 4. Monthly: `seo-monthly-health` runs validator.schema.org + lighthouse + sitemap checks, refreshes `STATUS.md > Metrics` row for the current month. `seo-monthly-profile-drift` reads canonical NAP block from `STATUS.md`, fetches public profile data from each `sameAs` URL, diffs, appends to `STATUS.md > Drift log` on mismatch.
@@ -40,7 +41,7 @@ How discovery + automation thread together:
 ## Dependencies
 
 - **External (account-bound, Abhishek-only):** Vercel project domains config; Google Search Console + Bing Webmaster Tools verification; GSC Change-of-Address; Wikidata entry; LinkedIn / GitHub / X / Bluesky / dev.to / Hashnode profile editing. Status tracked in `STATUS.md > Human handoff queue`.
-- **Internal code:** `lib/canonical.ts`, `lib/seo/jsonld.ts`, `app/sitemap.ts` (existing), `middleware.ts` (existing, already emits Link headers).
+- **Internal code:** `lib/canonical.ts`, `lib/structured-data.ts`, `components/seo/JsonLdScript.tsx`, `app/sitemap.ts` (existing), `middleware.ts` (existing, already emits Link headers).
 - **Tooling (used by scheduled tasks):** `gh` CLI for PR creation; `curl` for redirect health; `linkinator` or equivalent for internal-link audit; `validator.schema.org` HTTP API; Lighthouse (npm package or pnpm script).
 - **Cowork scheduled-tasks MCP:** `mcp__scheduled-tasks__create_scheduled_task` / `list` / `update`. Task storage at `/Users/abhishek/.claude/scheduled-tasks/<task-id>/SKILL.md`. Tasks fire only while Cowork app is open (or on next launch for deferred runs).
 - **Related primers:** `agent-readiness-contract` (LLM/agent surfaces already shipped), `og-image-generation` (per-page OG images; extend per spec §4.7), `mdx-content-pipeline` (drives content + listing endpoints feeding `llms-full.txt`).

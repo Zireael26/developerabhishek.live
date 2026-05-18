@@ -6,7 +6,8 @@ import SiteFooter from '@/components/site/SiteFooter';
 // import { Wanderer } from '@/components/scene/Wanderer'; // TODO: temporarily disabled — reinstate when crane returns
 import { TweakBridge } from '@/components/dev/TweakBridge';
 import { CANONICAL_ORIGIN } from '@/lib/canonical';
-import { personJsonLd, jsonLdString } from '@/lib/seo/jsonld';
+import { JsonLdScript } from '@/components/seo/JsonLdScript';
+import { siteGraph, jsonLdString } from '@/lib/structured-data';
 import './globals.css';
 
 // Cloudflare Web Analytics beacon — cookieless, no consent banner needed
@@ -103,19 +104,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="describedby" type="text/markdown" href="/llms.txt" />
         <link rel="describedby" type="text/markdown" href="/llms-full.txt" />
         <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
-        {/* Schema.org Person — identity disambiguation anchor. Next's
-            <Script type="application/ld+json"> passes the child string
-            through unescaped (unlike a raw <script>{json}</script> which
-            React would HTML-entity-escape and corrupt). Strategy
-            "beforeInteractive" guarantees the payload is in the SSR HTML
-            for crawlers. sameAs[] lives in lib/seo/jsonld.ts. */}
-        <Script
-          id="ld-person"
-          type="application/ld+json"
-          strategy="beforeInteractive"
-        >
-          {jsonLdString(personJsonLd())}
-        </Script>
+        {/* Schema.org JSON-LD — Person + Organization + WebSite emitted as
+            one @graph so the Article/Case-study graphs on detail pages can
+            point back at stable @id URIs (https://akaushik.org/#person,
+            /#organization) rather than redeclaring the author and publisher.
+            Rendered as a literal <script> in the static HTML head via
+            JsonLdScript (see that component for why next/script won't do). */}
+        <JsonLdScript id="ld-json-site" json={jsonLdString(siteGraph())} />
       </head>
       <body>
         {/* Wanderer renders the #companion host with its SVG fallback today.

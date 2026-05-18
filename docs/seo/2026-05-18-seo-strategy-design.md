@@ -109,7 +109,7 @@ Each flagship gets:
 |---|------|-----------|-------|
 | 4.1 | `Person` JSON-LD on root + `/about` | `<script type="application/ld+json">` in `app/layout.tsx`. Fields: `@type: Person`, `name`, `url`, `image`, `jobTitle`, `worksFor: {@type: Organization, name: "Bluehost"}`, `sameAs: [github, linkedin, x, wikidata, ...]` | Claude (code) |
 | 4.2 | `Article` JSON-LD on every `/writing/*` and `/work/*` | Per-page metadata helper generating from MDX frontmatter | Claude (code) |
-| 4.3 | `BreadcrumbList` schema site-wide | Component in layout | Claude (code) |
+| 4.3 | `BreadcrumbList` schema site-wide | Add `breadcrumbGraph` builder to `lib/structured-data.ts`, emit via `JsonLdScript` on content detail pages | Claude (code) — deferred follow-up |
 | 4.4 | **Wikidata entry** for "Abhishek Kaushik (AI engineer)" — disambiguated from politician, professor, doctor, etc. | Manual creation. Fields: `instance of: human (Q5)`, `occupation: software engineer (Q82594)`, `employer: Bluehost`, `official website: akaushik.org`, `educated at:`, `social media accounts`. Cite `akaushik.org/about` + LinkedIn + Bluehost team page as references so entry survives deletion review | **Abhishek (manual)** — see `STATUS.md` for checklist |
 | 4.5 | Profile sync: identical NAP across LinkedIn, GitHub, X, Bluesky, Mastodon, dev.to, Hashnode | One-time pass, then drift-monitored monthly by `seo-monthly-profile-drift` scheduled task | **Abhishek (manual)** |
 | 4.6 | GitHub: pin top 6 repos on profile, every README opens with same one-liner + akaushik.org link | Manual | **Abhishek (manual)** |
