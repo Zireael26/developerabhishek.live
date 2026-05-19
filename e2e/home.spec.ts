@@ -52,14 +52,13 @@ test.describe('Home page', () => {
   // budget, so the fixme is restored and the work moves to a follow-up
   // `fix(a11y)` PR tracked in ROADMAP. Re-arm by deleting the fixme line
   // once the contrast pass lands.
-  test.fixme(
-    'axe-core reports no WCAG A/AA violations on the landing page',
-    async ({ page }) => {
-      await page.goto('/');
-      const results = await new AxeBuilder({ page })
-        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-        .analyze();
-      expect(results.violations).toEqual([]);
-    },
-  );
+  test('axe-core reports no WCAG A/AA violations on the landing page', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
 });

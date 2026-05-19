@@ -15,9 +15,14 @@
   --bg-2: #EEE8D9;
   --ink: #1A1A1E;
   --ink-90: #2A2A2E;
-  --ink-70: rgba(26, 26, 30, 0.72);
-  --ink-60: rgba(26, 26, 30, 0.55);
-  --ink-40: rgba(26, 26, 30, 0.38);
+  --ink-70: rgba(26, 26, 30, 0.78);
+  /* WCAG 2.1 AA contrast: ink-60 + ink-40 bumped 2026-05-19 to clear
+     4.5:1 against the parchment background. Prior 0.55 / 0.38 caps
+     produced #7d7b79 + #9d9a92 against #f5f1e8 / #eee8d9 — ratios 3.73
+     and 2.29. New caps composite to ~#5C5B5C / ~#64625F, ratios ~6.2 /
+     ~5.0. Visual feel still muted; readability passes axe-core. */
+  --ink-60: rgba(26, 26, 30, 0.70);
+  --ink-40: rgba(26, 26, 30, 0.65);
   --ink-25: rgba(26, 26, 30, 0.22);
   --ink-15: rgba(26, 26, 30, 0.13);
   --ink-10: rgba(26, 26, 30, 0.08);

@@ -4,6 +4,9 @@ All notable changes to akaushik.org (legacy host: developerabhishek.live, sunset
 
 ## [Unreleased]
 
+### Fixed
+- 2026-05-19 — A11y contrast closure (follow-up to gap-analysis cycle): `app/globals.css` `--ink-70` / `--ink-60` / `--ink-40` opacity caps bumped from 0.72 / 0.55 / 0.38 → 0.78 / 0.70 / 0.65 against the parchment background. Composited values move from `#7d7b79` / `#9d9a92` (failing 3.73:1 / 2.29:1) to `~#5C5B5C` / `~#64625F` (~6.2:1 / ~5.0:1) — every `color-contrast` axe-core violation surfaced in PR-4 of the gap-analysis plan is now closed. `e2e/home.spec.ts` axe-core gate re-armed: `test.fixme` removed; WCAG 2.0/2.1 A/AA `color-contrast` rule passes against the live home page. ROADMAP follow-up `[ ] WCAG contrast violations on the home page` ticked `[x]`. Visual feel stays muted; readability passes the gate. New `gotchas.md` entry captures the opacity-band lesson against the parchment palette.
+
 ### Added
 - 2026-05-19 — Gap-analysis execution wrap-up: `docs/rfcs/RFC-0001-quarterly-gap-analysis.md` proposes adopting the four-explorer + sequenced-PR gap-analysis shape as a standard quarterly process across Trellis-registered projects; `docs/gap-analysis-2026-05-19-execution-summary.md` carries the PR-by-PR receipts, finding-by-finding final state, ROADMAP follow-ups, owner handoff queue snapshot, and cycle metrics. No code changes; closes the cycle.
 
