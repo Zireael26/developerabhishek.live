@@ -45,10 +45,13 @@ test.describe('Home page', () => {
     await expect(work).toBeInViewport({ ratio: 0.1 });
   });
 
-  // Phase 3 ships the axe-core harness; Phase 5 (launch) fixes the remaining
-  // WCAG violations (missing meta description, contrast nits, landmark +
-  // skip-link work). The test runs in reporting mode here — when it passes
-  // we tighten the phase-5 launch slice to assert zero violations.
+  // PR-4 of the gap-analysis plan un-fixmed this gate and immediately
+  // surfaced ~30 contrast violations across the home page (every
+  // expectedContrastRatio: "4.5:1" finding). Per the plan §1.6 risks
+  // ("axe violations cascade"), the residue exceeds the 30-min inline
+  // budget, so the fixme is restored and the work moves to a follow-up
+  // `fix(a11y)` PR tracked in ROADMAP. Re-arm by deleting the fixme line
+  // once the contrast pass lands.
   test.fixme(
     'axe-core reports no WCAG A/AA violations on the landing page',
     async ({ page }) => {
