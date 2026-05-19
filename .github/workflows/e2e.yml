@@ -32,7 +32,10 @@ jobs:
       # run tests against localhost.
 
       - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium
+        # All projects in playwright.config.ts: chromium-desktop, firefox-desktop,
+        # webkit-desktop, chromium-mobile, chromium-tablet. Install all browsers
+        # so every project can run.
+        run: pnpm test:e2e:install
 
       - name: Build (production)
         run: pnpm build
