@@ -33,6 +33,9 @@ const LINK_HEADER = [
   '</.well-known/agent-skills/index.json>; rel="describedby"; type="application/json"',
   '</.well-known/mcp.json>; rel="describedby"; type="application/json"',
   '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"',
+  // RFC 8631: service-desc (machine-readable spec) + service-doc (human page).
+  '</api/openapi.json>; rel="service-desc"; type="application/json"',
+  '</api/docs>; rel="service-doc"; type="text/html"',
 ].join(', ');
 
 // Paths that have a `.md` alternate. The set is small and deliberate — adding

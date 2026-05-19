@@ -138,8 +138,28 @@ test.describe('agent readiness', () => {
     expect(link).toContain('rel="describedby"');
     expect(link).toContain('rel="sitemap"');
     expect(link).toContain('rel="api-catalog"');
+    expect(link).toContain('rel="service-desc"');
+    expect(link).toContain('rel="service-doc"');
     expect(link).toContain('llms.txt');
     expect(link).toContain('llms-full.txt');
     expect(link).toContain('api-catalog');
+  });
+
+  test('/api/docs renders the OpenAPI spec as HTML', async ({ request }) => {
+    const res = await request.get('/api/docs');
+    expect(res.status()).toBe(200);
+    expect(res.headers()['content-type']).toMatch(/text\/html/);
+    const body = await res.text();
+    expect(body).toContain('akaushik.org portfolio API');
+    expect(body).toContain('OpenAPI 3.1');
+    // Every documented path should appear at least once in the rendered page.
+    for (const path of [
+      '/llms.txt',
+      '/llms-full.txt',
+      '/api/writing',
+      '/api/case-studies',
+    ]) {
+      expect(body).toContain(path);
+    }
   });
 });

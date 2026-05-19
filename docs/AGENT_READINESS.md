@@ -348,7 +348,7 @@ Minimum bar; we iterate the skill once the site content is in place.
 | `Accept: text/markdown` negotiation | `middleware.ts` rewrites to `.md` endpoint when `Accept` matches |
 | `/.well-known/api-catalog` | `app/.well-known/api-catalog/route.ts` |
 | `/api/openapi.json` | `app/api/openapi.json/route.ts` (generated from a schema file committed in repo) |
-| `/api/docs` | renders the OpenAPI spec (use `redoc` or `rapidoc` — pick the one with the smallest bundle) |
+| `/api/docs` | `app/api/docs/page.tsx` (server-rendered React; reads `lib/openapi-spec.ts`; no client JS — Redoc/Swagger UI dropped on bundle-budget grounds) |
 | `/.well-known/agent-skills/index.json` | `app/.well-known/agent-skills/index.json/route.ts` (emits v0.2.0 schema; `digest` computed at build) |
 | `content/agent-skills/portfolio-content/SKILL.md` | Skill artifact itself, served at `/agent-skills/portfolio-content/SKILL.md` |
 | Content Signals | embedded in `app/robots.ts` output |

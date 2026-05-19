@@ -80,7 +80,7 @@ A living document. Phases are ordered by dependency, not calendar. Each phase is
 - [ ] Script-bundle overrun (377 KiB > 150 KiB target) — investigate top chunks (820 KiB three.js + R3F + drei candidate), confirm `next/dynamic` boundaries are truly lazy, consider raw three over R3F for `AgentGraph` (Wanderer already uses raw three)
 - [ ] WCAG 2.0/2.1 contrast violations on the home page — axe-core CI surfaces ~30 `expectedContrastRatio: "4.5:1"` findings. Audit each ratio against parchment-and-forest tokens (`globals.css @theme`), adjust low-contrast pairs without breaking the visual identity, then delete the `test.fixme` in `e2e/home.spec.ts` to re-arm the gate.
 - [~] Lighthouse category thresholds — 2026-05-19 measurement landed; performance + accessibility + best-practices promoted to `error` severity (desktop 0.95 / 0.95 / 0.95, mobile 0.9 / 0.95 / 0.9). SEO + JS-budget remain `warn` until SEO crosses 1.0 and the bundle overrun resolves
-- [ ] `/api/docs` human-readable page rendering the OpenAPI spec (deferred with note in Phase 4.4 PR)
+- [x] `/api/docs` human-readable page rendering the OpenAPI spec — shipped 2026-05-19 (gap-analysis PR-5). Server-rendered React reading from `lib/openapi-spec.ts`; same source as `/api/openapi.json`. No client JS.
 - [ ] MCP server for v1.1 — `/api/mcp` with `lookup_case_study` + `get_availability` tools
 - [ ] Abhishek's edit pass on `About.tsx` prose + case-study honest-scope paragraphs + curat.money framing check
 - [x] Directory + repo rename `developerabhishek.live` → `akaushik.org` (2026-04-24); flip repo visibility to public; Cloudflare Email Routing for `hello@akaushik.org`; legacy-domain 308 via `vercel.json`; social-bio sync
