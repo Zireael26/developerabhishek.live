@@ -16,6 +16,12 @@ type CaseStudy = {
   draft?: boolean;
 };
 
+// TODO(clusterbid): skeleton MDX lives at content/case-studies/clusterbid.mdx
+// with `draft: true`. The CASE_STUDIES row + Reel mapping land together when
+// the case study comes off draft — adding the row now would require extending
+// the `ReelSlug` union in components/work/reels.tsx (currently a closed union:
+// 'neev' | 'vericite' | 'bluehost-agents' | 'curat-money') and shipping a
+// matching reel component, which is out of scope for the skeleton PR.
 export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
   {
     index: '01',

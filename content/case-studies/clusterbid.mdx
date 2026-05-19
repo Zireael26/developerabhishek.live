@@ -1,0 +1,37 @@
+---
+title: ClusterBid
+dek: A polyglot monorepo SaaS — Go services, Next.js console, Python GPU runners — wired up to one engineering process.
+index: "05"
+tag: Polyglot monorepo · engineering depth
+year: 2026 — now
+role: PLACEHOLDER — Abhishek to confirm (consulting CTO / tech advisor / platform lead?)
+stack: [Go workspace, Next.js, Python, k8s, Makefile orchestration]
+evidenceOf: Backend depth · multi-language platform discipline
+draft: true
+---
+
+# ClusterBid
+
+> A polyglot monorepo SaaS — Go services, Next.js console, Python GPU runners — wired up to one engineering process.
+
+## Context
+
+*Who runs ClusterBid, what they do, why the polyglot shape is load-bearing rather than accidental. Tie to the "GPU runners" use case if appropriate.*
+
+## Problem
+
+*The systems problem in their words. Why a single-language stack would have made the trade-offs worse. What "polyglot done right" needs to provide.*
+
+## Approach
+
+*Repo layout — go.work with N services + M pkg/ + tool/, Next.js under clients/ts/, Python planned for inference-runner + fine-tuning-orchestrator. Root Makefile orchestrates vet/lint/test across all language subtrees because Go workspaces forbid `go vet ./...` from root.*
+
+*Engineering process: stack-profile `monorepo-polyglot` carve-out in process-gate (Lume pattern, n=1). Native git hooks via `.githooks/` because no root package.json. PR size budget 400/800.*
+
+## What shipped
+
+*Concrete deliverables — list the services, the console scaffold, the validator pipeline. Be specific.*
+
+## Scope
+
+*What was and wasn't in scope. Branch protection on main: pending. Pre-commit deferred until polyglot validators hit Rule of Three.*
