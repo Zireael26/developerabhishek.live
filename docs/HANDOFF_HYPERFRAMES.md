@@ -1,5 +1,7 @@
 # Handoff — HyperFrames render pass
 
+> **Superseded (2026-04-24).** Directory rename to `akaushik.org` landed per ADR-0003. Repo path is now `~/projects/personal/akaushik.org/`. This handoff is retained as historical context.
+
 > **Paste everything below the `---` into a fresh Claude Code session** opened at the repository root (`~/projects/personal/developerabhishek.live/` on disk today; rename deferred per §15 of the main HANDOFF.md). This handoff completes the post-launch reel-rendering slice already scaffolded in-session; your job is the render → commit loop, not the authoring.
 
 ---

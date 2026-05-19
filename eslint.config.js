@@ -2,6 +2,19 @@ import next from 'eslint-config-next';
 
 /** @type {import("eslint").Linter.Config[]} */
 const config = [
+  {
+    // eslint-config-next ignores `.next/**` relative to the project root only —
+    // worktree copies under `.claude/worktrees/*/.next/` were not covered and
+    // contaminated `pnpm lint` with 700+ false-positive errors from stale build
+    // artefacts. `_reference/` is the frozen Claude Design prototype and is
+    // intentionally outside the lint surface.
+    ignores: [
+      '.claude/worktrees/**',
+      '_reference/**',
+      '.next/**',
+      'node_modules/**',
+    ],
+  },
   ...next,
   {
     rules: {

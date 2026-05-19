@@ -1,6 +1,44 @@
 import Image from 'next/image';
+import { Fragment, type ReactNode } from 'react';
 
+import { ABOUT_COPY } from '@/lib/about-copy';
 import { SectionHeader } from './SectionHeader';
+
+// Inline-markdown renderer supporting **bold**, *italic*, and [text](url)
+// links only. Returns React nodes — never raw HTML strings — so there is no
+// XSS surface even if ABOUT_COPY drifts to operator-edited content.
+// Tokens matched in order via matchAll: link, bold, italic. No nested
+// formatting (`**[a](b)**` renders as bold containing plain text).
+function renderInline(text: string): ReactNode[] {
+  const pattern = /\[([^\]]+)\]\(([^)]+)\)|\*\*([^*]+)\*\*|\*([^*]+)\*/g;
+  const nodes: ReactNode[] = [];
+  let cursor = 0;
+  let key = 0;
+  for (const match of text.matchAll(pattern)) {
+    const start = match.index ?? 0;
+    if (start > cursor) {
+      nodes.push(text.slice(cursor, start));
+    }
+    if (match[1] !== undefined && match[2] !== undefined) {
+      nodes.push(
+        <a key={key++} href={match[2]}>
+          {match[1]}
+        </a>,
+      );
+    } else if (match[3] !== undefined) {
+      nodes.push(<strong key={key++}>{match[3]}</strong>);
+    } else if (match[4] !== undefined) {
+      nodes.push(<em key={key++}>{match[4]}</em>);
+    }
+    cursor = start + match[0].length;
+  }
+  if (cursor < text.length) {
+    nodes.push(text.slice(cursor));
+  }
+  return nodes.map((node, i) =>
+    typeof node === 'string' ? <Fragment key={`t${i}`}>{node}</Fragment> : node,
+  );
+}
 
 export function About() {
   return (
@@ -24,42 +62,18 @@ export function About() {
           />
         </figure>
         <div className="about-prose">
-          <p className="about-kicker">The short version</p>
-          <p className="about-lede">
-            I&apos;m Abhishek — an AI engineer who builds agent systems that
-            businesses can <em>actually</em> run.
-          </p>
-          <p>
-            For the last six years I&apos;ve been shipping software — AI and
-            platform engineering for the past stretch of it, most recently on
-            the agents framework behind Bluehost&apos;s AI products. Outside of
-            that, I&apos;m building <a href="#work">Neev</a>, a modular
-            operations platform for Indian MSMEs starting with textile
-            distribution — because the most exciting place for AI right now
-            isn&apos;t another consumer chatbot. It&apos;s the{' '}
-            <strong>63 million businesses</strong> still running on WhatsApp
-            messages and paper ledgers.
-          </p>
-          <p>
-            My way into AI was Andrej Karpathy&apos;s <em>Zero to Hero</em>{' '}
-            series. I didn&apos;t just watch it — I built micrograd and makemore
-            from scratch to understand what I was watching. That habit, going to
-            the foundations rather than the abstractions, is how I work on most
-            things. Including this site.
-          </p>
+          <p className="about-kicker">{ABOUT_COPY.kicker}</p>
+          <p className="about-lede">{renderInline(ABOUT_COPY.lede)}</p>
+          {ABOUT_COPY.paragraphs.map((p, i) => (
+            <p key={i}>{renderInline(p)}</p>
+          ))}
           <ul className="about-meta">
-            <li>
-              <span>Now</span>Bluehost · agents framework backend
-            </li>
-            <li>
-              <span>Building</span>Neev · MSME operations platform
-            </li>
-            <li>
-              <span>Co-founder / CTO</span>VeriCite · curat.money
-            </li>
-            <li>
-              <span>Writes</span>agent systems · AI for traditional business
-            </li>
+            {ABOUT_COPY.meta.map((row) => (
+              <li key={row.label}>
+                <span>{row.label}</span>
+                {row.value}
+              </li>
+            ))}
           </ul>
         </div>
       </div>

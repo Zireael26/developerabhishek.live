@@ -4,9 +4,9 @@ import { Reel, type ReelSlug } from '@/components/work/reels';
 
 /**
  * Fallback rendered by `app/work/[slug]/page.tsx` when no MDX body exists
- * yet for a known card slug. Keeps the "Read the case study →" link from
- * ever 404-ing during the Phase-2 content gap. Phase 2 case-study slices
- * ship MDX bodies that replace this view; Bluehost keeps it permanently.
+ * for a known card slug. Today only `bluehost-agents` hits this path — the
+ * Bluehost framework write-up is under NDA review and the stub is the
+ * permanent surface, not a transitional placeholder.
  */
 export function CaseStudyStub({ slug }: { slug: ReelSlug }) {
   const study = CASE_STUDIES.find((c) => c.slug === slug);
@@ -43,10 +43,10 @@ export function CaseStudyStub({ slug }: { slug: ReelSlug }) {
         ))}
       </dl>
       <div className="work-stub-notice">
-        Case study in preparation. Full write-up lands in Phase 2 via the MDX
-        pipeline. Meanwhile: the home-page card above is the honest headline —
-        email <a href="mailto:hello@akaushik.org">hello@akaushik.org</a>{' '}
-        if you want the full story today.
+        Case study available on request — scope is under client review. The
+        home-page card above is the honest headline; email{' '}
+        <a href="mailto:hello@akaushik.org">hello@akaushik.org</a> for the
+        full story.
       </div>
     </main>
   );

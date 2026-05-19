@@ -1,5 +1,7 @@
 # Claude Code Handoff — akaushik.org (v2)
 
+> **Superseded (2026-04-24).** The directory + GitHub repo rename to `akaushik.org` landed per ADR-0003 §15. Repository path on disk is `~/projects/personal/akaushik.org/`; remote is `github.com/Zireael26/akaushik.org`. This handoff is retained as historical context — read for the original engineering contract; do not act on the path references.
+
 > **Paste everything below this line as the first message in a fresh Claude Code session.** Run from the repository root: `~/projects/personal/developerabhishek.live/` on disk today (the directory rename to `akaushik.org` happens after this handoff completes — see §15). Either path works while you're inside it.
 >
 > Authoring assumption: you (Claude Code) have full filesystem access, network access, and the ability to run `pnpm`, `git`, and `node`. The Next.js scaffold is already in place. Your job is the **pixel-parity recreation**, the content fill, and the engineering rigor that gets it from "scaffold renders" to "ready to ship."

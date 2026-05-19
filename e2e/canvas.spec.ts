@@ -43,13 +43,13 @@ test.describe('hero canvas + wanderer', () => {
   test('wanderer host ships SVG fallback + hosts a <canvas> after hydration', async ({
     page,
   }) => {
+    test.skip(
+      true,
+      'Wanderer disabled since PR #58 (2026-05-11). Reinstate when the redesign brief in docs/wanderer-redesign-brief.md is closed. Until then #companion is not rendered and these assertions would fail.',
+    );
     await page.goto('/');
     await expect(page.locator('#companion')).toBeAttached();
     await expect(page.locator('#companion .companion-svg')).toBeAttached();
-    // WandererCrane appends its canvas to #companion on successful WebGL
-    // init. If WebGL fails the try/catch around `new THREE.WebGLRenderer`
-    // tears the canvas down and the SVG fallback stays. Either way, no
-    // console errors.
     await page.waitForTimeout(1500);
   });
 
@@ -67,7 +67,11 @@ test.describe('hero canvas + wanderer', () => {
       await expect(canvasHost).toBeHidden();
     }
     // Wanderer crane bails early when reduceMotion is true, so no canvas
-    // should be inside #companion.
+    // should be inside #companion. With Wanderer disabled site-wide (PR #58)
+    // #companion is not in the DOM at all — the count check still holds
+    // (zero canvases match a missing parent) but the assertion is no longer
+    // exercising the bail-out path. Keep it for completeness; reinstating
+    // the Wanderer per docs/wanderer-redesign-brief.md re-arms it.
     const crane = page.locator('#companion canvas');
     await expect(crane).toHaveCount(0);
   });

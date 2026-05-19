@@ -339,7 +339,7 @@ Minimum bar; we iterate the skill once the site content is in place.
 
 | Requirement | File / code location |
 | --- | --- |
-| `robots.txt` | `app/robots.ts` (Next.js Metadata API) |
+| `robots.txt` | `app/robots.txt/route.ts` (Route Handler — pivoted from the original `app/robots.ts` MetadataRoute approach to keep the Content-Signal directive emission under direct control) |
 | `sitemap.xml` | `app/sitemap.ts` |
 | `Link` headers on all HTML responses | `middleware.ts` |
 | `/llms.txt` | `app/llms.txt/route.ts` |

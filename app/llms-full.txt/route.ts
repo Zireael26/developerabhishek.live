@@ -29,7 +29,7 @@ function renderAbout(): string {
     '',
     ABOUT_COPY.lede,
     '',
-    ABOUT_COPY.bodyMarkdown,
+    ABOUT_COPY.paragraphs.join('\n\n'),
     '',
     ...ABOUT_COPY.meta.map((row) => `- **${row.label}** — ${row.value}`),
     '',
