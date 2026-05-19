@@ -3,7 +3,7 @@ slug: hyperframes-reels
 purpose: HTML/GSAP compositions rendered to deterministic MP4 reels for case-study cards and hero bands via the HyperFrames CLI; artifacts are committed.
 pinned_to: e73ab4026fe93e8f216d4c3fea227ca26a1fdbac
 created: 2026-05-15
-last_refreshed: 2026-05-15
+last_refreshed: 2026-05-19
 related_primers: [og-image-generation, mdx-content-pipeline]
 ---
 
@@ -12,6 +12,8 @@ related_primers: [og-image-generation, mdx-content-pipeline]
 ## Purpose
 
 Pre-render motion reels for the four home `Work` cards (600×400, 5s loop) and the four `/work/<slug>` hero bands (1600×900, 10s loop), so the site has ambient case-study motion without paying live-animation cost on the main thread. Compositions are authored as plain HTML + GSAP timelines, rendered locally via the HyperFrames CLI, and the resulting MP4 + WebP poster pair is committed alongside the source.
+
+> The same pipeline serves the **writing-post loops** under `public/video/writing/` (16:9, 5s). Composition sources for the writing slugs land under `scripts/hyperframes/<slug>/` when they exist; the policy + exceptions are codified in **ADR-0011**. Two writing posts (`trellis`, `best-practices-into-trellis`) intentionally ship without loops per the non-visual exception in that ADR.
 
 ## Entry points
 

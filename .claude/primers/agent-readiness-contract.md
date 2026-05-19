@@ -3,7 +3,7 @@ slug: agent-readiness-contract
 purpose: Content-negotiation, API catalog, OpenAPI 3.1, and llms-full.txt surfaces so the portfolio passes isitagentready.com checks.
 pinned_to: e73ab4026fe93e8f216d4c3fea227ca26a1fdbac
 created: 2026-05-15
-last_refreshed: 2026-05-15
+last_refreshed: 2026-05-19
 related_primers: [mdx-content-pipeline]
 ---
 
