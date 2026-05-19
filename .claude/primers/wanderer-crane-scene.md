@@ -1,13 +1,15 @@
 ---
 slug: wanderer-crane-scene
-purpose: Single-instance paper-crane Three.js companion driven by document scroll and IntersectionObserver pose anchors, with SVG fallback for reduced-motion users.
+purpose: Single-instance paper-crane Three.js companion driven by document scroll and IntersectionObserver pose anchors, with SVG fallback for reduced-motion users. Currently disabled in app/layout.tsx; code preserved.
 pinned_to: e73ab4026fe93e8f216d4c3fea227ca26a1fdbac
 created: 2026-05-15
-last_refreshed: 2026-05-15
+last_refreshed: 2026-05-19
 related_primers: []
 ---
 
 # Wanderer Crane Scene
+
+> ⚠ **STATUS (2026-05-19): Wanderer is checked-in but disabled.** `<Wanderer />` is commented out at `app/layout.tsx:120` behind a `TODO: temporarily disabled — reinstate when crane returns` comment. The component code, `WandererCraneClient`, `WandererCrane`, and the `e2e/canvas.spec.ts` assertions for the companion path all remain. Until reinstated, the SVG fallback never appears on the live site (because the host `#companion` div is also not rendered) and the e2e assertions on the companion canvas pass vacuously. Surfaced in `docs/gap-analysis-2026-05-19.md` finding C2. Reinstate or move to a post-launch ROADMAP item.
 
 ## Purpose
 

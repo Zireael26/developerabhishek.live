@@ -3,7 +3,7 @@ slug: seo-strategy
 purpose: SEO + AIO program for akaushik.org — three-goal plan, per-page canonical + JSON-LD wiring, five Cowork scheduled tasks, live status doc, human-required handoff queue.
 pinned_to: 000ca08ce8ef7b13437a4b57e3d57b53a22b5ff1
 created: 2026-05-18
-last_refreshed: 2026-05-18
+last_refreshed: 2026-05-19
 related_primers: [agent-readiness-contract, mdx-content-pipeline, og-image-generation]
 ---
 
@@ -19,7 +19,7 @@ Plan written 2026-05-18 after the canonical-host rename (`developerabhishek.live
 
 - `docs/seo/2026-05-18-seo-strategy-design.md` — the static plan. Goals, phases, success metrics, risks. Read this before changing program direction.
 - `docs/seo/STATUS.md` — **live status doc**. Phase progress, canonical NAP block, metrics, alerts, drift log, automation health, leads attributed, human handoff queue. Read this every session to know current state without re-exploration.
-- `docs/seo/editorial-calendar.md` — 50-slot publishing calendar (seeded by `seo-weekly-draft` first run).
+- `docs/seo/editorial-calendar.md` — 50-slot publishing calendar. **Does not exist on disk yet (2026-05-19);** seeded by `seo-weekly-draft` on first run. Any session that needs to read the calendar before the cron has fired should treat absence as expected and either trigger the task or wait for Monday 06:00.
 - `docs/seo/scheduled-tasks/*.md` — self-contained prompts for the five Cowork scheduled tasks. Edit these files + call `mcp__scheduled-tasks__update_scheduled_task` to change task behavior.
 - `lib/canonical.ts` — helper exporting `canonical(path)` for per-page `alternates.canonical` metadata.
 - `lib/structured-data.ts` — Schema.org JSON-LD builders for `Person`, `Organization`, `WebSite`, `Article`, and case-study `Article` graphs (landed 2026-05-17, supersedes the parallel `lib/seo/jsonld.ts` draft). `BreadcrumbList` not yet shipped here — see Gotchas.
