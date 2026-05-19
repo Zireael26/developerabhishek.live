@@ -1,26 +1,25 @@
 # akaushik.org
 
-Abhishek Kaushik's personal portfolio — a sales-artifact-grade site that reads as a quiet, confident craft object. AI systems for businesses that haven't met AI yet.
+Abhishek Kaushik's personal portfolio — a sales-artifact-grade site for an AI engineer who ships agent systems for production. The thesis: AI systems for businesses that haven't met AI yet.
 
-**Live:** https://akaushik.org · `akaushik.dev` redirects here.
+**Live:** https://akaushik.org · `akaushik.dev` and `developerabhishek.live` 308-redirect here per [`docs/adr/0003-domain-and-canonical-url.md`](docs/adr/0003-domain-and-canonical-url.md).
 
-> This repository is mid-rewrite. The prior SvelteKit build is archived at the `legacy-v1-final` tag. The current branch is a Next.js 16.2 scaffold that Claude Code will flesh out against the Claude Design reference. Domain history and canonical-URL rationale are in [`docs/adr/0003-domain-and-canonical-url.md`](docs/adr/0003-domain-and-canonical-url.md); the legacy host `developerabhishek.live` will not be renewed and 308-redirects to `akaushik.org` until the registration lapses.
+The portfolio is itself a case study in the engineering process it advertises. The PRD, ROADMAP, ADRs, and CHANGELOG are public artefacts; every non-trivial change ships with the matching sibling docs. Process-gate scripts enforce the discipline at pre-commit.
 
 ## Stack
 
 | Layer | Choice | Reason |
 | --- | --- | --- |
-| Framework | Next.js 16.2 LTS (App Router) | Matches `tgsc`; stable server/client boundary; edge-ready |
-| Language | TypeScript 6.0 (strict) | `noUncheckedIndexedAccess`, `verbatimModuleSyntax`-ready |
-| UI | React 19.2 | Actions, `use`, server components |
-| Styling | Tailwind 4.2 (CSS-first, no `tailwind.config.ts`) | Tokens live in `app/globals.css` under `@theme` |
-| Components | shadcn/ui v4 | Re-skinned with forest-on-parchment tokens |
-| 3D | react-three-fiber + drei | The Wanderer (low-poly paper crane companion) |
-| Motion | Framer Motion + GSAP | Micro-interactions + scroll timeline |
-| Content | MDX (App Router `mdx-rs`) | Case studies, writing, skill cards |
-| Package manager | pnpm 10 | Same as `tgsc` |
-| Runtime | Node 22 LTS | See `.nvmrc` |
-| Host | Vercel | Git-driven deploys, edge middleware |
+| Framework | Next.js 16.2 LTS (App Router) | Stable server/client boundary; edge-ready |
+| Language | TypeScript 6.0 (strict, `noUncheckedIndexedAccess`) | Catches every shape drift |
+| UI | React 19.2 | Server components + Actions |
+| Styling | Tailwind 4 (CSS-first, tokens under `@theme` in `app/globals.css`) | No `tailwind.config.ts` |
+| 3D | three + `@react-three/fiber` + drei | Hero `AgentGraph` scene |
+| Content | MDX via `next-mdx-remote@6` | Case studies + writing |
+| Motion (case study cards / writing loops) | HyperFrames-rendered MP4 + webp | Deterministic cinema-grade output |
+| Package manager | pnpm 11 | Corepack-pinned |
+| Runtime | Node 22 LTS | `.nvmrc` |
+| Host | Vercel | Edge middleware for Link headers + content negotiation |
 
 ## Local development
 
@@ -30,58 +29,54 @@ corepack enable
 pnpm install
 
 # run
-pnpm dev          # http://localhost:3000
+pnpm dev          # http://localhost:3000 (Turbopack)
 pnpm typecheck
 pnpm lint
+pnpm test         # vitest unit tests
+pnpm test:e2e     # Playwright e2e (needs pnpm start running)
 pnpm build && pnpm start
 ```
 
-## How the build is organized
+## Repository layout
 
 ```
-/app                     App Router (layout, page, routes)
-/components              Presentational components (section/, scene/, ui/)
-/content                 MDX case studies + writing
-/lib                     Utilities, server actions, token helpers
-/public                  Static assets (/.well-known/* served from here)
-/scripts                 fetch-github-stats.mjs, process-gate.mjs, etc.
-/docs
-  PRD.md                 Product requirements (ship-blocking)
-  DESIGN_DIRECTION.md    North-star aesthetic brief
-  AGENT_READINESS.md     Cloudflare isitagentready.com compliance contract
-  CASE_STUDIES_OUTLINE.md  4 hero case studies, five-beat structure
-  BIO_DRAFT.md           Tagline + About copy candidates
-  ROADMAP.md             Phased plan (to be written during scaffold phase)
-  CHANGELOG.md           Human-readable release notes
-  adr/                   ADRs for substantive decisions
-  epm/                   Epic plans
-/_reference              Frozen Claude Design prototype (visual source of truth — do not edit)
-HANDOFF.md               Self-contained Claude Code prompt (v0 → v1)
+/app                  App Router (layout, pages, route handlers, .well-known/, api/, sitemap)
+/components           Section components, scene (R3F + Three.js), media, SEO islands
+/content              MDX case studies + writing posts
+/lib                  Content loader, structured-data builders, canonical helper, stats reader
+/public               Static assets, agent-skills, mcp.json, init-theme.js
+/scripts              process-gate, agent-skills index build, fetch-github-stats, HyperFrames render
+/docs                 PRD, ROADMAP, AGENT_READINESS, CHANGELOG, ADRs (10+), bundle budget, SEO program
+/e2e                  Playwright specs (home, work, theme, canvas, reduced-motion, content-negotiation)
+/_reference           Frozen Claude Design prototype (read-only)
+/.claude/primers      Feature primers for stable subsystems
 ```
 
-## Process gates (match `tgsc`)
+## Process gates
 
-Every non-trivial change must ship with:
+Every non-trivial change ships with:
 
-1. An **ADR** if the decision is architectural
-2. An updated **ROADMAP.md** if the scope shifts
-3. An **EPM** for anything that touches more than one sub-system
-4. A **CHANGELOG.md** entry
-5. A passing **process-gate** run: `pnpm process:check`
+1. An **ADR** under `docs/adr/` if the decision is architectural
+2. An updated **ROADMAP.md** if scope shifts
+3. A **CHANGELOG.md** entry under `[Unreleased]`
+4. A passing **`pnpm process:check`**
+5. A Conventional Commit message
 
-`pnpm process:check` validates the presence of the required sibling docs for any staged code change. It is wired into pre-commit locally and into CI as a blocking check.
+Pre-commit (husky) runs the gate; pre-push (husky) blocks direct push to `main` and runs the unit smoke. CI (`.github/workflows/`) runs `verify` (typecheck + lint + build + process-gate) on every PR.
 
-## Agent-readiness contract
+## Agent readiness
 
-See `docs/AGENT_READINESS.md`. In short, every deploy must satisfy Cloudflare's [isitagentready.com](https://isitagentready.com/) scan across all four dimensions: Discoverability, Content, Bot Access Control, and Capabilities. Regressions are release-blocking.
+The site passes Cloudflare's [isitagentready.com](https://isitagentready.com/) across all four dimensions (Discoverability, Content, Bot Access Control, Capabilities). Implementation contract: [`docs/AGENT_READINESS.md`](docs/AGENT_READINESS.md). Live snapshot directory: [`docs/agent-readiness-snapshots/`](docs/agent-readiness-snapshots/).
+
+The full corpus is also available as Markdown at [`/llms.txt`](https://akaushik.org/llms.txt) and [`/llms-full.txt`](https://akaushik.org/llms-full.txt); every content page responds to `Accept: text/markdown` and has a `.md` suffix alternate.
 
 ## Links
 
 - LinkedIn · [abhishek26k](https://linkedin.com/in/abhishek26k)
 - GitHub · [Zireael26](https://github.com/Zireael26)
 - X · [@abhi2601k](https://x.com/abhi2601k)
-- Email · `abhishek.nexus26@gmail.com`
+- Email · `hello@akaushik.org`
 
 ## License
 
-Source code: MIT. Written content and case studies: CC BY-NC 4.0 (the words and diagrams are mine, feel free to learn from them, not to republish as your own).
+Source code: MIT. Written content and case studies: CC BY-NC 4.0 (learn from them; do not republish as your own).

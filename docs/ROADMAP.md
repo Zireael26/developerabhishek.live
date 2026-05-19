@@ -61,7 +61,7 @@ A living document. Phases are ordered by dependency, not calendar. Each phase is
 
 - [x] R3F 9 + drei 10 bump — React 19 peer warnings cleared (ADR-0007)
 - [x] Hero R3F canvas — agent-graph live scene (4 nodes, rings, labels, edges, packets, pointer parallax)
-- [x] Wanderer full Three.js port — 8 POSES, IntersectionObserver dispatch, damp lerp, scroll-velocity rotation, accent sync, 80ms WebGL bail-out
+- [~] Wanderer full Three.js port — 8 POSES, IntersectionObserver dispatch, damp lerp, scroll-velocity rotation, accent sync (disabled 2026-05-11 per PR #58; reinstate tracked post-launch — see `docs/wanderer-redesign-brief.md`)
 - [x] OG images via `next/og` — home + per case study + per writing post
 - [x] Cloudflare Web Analytics beacon (token-gated, cookieless)
 - [x] Head `<link>` tags synced to middleware Link header shape
@@ -72,7 +72,8 @@ A living document. Phases are ordered by dependency, not calendar. Each phase is
 ## Post-launch (honest open items)
 
 - [ ] Calendly / Cal.com URL wired into Contact ghost button (currently `href="#"`)
-- [ ] Portrait photo swap (`/images/abhishek.webp`, 4:5) — SVG placeholder today
+- [x] Portrait photo swap (`/images/about/abhishek.webp`, 4:5) — shipped 2026-05-11 (CHANGELOG)
+- [ ] Wanderer crane redesign + reinstate — see `docs/wanderer-redesign-brief.md`
 - [~] Case-study reel MP4s — HyperFrames scaffold + 8 compositions + React integration landed (ADR-0008); remaining work is the render pass (`pnpm render:work && pnpm render:posters`) + committing `public/video/work/*.{mp4,webp}`. Blocked in-sandbox on FFmpeg/Chrome availability; runs cleanly on a local dev box
 - [ ] `isitagentready.com` scan against prod + dated PNG into `docs/agent-readiness-snapshots/`
 - [ ] `pnpm analyze` Phase-5 bundle audit — update `docs/BUNDLE_BUDGET.md` with measured initial JS, tighten `lighthouserc.yml` ceiling back toward 150 KiB target (currently 200 KiB `warn`)

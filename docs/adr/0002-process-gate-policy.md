@@ -3,6 +3,8 @@
 **Status:** Accepted · 2026-04-20
 **Supersedes:** — (extends the engineering process spelled out in PRD §7 and HANDOFF §9)
 
+> **Tool note (2026-05-19):** The policy in this ADR is unchanged and authoritative. The git-hook manager was migrated from `simple-git-hooks` to husky per **ADR-0009 (SE Core onboarding)**. References to `simple-git-hooks` below are historical; the current pre-commit / pre-push wiring lives under `.husky/`.
+
 ## Context
 
 HANDOFF §9 requires the portfolio to ship with a tgsc-style process discipline:

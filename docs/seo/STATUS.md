@@ -51,16 +51,13 @@
 ```yaml
 name: Abhishek Kaushik
 tagline: AI systems for businesses that haven't met AI yet
-photo_url: https://akaushik.org/images/abhishek.jpg     # TODO: confirm asset exists at this path
+photo_url: https://akaushik.org/images/about/abhishek.webp
 canonical_url: https://akaushik.org
 sameAs:
-  - https://github.com/<handle>                         # TODO: fill from current profile
-  - https://www.linkedin.com/in/<handle>                # TODO: fill
+  - https://github.com/Zireael26
+  - https://linkedin.com/in/abhishek26k
   - https://x.com/abhi2601k
-  - https://bsky.app/profile/<handle>                   # TODO: fill or remove
-  - https://hashnode.com/@<handle>                      # TODO: fill or remove
-  - https://dev.to/<handle>                             # TODO: fill or remove
-  - https://www.wikidata.org/wiki/Q<id>                 # TODO: fill after entry approved
+  # Bluesky, Hashnode, dev.to, Wikidata pending owner action — see §9 handoff queue H5 + H6.
 ```
 
 ---

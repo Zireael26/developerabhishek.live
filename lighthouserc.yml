@@ -24,8 +24,9 @@ ci:
       # drei 10 + three.js push the code-split chunks the preloader
       # fetches alongside the main bundle, even though they are
       # dynamically imported via ssr:false + Suspense. Post-launch
-      # (Phase 6) the target pulls back to 160 KiB once bundle-analyzer
-      # surfaces exactly which dependency is hitting initial JS.
+      # the target tightens toward 160 KiB once bundle-analyzer surfaces
+      # exactly which dependency is hitting initial JS — tracked in
+      # docs/BUNDLE_BUDGET.md, refreshed by PR-3 of the gap-analysis plan.
       resource-summary:script:size:
         - 'warn'
         - maxNumericValue: 204800 # 200 KiB

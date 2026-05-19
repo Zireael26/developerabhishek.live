@@ -3,7 +3,7 @@ import { Newsreader, Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google'
 import Script from 'next/script';
 import SiteNav from '@/components/site/SiteNav';
 import SiteFooter from '@/components/site/SiteFooter';
-// import { Wanderer } from '@/components/scene/Wanderer'; // TODO: temporarily disabled — reinstate when crane returns
+// import { Wanderer } from '@/components/scene/Wanderer'; // Disabled per PR #58 (2026-05-11). Redesign brief: docs/wanderer-redesign-brief.md.
 import { TweakBridge } from '@/components/dev/TweakBridge';
 import { CANONICAL_ORIGIN } from '@/lib/canonical';
 import { JsonLdScript } from '@/components/seo/JsonLdScript';
@@ -113,10 +113,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <JsonLdScript id="ld-json-site" json={jsonLdString(siteGraph())} />
       </head>
       <body>
-        {/* Wanderer renders the #companion host with its SVG fallback today.
-            Slice 5.1c layers the Three.js crane on top for `[data-motion="on"]`
-            + no `prefers-reduced-motion`. The SVG stays as the fallback.
-            TODO: temporarily disabled — reinstate <Wanderer /> + its import when crane returns. */}
+        {/* Wanderer disabled per PR #58 (2026-05-11). When reinstated, this
+            mount renders the #companion host + SVG fallback + the Three.js
+            crane layered on top for `[data-motion="on"]` + no
+            `prefers-reduced-motion`. Reinstatement checklist + open redesign
+            questions live in docs/wanderer-redesign-brief.md. */}
         {/* <Wanderer /> */}
         <SiteNav />
         {children}

@@ -5,4 +5,20 @@ Review at session start. Recurring patterns (n≥2 projects) promote to `core-ru
 
 ---
 
-*(empty — add entries as they surface)*
+- **2026-04-21 — Hero SVG bleed-through.** The SSR SVG fallback for the agent-graph hero composited through the transparent R3F canvas once mounted, producing a ghost-edge artefact. **Fix:** CSS rule `.scene-frame[data-canvas-active="true"] .scene-svg { display: none }` hides the SVG once `AgentGraphClient` flips the `data-canvas-active` flag. Don't replace this with conditional rendering — keep the SVG attached for the SSR pass, hide via CSS post-mount.
+
+- **2026-04-22 — Mobile section reorder via CSS breaks the narrative.** Reordering sections via `flex-order` / `grid-row` on small viewports works visually but screen readers follow source order, so the read-aloud sequence drifts from the visual sequence. **Fix:** keep DOM source order = visual order on every viewport. Reorder by moving JSX, not CSS.
+
+- **2026-04-24 — Theme-toggle flicker on first paint.** Deferred `<script src="/init-theme.js" defer>` painted the light theme first, then flipped to dark for dark-preference users, producing a visible flash. **Fix:** `public/init-theme.js` loads **synchronously** in `<head>` before any stylesheet runs. The `eslint-disable-next-line @next/next/no-sync-scripts` comment in `app/layout.tsx` exists for exactly this reason; don't remove it.
+
+- **2026-05-02 — `stats.json` null widening.** `scripts/fetch-github-stats.mjs` may emit `null` for `commits12mo` / `lastCommit` when a per-repo fetch hits a private-repo 404 or an empty branch. The TypeScript contract in `lib/stats.ts` initially claimed those fields were always present; `pnpm typecheck` broke. **Fix:** types widened to `number | null` / `string | null`; `components/sections/OpenSource.tsx` coalesces via `?? 0`. New consumers must apply the same guard.
+
+- **2026-05-11 — Wanderer disable is mount-level, not asset-level.** `<Wanderer />` in `app/layout.tsx` ships both the Three.js crane and its SVG fallback through a single mount point (`#companion`). Commenting out `<Wanderer />` hides both surfaces; the SVG fallback does **not** stay visible on its own. Revert path is uncomment-only. Tests that assert `#companion` is attached fail vacuously today (`e2e/canvas.spec.ts` skip wrappers added 2026-05-19). Redesign brief: `docs/wanderer-redesign-brief.md`.
+
+- **2026-05-11 — Writing-post HyperFrames loops live across two component layers.** `components/media/hyperframes-loop.tsx` owns the SVG floor per slug; `components/media/MotionVideo.tsx` owns the `<video>` element and its motion gating. MP4 + webp assets in `public/video/writing/`. Adding a new slug requires touching the loop-component switch and committing the rendered assets — render pass needs FFmpeg + Chrome locally and does not run in the sandbox.
+
+- **2026-05-19 — Vercel GitHub auto-deploy broken since 2026-04-24 (`cd559de`).** PR-based CI workflows that wait on a `*.vercel.app` preview URL stall forever. PR-2 of the gap-analysis plan switches `.github/workflows/e2e.yml` + `lighthouse.yml` to `pnpm build` + `pnpm start` + wait-on against localhost. Do not add new workflows that depend on the Vercel preview URL until the GitHub integration is repaired.
+
+- **2026-05-19 — `pnpm lint` contaminated by worktree `.next/`.** `eslint-config-next` ignores `.next/**` relative to the project root only; worktree copies under `.claude/worktrees/*/.next/` were not covered and lint reported 700+ false-positive errors. **Fix:** explicit `ignores: ['.claude/worktrees/**', '_reference/**', '.next/**', 'node_modules/**']` at the top of `eslint.config.js`. Do not delete `.claude/worktrees/` — it is the active worktree pool managed by `superpowers:using-git-worktrees`.
+
+- **2026-05-19 — `mcp.json` must not advertise a non-existent endpoint.** `public/.well-known/mcp.json` previously listed `endpoint: https://akaushik.org/api/mcp` while no route handler existed; any MCP-aware agent following the discovery file hit a 404. Until `/api/mcp` ships, the file carries `status: planned` and no `endpoint` field. Reintroduce `endpoint` only at the same commit that lands the route.

@@ -26,24 +26,17 @@ export default function WritingIndex() {
           First-principles notes on agent systems and AI for traditional
           businesses. New posts land here without a redesign.
         </p>
-        {posts.length === 0 ? (
-          <p className="writing-index-empty">
-            Drafting in the open. First posts land alongside the Phase-2
-            content push.
-          </p>
-        ) : (
-          <ul className="writing-index-list" role="list">
-            {posts.map((p) => (
-              <li key={p.slug} className="writing-index-item">
-                <span className="writing-index-date">{formatMonthYear(p.frontmatter.date)}</span>
-                <h2 className="writing-index-item-title">
-                  <Link href={`/writing/${p.slug}`}>{p.frontmatter.title}</Link>
-                </h2>
-                <p className="writing-index-item-dek">{p.frontmatter.dek}</p>
-              </li>
-            ))}
-          </ul>
-        )}
+        <ul className="writing-index-list" role="list">
+          {posts.map((p) => (
+            <li key={p.slug} className="writing-index-item">
+              <span className="writing-index-date">{formatMonthYear(p.frontmatter.date)}</span>
+              <h2 className="writing-index-item-title">
+                <Link href={`/writing/${p.slug}`}>{p.frontmatter.title}</Link>
+              </h2>
+              <p className="writing-index-item-dek">{p.frontmatter.dek}</p>
+            </li>
+          ))}
+        </ul>
       </div>
     </main>
   );
