@@ -5,6 +5,9 @@ All notable changes to akaushik.org (legacy host: developerabhishek.live, sunset
 ## [Unreleased]
 
 ### Changed
+- 2026-05-19 — Gap-analysis PR-3: bundle baseline + Lighthouse tightening. First post-Phase-5 measurement: desktop 1.00 / 0.97 / 0.96 / 0.92, mobile 0.92 / 0.97 / 0.96 / 0.92, script transferSize 386,439 bytes (377 KiB). `lighthouserc.yml` promotes performance + accessibility + best-practices to `error` at thresholds the measurement clears (desktop 0.95 / 0.95 / 0.95); `lighthouserc.mobile.yml` mirrors at 0.9 / 0.95 / 0.9. SEO stays at `warn` 0.9 because 0.92 is short of the PRD 1.0 target. JS-budget ceiling moved from 200 KiB → 400 KiB `warn` to suppress per-PR noise on the overrun; **not** silently raised — a follow-up ROADMAP item `[ ] Script-bundle overrun — reduce initial JS from 377 KiB toward 150 KiB` is now open with the candidate investigation paths in `docs/BUNDLE_BUDGET.md` + `docs/bundle-snapshots/2026-05-19-bundle.md`. ROADMAP `Lighthouse category thresholds` line ticked `[~]` with the promoted bars; `pnpm analyze Phase-5 bundle audit` line ticked `[~]` pointing at the dated snapshot.
+
+### Changed
 - 2026-05-19 — Gap-analysis PR-2: CI workflows switch to runner-local serve. `.github/workflows/e2e.yml` + `lighthouse.yml` no longer wait on a Vercel preview URL (broken since 2026-04-24 per `docs/gap-analysis-2026-05-19.md` finding C2-b). New shape: `pnpm install` → `pnpm exec playwright install --with-deps chromium` (e2e only) → `pnpm build` → `nohup pnpm start > server.log` → `pnpm exec wait-on http://localhost:3000 --timeout 60000` → run Playwright / Lighthouse / axe-core against `http://localhost:3000` → kill server in `if: always()` step → upload server log on failure. New `wait-on@^9` devDependency. New `ci:serve` package script for local repro of the workflow shape. No source-code changes — `pnpm typecheck` clean.
 
 ### Added
