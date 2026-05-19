@@ -102,14 +102,16 @@ test.describe('agent readiness', () => {
     expect(Object.keys(body.paths).length).toBeGreaterThan(0);
   });
 
-  test('/api/case-studies returns the curated case-study list', async ({ request }) => {
+  test('/api/case-studies returns { count, caseStudies } shape', async ({ request }) => {
     const res = await request.get('/api/case-studies');
     expect(res.status()).toBe(200);
     expect(res.headers()['content-type']).toMatch(/application\/json/);
     const body = await res.json();
-    expect(Array.isArray(body)).toBe(true);
-    expect(body.length).toBeGreaterThanOrEqual(4);
-    expect(body[0]).toHaveProperty('slug');
+    expect(body).toHaveProperty('count');
+    expect(Array.isArray(body.caseStudies)).toBe(true);
+    expect(body.caseStudies.length).toBeGreaterThanOrEqual(4);
+    expect(body.caseStudies[0]).toHaveProperty('slug');
+    expect(body.count).toBe(body.caseStudies.length);
   });
 
   test('/api/writing returns posts newest-first with reading times', async ({ request }) => {
@@ -117,12 +119,14 @@ test.describe('agent readiness', () => {
     expect(res.status()).toBe(200);
     expect(res.headers()['content-type']).toMatch(/application\/json/);
     const body = await res.json();
-    expect(Array.isArray(body)).toBe(true);
-    expect(body.length).toBeGreaterThanOrEqual(3);
-    expect(body[0]).toHaveProperty('slug');
+    expect(body).toHaveProperty('count');
+    expect(Array.isArray(body.posts)).toBe(true);
+    expect(body.posts.length).toBeGreaterThanOrEqual(3);
+    expect(body.posts[0]).toHaveProperty('slug');
+    expect(body.posts[0]).toHaveProperty('readingTime');
     // Sorted newest-first: dates non-increasing.
-    for (let i = 1; i < body.length; i++) {
-      expect(body[i - 1].date >= body[i].date).toBe(true);
+    for (let i = 1; i < body.posts.length; i++) {
+      expect(body.posts[i - 1].date >= body.posts[i].date).toBe(true);
     }
   });
 
