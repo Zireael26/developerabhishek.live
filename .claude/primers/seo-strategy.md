@@ -1,7 +1,7 @@
 ---
 slug: seo-strategy
 purpose: SEO + AIO program for akaushik.org — three-goal plan, per-page canonical + JSON-LD wiring, five Cowork scheduled tasks, live status doc, human-required handoff queue.
-pinned_to: 000ca08ce8ef7b13437a4b57e3d57b53a22b5ff1
+pinned_to: 12473b5d639a994ad9a880c706d5b8e9aab0fc49
 created: 2026-05-18
 last_refreshed: 2026-05-19
 related_primers: [agent-readiness-contract, mdx-content-pipeline, og-image-generation]
