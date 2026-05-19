@@ -13,7 +13,7 @@ Format:
 ---
 
 - [agent-readiness-contract](./agent-readiness-contract.md) — Content-negotiation, API catalog, OpenAPI 3.1, and llms-full.txt surfaces so the portfolio passes isitagentready.com checks.
-- [hyperframes-reels](./hyperframes-reels.md) — HTML/GSAP compositions rendered to deterministic MP4 reels for case-study cards and hero bands via the HyperFrames CLI; artifacts are committed.
+- [hyperframes-reels](./hyperframes-reels.md) — HTML/GSAP compositions rendered to deterministic MP4 reels for case-study cards and hero bands via the HyperFrames CLI; artifacts are committed. Writing-post loops follow the same pipeline per ADR-0011.
 - [mdx-content-pipeline](./mdx-content-pipeline.md) — Custom YAML frontmatter parser + filesystem loader feeding case studies and writing posts, with reading-time calc and agent-facing JSON listings.
 - [og-image-generation](./og-image-generation.md) — Next.js ImageResponse handlers rendering parchment-and-forest Open Graph previews for home, case-study, and writing pages from MDX frontmatter.
 - [process-gate-policy](./process-gate-policy.md) — Pre-commit hook enforcing CHANGELOG / ADR / ROADMAP coupling for code, structural, and EPM changes; bypassed only via SKIP_PROCESS_GATE.
