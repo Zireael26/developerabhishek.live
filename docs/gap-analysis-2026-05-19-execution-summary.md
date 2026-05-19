@@ -136,3 +136,64 @@ The cycle added three new lessons to `gotchas.md`:
 Per RFC-0001, the next quarterly gap analysis is due on the first Monday of August 2026. Earlier triggers (CI pipeline change, deploy-target switch, repo rename, ≥3-package major bump) can pull it forward.
 
 The RFC's open questions (cadence enforcement, project-scope, skill codification) stay open until two more projects run the cycle.
+
+---
+
+## Addendum (post-cycle follow-ups) — 2026-05-19 (same day)
+
+Two of the three formally-deferred follow-ups closed inside the same calendar day after the main 6-PR cycle landed. The third (Wanderer redesign) remains deferred by design — it needs operator design judgment, not engineering capacity.
+
+### PR #78 · `fix/a11y-contrast-closure` — closes follow-up Q3
+
+Bumped `app/globals.css` ink-opacity caps to clear WCAG 2.0/2.1 AA against the parchment background:
+
+- `--ink-70`: `0.72` → `0.78` (≈7.6:1 ratio)
+- `--ink-60`: `0.55` → `0.70` (≈6.2:1)
+- `--ink-40`: `0.38` → `0.65` (≈5.0:1)
+
+`e2e/home.spec.ts` axe-core gate re-armed (`test.fixme` removed). Scan returns zero `color-contrast` violations against the live home page. ROADMAP line ticked `[x]`. New `gotchas.md` entry codifies the 0.65–0.78 working opacity band against the parchment palette.
+
+### PR #79 · `perf/bundle-r3f-tree-shaking` — partially closes follow-up R4
+
+Bundle overrun investigation + execution:
+
+1. **`@react-three/drei` removal** (preceding step): zero in-repo imports — removed from `dependencies`. Bundle delta: zero (drei was already tree-shaken). Install-graph + supply-chain win only.
+2. **AgentGraph: R3F → raw `three`** (ADR-0012): full rewrite of `components/scene/AgentGraph.tsx` from `@react-three/fiber` JSX-declarative pattern to raw `three.js` `useEffect`-based renderer, mirroring the existing Wanderer scene. `@react-three/fiber` removed from `dependencies`.
+
+**Measured impact** (`pnpm build` + `pnpm start` + `@lhci/cli` desktop preset against `localhost:3000`):
+
+| Metric | PR-3 baseline | After PR #79 | Δ |
+|---|---|---|---|
+| Script transferSize | 386,439 bytes (377 KiB) | 290,327 bytes (283 KiB) | **−94 KiB (−24.9%)** |
+| Total transferSize | 805,976 bytes | 710,786 bytes | −93 KiB |
+| Largest chunk (uncompressed) | 820 KiB (three + R3F + drei) | 503 KiB (three) | −317 KiB |
+| Performance / A11y / BP / SEO | 1.00 / 0.97 / 0.96 / 0.92 | 1.00 / 0.97 / 0.96 / 0.92 | unchanged |
+
+**Remaining gap:** 133 KiB above the 150 KiB target. The remaining bytes are entirely `three`'s own footprint. Further reduction requires accepting 283 KiB as the new target or porting to a smaller WebGL primitive — deferred to the next quarterly cycle. ROADMAP line `[~]` with updated numbers.
+
+### ADRs + RFCs landed across the full cycle
+
+| Doc | PR | Subject |
+|---|---|---|
+| ADR-0011 | #76 | Writing-post HyperFrames loops policy (16:9 / 5s; non-visual topics exempted) |
+| ADR-0012 | #79 | AgentGraph `@react-three/fiber` → raw `three.js` (bundle reduction) |
+| RFC-0001 | #77 | Quarterly gap-analysis as standard Trellis-fleet process |
+
+### Final findings tally
+
+| ID | Status | Closed by |
+|---|---|---|
+| Q3 (a11y residue) | Closed | PR #78 |
+| R4 (bundle overrun) | Partially closed | PR #79 (94 KiB savings; 133 KiB above target remains deferred) |
+| C2 (Wanderer) | Still deferred | Owner design judgment required |
+
+**Closed end-to-end:** 25 of 28 findings fully closed. 1 partially closed (R4). 2 deferred (C2 Wanderer, R4 residue) with formal ROADMAP follow-ups. 3 owner-pending (R1, R8, S7) tracked in `STATUS.md > Human handoff queue`.
+
+### Total cycle delta on `main`
+
+```
+12 PRs merged: #69 (gap report) → #70 (plan) → #71–#76 (6-PR sequence) → #77 (RFC + summary) → #78 (a11y) → #79 (bundle)
+2 ADRs created: 0011, 0012
+1 RFC created: 0001
+0 hook bypasses, 0 reverts, 0 force-pushes
+```

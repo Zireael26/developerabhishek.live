@@ -29,8 +29,6 @@
     "ci:serve": "pnpm build && pnpm start"
   },
   "dependencies": {
-    "@react-three/drei": "^10.7.7",
-    "@react-three/fiber": "^9.6.0",
     "clsx": "^2.1.1",
     "next": "16.2.6",
     "next-mdx-remote": "^6.0.0",
