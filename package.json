@@ -17,6 +17,7 @@
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "prepare": "husky",
     "process:check": "node scripts/process-gate.mjs",
     "stats:fetch": "node scripts/fetch-github-stats.mjs",
@@ -67,6 +68,7 @@
     "tsx": "^4.19.0",
     "typescript": "6.0.3",
     "vitest": "^4.1.5",
+    "@vitest/coverage-v8": "^4.1.5",
     "wait-on": "^9.0.0"
   },
   "pnpm": {

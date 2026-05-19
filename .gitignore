@@ -60,6 +60,9 @@ context-log.md
 # Lighthouse CI local artefacts (lhci writes here; CI uploads via the action)
 .lighthouseci/
 
+# Vitest coverage reports
+coverage/
+
 # Codex parity — .agents and .codex are NOT under the .claude/* blanket;
 # explicit allowlist for clarity.
 !.agents/

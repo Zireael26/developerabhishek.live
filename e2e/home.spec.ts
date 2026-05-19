@@ -45,18 +45,17 @@ test.describe('Home page', () => {
     await expect(work).toBeInViewport({ ratio: 0.1 });
   });
 
-  // Phase 3 ships the axe-core harness; Phase 5 (launch) fixes the remaining
-  // WCAG violations (missing meta description, contrast nits, landmark +
-  // skip-link work). The test runs in reporting mode here — when it passes
-  // we tighten the phase-5 launch slice to assert zero violations.
-  test.fixme(
-    'axe-core reports no WCAG A/AA violations on the landing page',
-    async ({ page }) => {
-      await page.goto('/');
-      const results = await new AxeBuilder({ page })
-        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-        .analyze();
-      expect(results.violations).toEqual([]);
-    },
-  );
+  // PR-4 of the gap-analysis plan armed this gate (was test.fixme). Lighthouse
+  // accessibility is 0.97 in the 2026-05-19 baseline — three nits short of
+  // 1.0. If this surfaces non-trivial violations the gate stays armed and
+  // the residue moves to a follow-up `fix(a11y)` PR.
+  test('axe-core reports no WCAG A/AA violations on the landing page', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
 });
