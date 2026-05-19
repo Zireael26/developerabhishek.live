@@ -4,6 +4,9 @@ All notable changes to akaushik.org (legacy host: developerabhishek.live, sunset
 
 ## [Unreleased]
 
+### Added
+- 2026-05-19 — Gap-analysis execution wrap-up: `docs/rfcs/RFC-0001-quarterly-gap-analysis.md` proposes adopting the four-explorer + sequenced-PR gap-analysis shape as a standard quarterly process across Trellis-registered projects; `docs/gap-analysis-2026-05-19-execution-summary.md` carries the PR-by-PR receipts, finding-by-finding final state, ROADMAP follow-ups, owner handoff queue snapshot, and cycle metrics. No code changes; closes the cycle.
+
 ### Changed
 - 2026-05-19 — Gap-analysis PR-6: dependency + docs hygiene. Closes findings D2, D3, D4, P2. `components/ui/ArrowLink.tsx` deleted (dead module, zero imports across `app/`, `components/`, `lib/`). `package.json` drops `framer-motion`, `gsap`, `lucide-react` from production dependencies — all three were declared but never imported in source; downstream bundle benefit pending the PR-3-tracked overrun investigation. ADR-0011 NEW (`docs/adr/0011-writing-post-hyperframes-loops.md`) codifies the writing-post HyperFrames loop policy: every new post gets a 16:9 / 5s loop **unless** the topic is non-visual (engineering process / tooling), which is the documented exception for `trellis` + `best-practices-into-trellis`. `CLAUDE.md` adds the EPM policy clarifier (EPM is for Phase-0-style scaffolding; per-phase narrative lives in CHANGELOG; no backfill required) and the dropped-deps note under stack quirks. `pnpm test` + `pnpm test:coverage` + `pnpm test:e2e` documented in Commands. `.claude/primers/hyperframes-reels.md` extends to mention writing loops + ADR-0011; `last_refreshed` bumped on `hyperframes-reels` + `agent-readiness-contract`; `INDEX.md` mirrors. Verification: `pnpm typecheck` clean, `pnpm lint` clean, `pnpm test` 45/45 pass, `pnpm build` clean.
 
