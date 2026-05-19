@@ -19,14 +19,14 @@ You are the `seo-redirect-health` scheduled task for the akaushik.org SEO progra
 
 **Checks to perform** (use `curl -sIL ... | head -8`):
 
-1. `https://developerabhishek.live/` — expect HTTP/2 301 → `Location: https://akaushik.org/`
-2. `https://developerabhishek.live/writing/fastembed-to-tei` — expect HTTP/2 301 → `Location: https://akaushik.org/writing/fastembed-to-tei` (path-preserving)
-3. `https://akaushik.dev/` — expect HTTP/2 301 → `Location: https://akaushik.org/`
-4. `https://akaushik.dev/work/neev` — expect HTTP/2 301 → `Location: https://akaushik.org/work/neev`
-5. `https://akaushik.org/` — expect HTTP/2 200 (no chain)
-6. `https://akaushik.org/writing/fastembed-to-tei` — expect HTTP/2 200
+1. `https://akaushik.dev/` — expect HTTP/2 308 → `Location: https://akaushik.org/`
+2. `https://akaushik.dev/work/neev` — expect HTTP/2 308 → `Location: https://akaushik.org/work/neev`
+3. `https://akaushik.org/` — expect HTTP/2 200 (no chain)
+4. `https://akaushik.org/writing/fastembed-to-tei` — expect HTTP/2 200
 
-**Pass criteria:** All six checks pass exactly. Anything else is a failure.
+> `developerabhishek.live` was dropped 2026-05-19 — registration lapsed (owner no longer holds the domain). Per the ADR-0003 Outcome addendum the catch-all 308 plan is moot; do not add it back to this check list. See `docs/adr/0003-domain-and-canonical-url.md` and `docs/CHANGELOG.md` 2026-05-19 entry.
+
+**Pass criteria:** All four checks pass exactly. Anything else is a failure.
 
 **On all green:**
 1. In `docs/seo/STATUS.md` §7 Automation health row for `seo-redirect-health`: update `Last run` to current ISO timestamp and `Status` to `green`. Do not add to Alerts section.
@@ -42,7 +42,7 @@ You are the `seo-redirect-health` scheduled task for the akaushik.org SEO progra
      ```
      <paste curl -sIL output>
      ```
-   - Action: <one-line suggested fix; e.g., "Verify Vercel domain config for developerabhishek.live → redirect to primary">
+   - Action: <one-line suggested fix; e.g., "Verify Vercel domain config for akaushik.dev → redirect to primary">
    ```
 2. Update §7 Automation health: `Status: red`, `Notes: see Alerts §4 <date>`.
 3. Commit on branch `seo-bot/redirect-health/<YYYY-MM-DD>-FAIL` with message `chore(seo-bot): redirect-health FAILED <YYYY-MM-DD>`.
@@ -52,4 +52,4 @@ You are the `seo-redirect-health` scheduled task for the akaushik.org SEO progra
 - Never push to `main`. The Trellis pre-push hook blocks it; do not try to bypass.
 - Never commit changes to anything outside `docs/seo/STATUS.md`.
 - If `gh` is not available or auth fails, write a log file at `docs/seo/scheduled-tasks/_last-failure.log` with the failure transcript and abort.
-- Keep the run under 60 seconds — six `curl -sIL` calls is fast; do not add additional checks here.
+- Keep the run under 60 seconds — four `curl -sIL` calls is fast; do not add additional checks here.

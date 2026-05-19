@@ -2,7 +2,7 @@
 
 Abhishek Kaushik's personal portfolio — a sales-artifact-grade site for an AI engineer who ships agent systems for production. The thesis: AI systems for businesses that haven't met AI yet.
 
-**Live:** https://akaushik.org · `akaushik.dev` and `developerabhishek.live` 308-redirect here per [`docs/adr/0003-domain-and-canonical-url.md`](docs/adr/0003-domain-and-canonical-url.md).
+**Live:** https://akaushik.org · `akaushik.dev` 308-redirects here per [`docs/adr/0003-domain-and-canonical-url.md`](docs/adr/0003-domain-and-canonical-url.md). (Legacy host `developerabhishek.live` registration lapsed 2026-05-19 — see the ADR Outcome addendum.)
 
 The portfolio is itself a case study in the engineering process it advertises. The PRD, ROADMAP, ADRs, and CHANGELOG are public artefacts; every non-trivial change ships with the matching sibling docs. Process-gate scripts enforce the discipline at pre-commit.
 
