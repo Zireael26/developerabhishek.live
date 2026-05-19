@@ -26,47 +26,36 @@ jobs:
       - name: Install deps
         run: pnpm install --frozen-lockfile
 
-      # Same preview-URL resolution pattern as .github/workflows/lighthouse.yml.
-      # Vercel's `target_url` on the status context points at the dashboard,
-      # not the deployed preview — the real *.vercel.app URL only appears in
-      # the Vercel bot's sticky PR comment.
-      - name: Wait for Vercel preview
-        id: preview
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_SHA: ${{ github.event.pull_request.head.sha }}
-          REPO: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-          deadline=$((SECONDS + 600))
-          while (( SECONDS < deadline )); do
-            state="$(gh api "repos/$REPO/commits/$PR_SHA/status" --jq '[.statuses[] | select(.context == "Vercel")] | .[0].state // empty')"
-            if [[ "$state" == "success" ]]; then
-              # Filter by Vercel bot author so a PR comment containing a
-              # stray vercel.app URL can't shadow the real deployment.
-              url="$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --jq '[.[] | select(.user.login == "vercel[bot]")] | .[].body' | grep -oE 'https://[a-zA-Z0-9.-]+\.vercel\.app' | head -1)"
-              if [[ -n "$url" ]]; then
-                echo "url=$url" >> "$GITHUB_OUTPUT"
-                echo "Vercel preview ready: $url"
-                exit 0
-              fi
-              echo "Vercel status success but no *.vercel.app URL in PR comments yet"
-            else
-              echo "Waiting for Vercel preview (state=${state:-missing})…"
-            fi
-            sleep 15
-          done
-          echo "Timed out waiting for Vercel preview." >&2
-          exit 1
+      # Runner-local serve. Vercel GitHub auto-deploy has been unreliable
+      # since 2026-04-24 (docs/gap-analysis-2026-05-19.md finding C2-b);
+      # this job no longer waits on *.vercel.app. Build + start + wait-on +
+      # run tests against localhost.
 
       - name: Install Playwright browsers
-        run: pnpm test:e2e:install
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Build (production)
+        run: pnpm build
+
+      - name: Start server
+        run: |
+          nohup pnpm start > server.log 2>&1 &
+          echo $! > server.pid
+
+      - name: Wait for server ready
+        run: pnpm exec wait-on http://localhost:3000 --timeout 60000
 
       - name: Run Playwright
         env:
-          PLAYWRIGHT_BASE_URL: ${{ steps.preview.outputs.url }}
+          PLAYWRIGHT_BASE_URL: http://localhost:3000
         run: pnpm test:e2e
+
+      - name: Stop server
+        if: always()
+        run: |
+          if [[ -f server.pid ]]; then
+            kill "$(cat server.pid)" || true
+          fi
 
       - name: Upload Playwright report
         if: ${{ !cancelled() }}
@@ -74,4 +63,12 @@ jobs:
         with:
           name: playwright-report-${{ github.run_id }}
           path: playwright-report/
+          retention-days: 7
+
+      - name: Upload server log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-log-${{ github.run_id }}
+          path: server.log
           retention-days: 7

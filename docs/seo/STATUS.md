@@ -10,7 +10,7 @@
 ## 1. Phase progress
 
 ### Phase 0 — Canonical hygiene (BLOCKING)
-- [ ] 2.1 Vercel: set `akaushik.org` as primary; mark `akaushik.dev` + `developerabhishek.live` as 301-redirect-to-primary **(Abhishek)**
+- [ ] 2.1 Vercel: set `akaushik.org` as primary; mark `akaushik.dev` + `developerabhishek.live` as 301-redirect-to-primary **(Abhishek)** — 2026-05-19 status: `akaushik.dev` co-serves 200 with the same etag (not 301); `developerabhishek.live` returns no response (registration / origin status uncertain). See `docs/agent-readiness-snapshots/2026-05-19.md` for transcripts.
 - [ ] 2.2 Verify 301 chain on both legacy hosts via `seo-redirect-health` for 7 consecutive days
 - [x] 2.3 Add `alternates.canonical` to per-page Next metadata (helper + per-page wiring) — landed in spec PR
 - [ ] 2.4 Verify all three properties in GSC + Bing Webmaster Tools **(Abhishek)**
@@ -20,7 +20,7 @@
 
 ### Phase 1 — Topic SEO foundation
 - [ ] 3.1 Buyer-intent keyword discovery → `docs/seo/keywords.json` (≥50 queries)
-- [ ] 3.2 Editorial calendar seeded → `docs/seo/editorial-calendar.md` (50 slots)
+- [x] 3.2 Editorial calendar seeded → `docs/seo/editorial-calendar.md` (50 slots) — seeded 2026-05-19
 - [ ] 3.2 Pillar page: `/writing/ai-for-indian-msme-guide`
 - [ ] 3.2 Pillar page: `/writing/agent-systems-production-guide`
 - [ ] 3.2 Pillar page: `/writing/rag-in-practice-guide`
@@ -101,7 +101,7 @@ _(none)_
 
 → [`editorial-calendar.md`](./editorial-calendar.md)
 
-_(not yet seeded — first `seo-weekly-draft` run will fail gracefully and update Automation health below)_
+_Seeded 2026-05-19 with 50 slots across the five pillars (msme, agents, rag, eng, craft). `seo-weekly-draft` re-reads on every run; flips status to `drafted` / `published` / `dropped` as PRs move._
 
 ---
 

@@ -75,7 +75,7 @@ A living document. Phases are ordered by dependency, not calendar. Each phase is
 - [x] Portrait photo swap (`/images/about/abhishek.webp`, 4:5) — shipped 2026-05-11 (CHANGELOG)
 - [ ] Wanderer crane redesign + reinstate — see `docs/wanderer-redesign-brief.md`
 - [~] Case-study reel MP4s — HyperFrames scaffold + 8 compositions + React integration landed (ADR-0008); remaining work is the render pass (`pnpm render:work && pnpm render:posters`) + committing `public/video/work/*.{mp4,webp}`. Blocked in-sandbox on FFmpeg/Chrome availability; runs cleanly on a local dev box
-- [ ] `isitagentready.com` scan against prod + dated PNG into `docs/agent-readiness-snapshots/`
+- [~] `isitagentready.com` scan against prod + dated snapshot in `docs/agent-readiness-snapshots/` — first dated snapshot landed 2026-05-19 (`docs/agent-readiness-snapshots/2026-05-19.md`); PNG from the live UI still pending owner action (curl-based snapshot is in place)
 - [ ] `pnpm analyze` Phase-5 bundle audit — update `docs/BUNDLE_BUDGET.md` with measured initial JS, tighten `lighthouserc.yml` ceiling back toward 150 KiB target (currently 200 KiB `warn`)
 - [ ] Lighthouse category thresholds — flip to `error` severity at PRD §5 targets (0.95 / 1.0 / 0.95 / 1.0) once first prod numbers are in
 - [ ] `/api/docs` human-readable page rendering the OpenAPI spec (deferred with note in Phase 4.4 PR)

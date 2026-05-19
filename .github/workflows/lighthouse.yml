@@ -14,48 +14,41 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # The Vercel "Vercel" status context's target_url points at the
-      # deployment dashboard, not the served preview. Parse the Vercel bot's
-      # PR comment instead — it ships the real *.vercel.app URL. Poll both:
-      # wait for Vercel status = success, then grep the first vercel.app URL
-      # out of any sticky comment the Vercel bot posted on the PR.
-      - name: Wait for Vercel preview
-        id: preview
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_SHA: ${{ github.event.pull_request.head.sha }}
-          REPO: ${{ github.repository }}
+      - uses: pnpm/action-setup@v4
+        with:
+          standalone: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      # Runner-local serve. Vercel GitHub auto-deploy has been unreliable
+      # since 2026-04-24 (docs/gap-analysis-2026-05-19.md finding C2-b);
+      # this job no longer waits on *.vercel.app. Build + start + wait-on +
+      # audit against localhost.
+
+      - name: Build (production)
+        run: pnpm build
+
+      - name: Start server
         run: |
-          set -euo pipefail
-          deadline=$((SECONDS + 600))
-          while (( SECONDS < deadline )); do
-            state="$(gh api "repos/$REPO/commits/$PR_SHA/status" --jq '[.statuses[] | select(.context == "Vercel")] | .[0].state // empty')"
-            if [[ "$state" == "success" ]]; then
-              # Filter by Vercel bot author so a PR comment containing a
-              # stray vercel.app URL can't shadow the real deployment.
-              url="$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --jq '[.[] | select(.user.login == "vercel[bot]")] | .[].body' | grep -oE 'https://[a-zA-Z0-9.-]+\.vercel\.app' | head -1)"
-              if [[ -n "$url" ]]; then
-                echo "url=$url" >> "$GITHUB_OUTPUT"
-                echo "Vercel preview ready: $url"
-                exit 0
-              fi
-              echo "Vercel status success but no *.vercel.app URL in PR comments yet"
-            else
-              echo "Waiting for Vercel preview (state=${state:-missing})…"
-            fi
-            sleep 15
-          done
-          echo "Timed out waiting for Vercel preview." >&2
-          exit 1
+          nohup pnpm start > server.log 2>&1 &
+          echo $! > server.pid
+
+      - name: Wait for server ready
+        run: pnpm exec wait-on http://localhost:3000 --timeout 60000
 
       - name: Lighthouse (desktop)
         uses: treosh/lighthouse-ci-action@v11
         with:
           urls: |
-            ${{ steps.preview.outputs.url }}
-            ${{ steps.preview.outputs.url }}/work/neev
-            ${{ steps.preview.outputs.url }}/writing
+            http://localhost:3000/
+            http://localhost:3000/work/neev
+            http://localhost:3000/writing
           configPath: ./lighthouserc.yml
           uploadArtifacts: true
           temporaryPublicStorage: true
@@ -65,9 +58,9 @@ jobs:
         uses: treosh/lighthouse-ci-action@v11
         with:
           urls: |
-            ${{ steps.preview.outputs.url }}
-            ${{ steps.preview.outputs.url }}/work/neev
-            ${{ steps.preview.outputs.url }}/writing
+            http://localhost:3000/
+            http://localhost:3000/work/neev
+            http://localhost:3000/writing
           configPath: ./lighthouserc.mobile.yml
           uploadArtifacts: true
           temporaryPublicStorage: true
@@ -76,15 +69,26 @@ jobs:
       - name: Install axe-core CLI
         run: npm install -g @axe-core/cli@4
 
-      # Phase 3 ships the scan; Phase 5 (launch) fixes the remaining
-      # violations (color-contrast accounts for the bulk today) and drops
-      # continue-on-error so the gate bites. Report still surfaces in the
-      # step log so regressions are visible.
-      - name: Axe-core scan (reporting only until Phase 5)
+      # Axe-core gate gets armed (`continue-on-error` removed) in PR-4 of
+      # the gap-analysis plan, after home.spec.ts un-fixmes the WCAG block.
+      - name: Axe-core scan (reporting only)
         continue-on-error: true
-        env:
-          PREVIEW_URL: ${{ steps.preview.outputs.url }}
         run: |
-          axe "$PREVIEW_URL" "$PREVIEW_URL/work/neev" "$PREVIEW_URL/writing" \
+          axe http://localhost:3000/ http://localhost:3000/work/neev http://localhost:3000/writing \
             --exit \
             --tags wcag2a,wcag2aa,wcag21a,wcag21aa
+
+      - name: Stop server
+        if: always()
+        run: |
+          if [[ -f server.pid ]]; then
+            kill "$(cat server.pid)" || true
+          fi
+
+      - name: Upload server log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-log-${{ github.run_id }}
+          path: server.log
+          retention-days: 7
