@@ -24,7 +24,8 @@
     "render:posters": "node scripts/hyperframes/generate-posters.mjs",
     "analyze": "ANALYZE=true next build --webpack",
     "test:e2e": "playwright test",
-    "test:e2e:install": "playwright install --with-deps"
+    "test:e2e:install": "playwright install --with-deps",
+    "ci:serve": "pnpm build && pnpm start"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
@@ -65,7 +66,8 @@
     "tailwindcss": "4.3.0",
     "tsx": "^4.19.0",
     "typescript": "6.0.3",
-    "vitest": "^4.1.5"
+    "vitest": "^4.1.5",
+    "wait-on": "^9.0.0"
   },
   "pnpm": {
     "overrides": {
