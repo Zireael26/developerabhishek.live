@@ -1,6 +1,6 @@
 # Release schedule — drafts batch 1
 
-Planned publication cadence for the four drafts that landed in PR [#TBD] (`feat/drafts-batch-1`). All four ship with `draft: true` frontmatter (writing) or `draft: true` field (case-study row) and are invisible to production today. Releasing each one is a one-line frontmatter flip + commit + push.
+Planned publication cadence for the four drafts that landed in PR [#81](https://github.com/Zireael26/akaushik.org/pull/81) (`feat/drafts-batch-1`). All four ship with `draft: true` frontmatter (writing) or `draft: true` field (case-study row) and are invisible to production today. Releasing each one is a one-line frontmatter flip + commit + push.
 
 This file is disposable — delete it once every row below is shipped.
 
