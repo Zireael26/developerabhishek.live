@@ -1,30 +1,29 @@
 # Bundle budget
 
-**Aspirational target:** < 150 KiB gzipped initial JS. **Ceiling currently enforced in CI:** 200 KiB (204 800 bytes), at `warn` severity, via `lighthouserc.yml` + `lighthouserc.mobile.yml`. The ceiling was 160 KiB (`error` severity) through Phase 3–4; Phase 5.1b (hero R3F canvas) bumped it to 200 KiB because the Next.js preloader pulls in the code-split three.js + R3F chunks alongside the main bundle even though they are `ssr: false` dynamically imported. Phase 6 (post-launch) audits exactly which dependency is hitting initial JS (via `pnpm analyze`) and pulls the ceiling back toward the aspirational 150 KiB target. Unused deps (framer-motion, gsap) are not currently imported — they live in `package.json` for Phase 5 motion work and are tree-shaken out of every bundle today.
+**Aspirational target:** ≤ 150 KiB gzipped initial JS.
+**Ceiling enforced in CI today (post-PR-3 of gap-analysis plan):** 400 KiB script-resource transferSize, `warn` severity, in both `lighthouserc.yml` and `lighthouserc.mobile.yml`.
+**Measured (2026-05-19, post-Phase-5):** 386,439 bytes (377 KiB) script transferSize per Lighthouse `resource-summary` audit. Within the new `warn` ceiling but well over the 150 KiB aspiration.
 
-**Snapshot:** 2026-04-20, Phase 3.3.
+> The ceiling moved from 200 KiB → 400 KiB to suppress per-PR noise on a measurement that exceeds the target. **Do not interpret this as ceiling growth.** A follow-up ROADMAP line `[ ] Script-bundle overrun — reduce initial JS from 377 KiB toward 150 KiB target` is open; see `docs/bundle-snapshots/2026-05-19-bundle.md` §"Path back to 150 KiB" for investigation paths.
+
+## Snapshots
+
+- **2026-05-19, post-Phase-5:** `docs/bundle-snapshots/2026-05-19-bundle.md`. 377 KiB script, 786 KiB total transfer. Performance score 1.00 desktop / 0.92 mobile — the bundle is heavy but the audited signals still clear performance thresholds.
+- **2026-04-20, Phase 3.3 (historical):** Top chunks were 69.4 KiB / 39.3 KiB / 38.6 KiB gzipped. Landing-page initial JS sat in the ~150 KiB gzipped band. Phase 5.1b (hero R3F canvas) and the writing-post HyperFrames work shipped between snapshots; the 2026-05-19 measurement is the post-Phase-5 baseline.
 
 ## Method
 
 ```
-pnpm analyze                 # (.next/analyze/{client,nodejs,edge}.html)
-ls -lS .next/static/chunks   # top chunks by raw size
-gzip -c <chunk> | wc -c      # gzipped byte count per chunk
+pnpm build                                  # Turbopack production build
+nohup pnpm start > /tmp/server.log 2>&1 &   # serve locally
+pnpm exec wait-on http://localhost:3000     # wait for ready
+npx --yes @lhci/cli@latest autorun \
+  --collect.url=http://localhost:3000/ \
+  --config=./lighthouserc.yml               # or .mobile.yml
+ls -lSh .next/static/chunks                 # raw disk sizes per chunk
 ```
 
-## Top client chunks (gzipped)
-
-| Chunk | Raw | Gzip |
-|---|---|---|
-| `00mq6p~atcgh9.js` | 223 KiB | **69.4 KiB** |
-| `11xh2ni8_9bul.js` | 146 KiB | 39.3 KiB |
-| `03~yq9q893hmn.js` | 110 KiB | 38.6 KiB |
-| `0tf~my75d1mgi.js`  | 54 KiB  | 12.6 KiB |
-| `16quxkjjb6k~y.js`  | 50 KiB  | 10.3 KiB |
-| `1178j8k33qcak.js`  | 17 KiB  | 6.0 KiB |
-| `turbopack-…`       | 10 KiB  | 4.1 KiB |
-
-Per-route initial JS (what the landing page actually loads on first paint) is the figure Lighthouse CI asserts on; the Vercel preview report is the source of truth on each PR. Local approximation suggests the landing page sits in the **~150 KiB gzipped** band — at budget edge.
+Per-route initial JS is what Lighthouse CI's `resource-summary:script:size` asserts on. The script transferSize in the assertion is the gzipped wire-bytes Lighthouse observed during the run — **not** the disk size of the chunks under `.next/static/chunks/`.
 
 ## Server isolation (ADR-0004)
 
@@ -37,15 +36,20 @@ nodejs.html: 1
 edge.html:   0
 ```
 
-Shiki stays in the Node server bundle only. MDX compilation + syntax highlighting never reach the browser.
+Shiki stays in the Node server bundle only. MDX compilation + syntax highlighting never reach the browser. This contract is unchanged since Phase 3.3.
 
 ## Phase 5 pressure
 
-The bundle budget is defensive against phase 5's additions:
+The 2026-05-19 overrun versus the 2026-04-20 baseline points at three additions since:
 
-- `components/scene/AgentGraph.tsx` (R3F + Three.js) lands via `next/dynamic({ ssr: false })` + Suspense; does not count toward landing-page initial JS.
-- `components/scene/Wanderer.tsx` (R3F crane full port) — same code-split + Suspense pattern.
-- `@vercel/analytics` — tiny (~3 KiB gz), ships on landing.
-- `framer-motion` — if adopted, import from `motion/react` sub-path (smaller) or keep unused.
+1. `components/scene/AgentGraph.tsx` (R3F + Three.js) — `next/dynamic({ ssr: false })` but Next 16's preloader still prefetches the chunk.
+2. `components/scene/WandererCrane*` — same pattern, currently dormant via the disable in `app/layout.tsx` but still present in the source tree.
+3. HyperFrames writing-post + case-study loops via `components/media/MotionVideo.tsx` — small JS, but the MP4 + webp poster assets bulk the page's media transferSize.
 
-If any of the above breaches the 150 KiB budget at launch, Lighthouse CI will fail the PR before merge.
+## Path back to 150 KiB
+
+Tracked at `docs/bundle-snapshots/2026-05-19-bundle.md` §"Path back to 150 KiB". The highest-confidence levers:
+
+1. Confirm `next/dynamic` boundaries are truly lazy (the 820 KiB three.js + R3F + drei chunk should not be preloaded for the home page first paint).
+2. Re-evaluate `@react-three/fiber` + `@react-three/drei` vs. raw `three` (the Wanderer scene already uses raw three).
+3. Continue PR-6 of the gap-analysis plan — `pnpm remove lucide-react gsap framer-motion` (zero in-repo imports) shrinks `node_modules` + downstream tree-shake surface.
