@@ -17,9 +17,10 @@
 
 const USERNAME = 'Zireael26';
 const REPOS = [
-  { name: 'neev',        label: 'Neev',        repo: 'Zireael26/neev' },
-  { name: 'vericite',    label: 'VeriCite',    repo: 'Zireael26/vericite' },
-  { name: 'curat-money', label: 'curat.money', repo: 'Zireael26/curat.money' },
+  { name: 'neev',        label: 'Neev',        repo: 'msme-neev/neev' },
+  { name: 'vericite',    label: 'VeriCite',    repo: 'vericite-ai/vericite' },
+  { name: 'curat-money', label: 'curat.money', repo: 'curat-money/curat' },
+  { name: 'clusterbid',  label: 'ClusterBid',  repo: 'ClusterBid/console' },
 ];
 
 const TOKEN = process.env.GITHUB_TOKEN;
@@ -83,6 +84,7 @@ async function repoStats(repo) {
     headers: { authorization: `bearer ${TOKEN}`, accept: 'application/vnd.github+json' },
   });
   if (!res.ok) {
+    console.warn(`repoStats: ${repo} returned ${res.status} — commits will be null`);
     return { commits12mo: null, lastCommit: null };
   }
   const link = res.headers.get('link') || '';

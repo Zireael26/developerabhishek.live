@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getPost, getPostSlugs, type CaseStudyFrontmatter } from '@/lib/content';
+import { getAllPosts, getPost, type CaseStudyFrontmatter } from '@/lib/content';
 import { CASE_STUDIES } from '@/components/sections/Work';
 import { CaseStudyStub } from '@/components/sections/CaseStudyStub';
 import { CaseStudyPage } from '@/components/work/CaseStudyPage';
@@ -15,7 +15,7 @@ function isCardSlug(s: string): s is ReelSlug {
 }
 
 export function generateStaticParams() {
-  const mdxSlugs = getPostSlugs('case-studies');
+  const mdxSlugs = getAllPosts('case-studies').map((p) => p.slug);
   const allSlugs = Array.from(new Set<string>([...CARD_SLUGS, ...mdxSlugs]));
   return allSlugs.map((slug) => ({ slug }));
 }
@@ -54,6 +54,13 @@ export default async function WorkDetail({
   const { slug } = await params;
 
   const mdx = getPost('case-studies', slug);
+  if (
+    mdx &&
+    (mdx.frontmatter as CaseStudyFrontmatter).draft === true &&
+    process.env.NODE_ENV === 'production'
+  ) {
+    notFound();
+  }
   // Pre-compute the JSON-LD island. Synthesise a minimal frontmatter shape
   // for stub-only slugs (Bluehost ships permanently as a card without an
   // MDX body) so they still emit an Article graph.

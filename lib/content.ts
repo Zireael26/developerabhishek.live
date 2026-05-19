@@ -14,6 +14,7 @@ export type CaseStudyFrontmatter = {
   stack: string[];
   evidenceOf: string;
   reel?: string;
+  draft?: boolean;
 };
 
 export type WritingFrontmatter = {
@@ -21,6 +22,7 @@ export type WritingFrontmatter = {
   dek: string;
   date: string;
   readingTime?: string;
+  draft?: boolean;
 };
 
 export type FrontmatterFor<T extends ContentType> = T extends 'case-studies'
@@ -99,6 +101,19 @@ function parseFrontmatter(raw: string): {
       i += 1;
       continue;
     }
+    // Bare booleans get coerced; quoted "true"/"false" stay strings (stripQuotes
+    // unwraps the quotes but the value never enters this branch in that case
+    // because the equality check fires before stripQuotes).
+    if (value === 'true') {
+      data[key] = true;
+      i += 1;
+      continue;
+    }
+    if (value === 'false') {
+      data[key] = false;
+      i += 1;
+      continue;
+    }
     data[key] = stripQuotes(value);
     i += 1;
   }
@@ -142,14 +157,21 @@ export function getPost<T extends ContentType>(
 
 export function getAllPosts<T extends ContentType>(
   type: T,
+  options?: { includeDrafts?: boolean },
 ): Array<Omit<Post<T>, 'content'>> {
+  const includeDrafts = options?.includeDrafts ?? false;
   return getPostSlugs(type)
     .map((slug) => {
       const post = getPost(type, slug);
       if (!post) return null;
       return { slug: post.slug, frontmatter: post.frontmatter };
     })
-    .filter((p): p is NonNullable<typeof p> => p !== null);
+    .filter((p): p is NonNullable<typeof p> => p !== null)
+    .filter((p) => {
+      if (includeDrafts) return true;
+      const fm = p.frontmatter as { draft?: boolean };
+      return fm.draft !== true;
+    });
 }
 
 // Index-with-reading-time variant for the home Writing list + writing index.
@@ -158,7 +180,9 @@ export function getAllPosts<T extends ContentType>(
 // only need frontmatter (sitemap, /api/writing, llms.txt).
 export function getAllPostsWithReadingTime<T extends ContentType>(
   type: T,
+  options?: { includeDrafts?: boolean },
 ): Array<Omit<Post<T>, 'content'> & { readingTime: string }> {
+  const includeDrafts = options?.includeDrafts ?? false;
   return getPostSlugs(type)
     .map((slug) => {
       const post = getPost(type, slug);
@@ -167,5 +191,10 @@ export function getAllPostsWithReadingTime<T extends ContentType>(
       const readingTime = fm.readingTime ?? getReadingTime(post.content);
       return { slug: post.slug, frontmatter: post.frontmatter, readingTime };
     })
-    .filter((p): p is NonNullable<typeof p> => p !== null);
+    .filter((p): p is NonNullable<typeof p> => p !== null)
+    .filter((p) => {
+      if (includeDrafts) return true;
+      const fm = p.frontmatter as { draft?: boolean };
+      return fm.draft !== true;
+    });
 }

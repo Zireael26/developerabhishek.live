@@ -13,6 +13,7 @@ type CaseStudy = {
   lede: ReactNode;
   spec: ReadonlyArray<{ term: string; def: ReactNode }>;
   lead?: boolean;
+  draft?: boolean;
 };
 
 export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
@@ -96,7 +97,7 @@ export function Work() {
         kicker="Four case studies, ordered by strategic weight. Each is a problem in the client's words, an approach, what shipped, and honest scope on what was and wasn't included."
       />
       <ol className="case-list" role="list">
-        {CASE_STUDIES.map((c) => (
+        {CASE_STUDIES.filter((c) => c.draft !== true).map((c) => (
           <li
             key={c.slug}
             className={`case-item${c.lead ? ' case-item--lead' : ''}`}
