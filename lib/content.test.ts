@@ -6,6 +6,8 @@ import {
   getAllPostsWithReadingTime,
 } from './content';
 
+const DRAFT_FIXTURE_SLUG = '_test-draft';
+
 // These tests exercise the real `content/` directory rather than mocking the
 // filesystem — the parser's job is to handle the real frontmatter shapes the
 // project ships, and pinning the assertions to the real corpus catches drift
@@ -87,10 +89,46 @@ describe('content — getAllPosts', () => {
     }
   });
 
-  it('matches getPostSlugs in length and order', () => {
-    const posts = getAllPosts('writing');
+  it('matches getPostSlugs in length and order when drafts are included', () => {
+    const posts = getAllPosts('writing', { includeDrafts: true });
     const slugs = getPostSlugs('writing');
     expect(posts.map((p) => p.slug)).toEqual(slugs);
+  });
+});
+
+describe('content — drafts', () => {
+  it('getAllPosts(writing) excludes draft posts by default', () => {
+    const posts = getAllPosts('writing');
+    expect(posts.some((p) => p.slug === DRAFT_FIXTURE_SLUG)).toBe(false);
+  });
+
+  it('getAllPosts(writing, { includeDrafts: true }) includes draft posts', () => {
+    const posts = getAllPosts('writing', { includeDrafts: true });
+    expect(posts.some((p) => p.slug === DRAFT_FIXTURE_SLUG)).toBe(true);
+  });
+
+  it('getAllPostsWithReadingTime(writing) excludes drafts by default', () => {
+    const posts = getAllPostsWithReadingTime('writing');
+    expect(posts.some((p) => p.slug === DRAFT_FIXTURE_SLUG)).toBe(false);
+  });
+
+  it('getAllPostsWithReadingTime(writing, { includeDrafts: true }) includes drafts', () => {
+    const posts = getAllPostsWithReadingTime('writing', { includeDrafts: true });
+    expect(posts.some((p) => p.slug === DRAFT_FIXTURE_SLUG)).toBe(true);
+  });
+
+  it('getPost returns drafts as-is (filtering happens at the listing layer)', () => {
+    const post = getPost('writing', DRAFT_FIXTURE_SLUG);
+    expect(post).not.toBeNull();
+    if (!post) return;
+    expect((post.frontmatter as { draft?: boolean }).draft).toBe(true);
+  });
+
+  it('parses bare `true` / `false` as JS booleans', () => {
+    const post = getPost('writing', DRAFT_FIXTURE_SLUG);
+    if (!post) throw new Error('expected draft fixture');
+    expect((post.frontmatter as { draft?: unknown }).draft).toBe(true);
+    expect(typeof (post.frontmatter as { draft?: unknown }).draft).toBe('boolean');
   });
 });
 

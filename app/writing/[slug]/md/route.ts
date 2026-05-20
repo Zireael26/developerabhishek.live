@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { getPost, getPostSlugs } from '@/lib/content';
+import { getAllPosts, getPost } from '@/lib/content';
 
 // Pattern B (suffix route) for AGENT_READINESS §4.1 content negotiation.
 // Externally reachable as `/writing/<slug>.md` via the middleware rewrite;
@@ -10,7 +10,7 @@ export const dynamic = 'force-static';
 export const revalidate = 300;
 
 export function generateStaticParams() {
-  return getPostSlugs('writing').map((slug) => ({ slug }));
+  return getAllPosts('writing').map((post) => ({ slug: post.slug }));
 }
 
 export async function GET(

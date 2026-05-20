@@ -22,7 +22,7 @@ export default function WorkIndex() {
           what shipped, and honest scope on what was and wasn&apos;t included.
         </p>
         <ol className="work-index-list" role="list">
-          {CASE_STUDIES.map((c) => (
+          {CASE_STUDIES.filter((c) => c.draft !== true).map((c) => (
             <li key={c.slug} className="work-index-item">
               <span className="case-index">{c.index}</span>
               <Link href={`/work/${c.slug}`} className="work-index-link">

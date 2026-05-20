@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { getPostSlugs } from '@/lib/content';
+import { getAllPosts } from '@/lib/content';
 
 const SITE_URL = 'https://akaushik.org';
 
@@ -10,8 +10,8 @@ const SITE_URL = 'https://akaushik.org';
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
-  const caseSlugs = getPostSlugs('case-studies');
-  const writingSlugs = getPostSlugs('writing');
+  const caseSlugs = getAllPosts('case-studies').map((p) => p.slug);
+  const writingSlugs = getAllPosts('writing').map((p) => p.slug);
 
   const staticEntries: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/`, lastModified: now, changeFrequency: 'weekly', priority: 1.0 },

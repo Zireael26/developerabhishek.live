@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { notFound } from 'next/navigation';
-import { getPost, getPostSlugs } from '@/lib/content';
+import { getAllPosts, getPost } from '@/lib/content';
 import { formatMonthYear } from '@/lib/dates';
 
 // Node runtime so generateStaticParams works.
@@ -9,7 +9,7 @@ export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
 export function generateStaticParams() {
-  return getPostSlugs('writing').map((slug) => ({ slug }));
+  return getAllPosts('writing').map((post) => ({ slug: post.slug }));
 }
 
 export default async function OGImage({ params }: { params: Promise<{ slug: string }> }) {

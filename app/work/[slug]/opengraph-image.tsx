@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { notFound } from 'next/navigation';
-import { getPost, getPostSlugs } from '@/lib/content';
+import { getAllPosts, getPost } from '@/lib/content';
 
 // Node runtime so generateStaticParams works (edge runtime forbids pre-
 // rendering params). Not edge-latency-critical — OG images are cached
@@ -10,7 +10,7 @@ export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
 export function generateStaticParams() {
-  return getPostSlugs('case-studies').map((slug) => ({ slug }));
+  return getAllPosts('case-studies').map((post) => ({ slug: post.slug }));
 }
 
 export default async function OGImage({ params }: { params: Promise<{ slug: string }> }) {

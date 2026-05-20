@@ -17,9 +17,10 @@
 
 const USERNAME = 'Zireael26';
 const REPOS = [
-  { name: 'neev',        label: 'Neev',        repo: 'Zireael26/neev' },
-  { name: 'vericite',    label: 'VeriCite',    repo: 'Zireael26/vericite' },
-  { name: 'curat-money', label: 'curat.money', repo: 'Zireael26/curat.money' },
+  { name: 'neev',        label: 'Neev',        repo: 'msme-neev/neev' },
+  { name: 'vericite',    label: 'VeriCite',    repo: 'vericite-ai/vericite' },
+  { name: 'curat-money', label: 'curat.money', repo: 'curat-money/curat' },
+  { name: 'clusterbid',  label: 'ClusterBid',  repo: 'ClusterBid/console' },
 ];
 
 const TOKEN = process.env.GITHUB_TOKEN;
@@ -83,6 +84,7 @@ async function repoStats(repo) {
     headers: { authorization: `bearer ${TOKEN}`, accept: 'application/vnd.github+json' },
   });
   if (!res.ok) {
+    console.warn(`repoStats: ${repo} returned ${res.status} — commits will be null`);
     return { commits12mo: null, lastCommit: null };
   }
   const link = res.headers.get('link') || '';
@@ -118,6 +120,19 @@ async function repoStats(repo) {
       commits12mo: stats.commits12mo,
       lastCommit: stats.lastCommit,
     });
+  }
+
+  // Fail-safe: if every repo returned null (token scope insufficient, revoked,
+  // or rate-limited), abort rather than overwrite stats.json with zeros. The
+  // workflow's commit step won't fire on non-zero exit, so the widget keeps
+  // its last-known-good values until the underlying issue is fixed.
+  if (repos.every((r) => r.commits12mo === null)) {
+    console.error(
+      'fetch-github-stats: every repo returned null commits12mo. ' +
+        'Likely token-scope, revoked-token, or rate-limit issue. ' +
+        'Aborting without overwriting stats.json.',
+    );
+    process.exit(1);
   }
 
   const out = {
