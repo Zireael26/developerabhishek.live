@@ -2,7 +2,7 @@
 
 > Live status doc. **Plan lives in [`2026-05-18-seo-strategy-design.md`](./2026-05-18-seo-strategy-design.md).** Scheduled tasks append to this file; humans hand-edit. Order of sections is load-bearing — automation reads + writes by anchor.
 
-**Last updated:** 2026-05-18T00:00:00+05:30 (seed)
+**Last updated:** 2026-05-19T21:35:00+05:30
 **Active phase:** Phase 0 — canonical hygiene
 
 ---
@@ -10,11 +10,11 @@
 ## 1. Phase progress
 
 ### Phase 0 — Canonical hygiene (BLOCKING)
-- [ ] 2.1 Vercel: set `akaushik.org` as primary; mark `akaushik.dev` + `developerabhishek.live` as 301-redirect-to-primary **(Abhishek)** — 2026-05-19 status: `akaushik.dev` co-serves 200 with the same etag (not 301); `developerabhishek.live` returns no response (registration / origin status uncertain). See `docs/agent-readiness-snapshots/2026-05-19.md` for transcripts.
-- [ ] 2.2 Verify 301 chain on both legacy hosts via `seo-redirect-health` for 7 consecutive days
+- [ ] 2.1 Vercel: set `akaushik.org` as primary; mark `akaushik.dev` as 308-redirect-to-primary **(Abhishek)** — 2026-05-19 status: `akaushik.dev` co-serves 200 with the same etag (not 308). See `docs/agent-readiness-snapshots/2026-05-19.md` for transcripts. (`developerabhishek.live` row dropped 2026-05-19 — registration lapsed, ADR-0003 Outcome.)
+- [ ] 2.2 Verify 308 chain on `akaushik.dev` via `seo-redirect-health` for 7 consecutive days
 - [x] 2.3 Add `alternates.canonical` to per-page Next metadata (helper + per-page wiring) — landed in spec PR
-- [ ] 2.4 Verify all three properties in GSC + Bing Webmaster Tools **(Abhishek)**
-- [ ] 2.5 Submit GSC Change of Address: `developerabhishek.live` → `akaushik.org` **(Abhishek)**
+- [ ] 2.4 Verify `akaushik.org` (+ `akaushik.dev` once redirect lands) in GSC + Bing Webmaster Tools **(Abhishek)**
+- [x] ~~2.5 Submit GSC Change of Address: `developerabhishek.live` → `akaushik.org`~~ — **dropped 2026-05-19**, ADR-0003 Outcome (legacy host no longer owned). Recovery falls back to Wikidata `sameAs` + sitemap submission.
 - [ ] 2.6 Submit `sitemap.xml` for `akaushik.org` to GSC + Bing **(Abhishek)**
 - [x] 2.7 `app/sitemap.ts` emits canonical-host URLs only (verified)
 
@@ -69,7 +69,6 @@ Refreshed monthly by `seo-monthly-health` scheduled task.
 | Metric | 2026-05 | 2026-06 | 2026-07 | Target (12mo) |
 |--------|---------|---------|---------|----------------|
 | Pages indexed (akaushik.org, GSC) | — | — | — | ≥ sitemap count |
-| Pages indexed (developerabhishek.live remnant) | — | — | — | 0 (all 301'd) |
 | Top-10 ranking queries (problem-shaped) | — | — | — | ≥15 |
 | Top-10 ranking queries (identity-qualified) | — | — | — | ≥3 |
 | Wikidata entry status | not-created | — | — | live + cited |
@@ -131,9 +130,9 @@ Outstanding manual-only tasks. Roll items into Phase progress checkboxes (§1) w
 
 | # | Task | Where | Status |
 |---|------|-------|--------|
-| H1 | Vercel: set primary domain + 301 redirects | Vercel dashboard | pending |
-| H2 | GSC + Bing Webmaster: verify all three properties | GSC console | pending |
-| H3 | GSC: submit Change of Address | GSC | pending |
+| H1 | Vercel: set `akaushik.org` primary + `akaushik.dev` 308 redirect to primary | Vercel dashboard | pending |
+| H2 | GSC + Bing Webmaster: verify `akaushik.org` (Domain property via DNS TXT preferred) | GSC console | pending |
+| H3 | ~~GSC: submit Change of Address~~ | — | dropped 2026-05-19 (legacy host lapsed) |
 | H4 | GSC + Bing: submit sitemap.xml | GSC | pending |
 | H5 | Wikidata: create entry "Abhishek Kaushik (AI engineer)" with references | wikidata.org | pending |
 | H6 | Profile NAP sync (LinkedIn, GitHub, X, Bluesky, dev.to, Hashnode) | each platform | pending |
@@ -141,3 +140,5 @@ Outstanding manual-only tasks. Roll items into Phase progress checkboxes (§1) w
 | H8 | Fill canonical-NAP block (§2) with real handles + Wikidata Q-id once H5 done | this file | pending |
 | H9 | Editorial review of weekly draft PRs | GitHub | recurring |
 | H10 | Register the 5 Cowork scheduled tasks (each prompts an approval dialog) — see `docs/seo/scheduled-tasks/REGISTER.md` | Cowork session | pending |
+| H11 | Cloudflare: disable "Manage robots.txt" / AI Crawler Control on `akaushik.org` zone — Security → Bots (or Security → Settings) → toggle off → Caching → purge `https://akaushik.org/robots.txt` → re-verify origin output (no `BEGIN Cloudflare Managed content` block). Currently prepends `Disallow: /` for ClaudeBot/GPTBot/CCBot/etc. + `Content-Signal: ai-train=no`, contradicting origin `app/robots.txt/route.ts` which serves `ai-train=yes`. | Cloudflare dashboard | **pending — high priority for AIO** |
+| H12 | GSC: after H11 lands, **Settings → robots.txt report → Request a recrawl**. Add `akaushik.org` as a Domain property (DNS TXT) if currently a URL-prefix property. | GSC dashboard | blocked by H11 |

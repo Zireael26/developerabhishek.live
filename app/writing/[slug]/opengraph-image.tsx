@@ -4,6 +4,7 @@ import { getAllPosts, getPost } from '@/lib/content';
 import { formatMonthYear } from '@/lib/dates';
 
 // Node runtime so generateStaticParams works.
+export const alt = 'Writing — akaushik.org';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 

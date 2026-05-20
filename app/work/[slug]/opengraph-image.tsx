@@ -5,6 +5,7 @@ import { getAllPosts, getPost } from '@/lib/content';
 // Node runtime so generateStaticParams works (edge runtime forbids pre-
 // rendering params). Not edge-latency-critical — OG images are cached
 // once per deploy.
+export const alt = 'Case study — akaushik.org';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
