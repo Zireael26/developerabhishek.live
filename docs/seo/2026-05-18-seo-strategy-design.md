@@ -36,24 +36,24 @@ curl -sIL https://akaushik.dev/             →  HTTP/2 200  (serving same site)
 curl -sIL https://akaushik.org/             →  HTTP/2 200  (canonical — correct)
 ```
 
-Three hostnames serving identical content with no 301 chain. Six years of `developerabhishek.live` backlink equity is stranded. Google sees duplicates. Until this is fixed, every other phase is pouring water into a leaky bucket.
+> **Update 2026-05-19:** `developerabhishek.live` registration lapsed; the legacy host is no longer owned (ADR-0003 Outcome addendum). Phase 0 collapses to the `akaushik.dev` 308 redirect + GSC verify + sitemap submit. CoA from `.live` is dropped. Equity recovery falls back to Wikidata `sameAs` + sitemap re-submission. Rows below reflect the trimmed set.
 
 ### 2.1 Tasks
 
 | # | Task | Mechanism | Owner |
 |---|------|-----------|-------|
-| 2.1 | Set `akaushik.org` as primary domain in Vercel project; mark `akaushik.dev` and `developerabhishek.live` as **Redirect to primary domain, status code 301** | Vercel Dashboard → project → Settings → Domains | **Abhishek (manual)** |
-| 2.2 | Verify 301 chain on both legacy hosts (homepage + a deep path) | `curl -sIL https://developerabhishek.live/writing/fastembed-to-tei \| head -5` — expect `301 Moved Permanently` → `Location: https://akaushik.org/writing/fastembed-to-tei` | Verified automatically by `seo-redirect-health` scheduled task (see §6) |
+| 2.1 | Set `akaushik.org` as primary domain in Vercel project; mark `akaushik.dev` as **Redirect to primary domain, status code 308** | Vercel Dashboard → project → Settings → Domains | **Abhishek (manual)** |
+| 2.2 | Verify 308 chain on `akaushik.dev` (homepage + a deep path) | `curl -sIL https://akaushik.dev/work/neev \| head -5` — expect `308 Permanent Redirect` → `Location: https://akaushik.org/work/neev` | Verified automatically by `seo-redirect-health` scheduled task (see §6) |
 | 2.3 | Add `alternates: { canonical: ... }` to per-page Next metadata (root + every dynamic page) | Code change — `app/layout.tsx`, `app/work/[slug]/page.tsx`, `app/writing/[slug]/page.tsx`, etc. Helper: `lib/canonical.ts` exporting `canonical(path: string)` | Claude (code) |
-| 2.4 | Verify all three properties in Google Search Console + Bing Webmaster Tools | GSC console | **Abhishek** |
-| 2.5 | Submit GSC **Change of Address** from `developerabhishek.live` → `akaushik.org` | GSC → Settings → Change of Address | **Abhishek** |
+| 2.4 | Verify `akaushik.org` (Domain property via DNS TXT preferred) in Google Search Console + Bing Webmaster Tools; add `akaushik.dev` after 2.1 lands | GSC console | **Abhishek** |
+| 2.5 | ~~Submit GSC Change of Address~~ | — | **dropped 2026-05-19** (ADR-0003 Outcome — legacy host lapsed) |
 | 2.6 | Submit `sitemap.xml` for `akaushik.org` to GSC + Bing | GSC | **Abhishek** |
 | 2.7 | Confirm `app/sitemap.ts` emits only canonical-host URLs | Already verified — `SITE_URL = 'https://akaushik.org'` constant | ✓ |
 
 ### 2.2 Exit criteria
 
-- 7 consecutive days of green status from `seo-redirect-health` scheduled task.
-- GSC Change of Address submitted (Abhishek attests in `STATUS.md`).
+- 7 consecutive days of green status from `seo-redirect-health` scheduled task (`akaushik.dev` 308 + `akaushik.org` 200).
+- ~~GSC Change of Address submitted~~ — dropped 2026-05-19; replaced by GSC sitemap submission + Wikidata `sameAs`.
 - `site:akaushik.org` returns ≥ sitemap-entry-count URLs within 14 days of submission.
 
 No other phase begins until exit met.
@@ -257,7 +257,7 @@ Tracked in `STATUS.md > Human handoff queue`.
 
 | Risk | Mitigation |
 |------|-----------|
-| GSC Change of Address requires both properties verified for ≥180 days. `developerabhishek.live` may not qualify if recently verified. | Use 301 + `sameAs` Wikidata + GSC sitemap submission as primary recovery; CoA is bonus |
+| `developerabhishek.live` registration lapsed 2026-05-19 — CoA no longer possible (ADR-0003 Outcome). | Wikidata `sameAs` + GSC sitemap submission carry the equity-recovery role unaided. |
 | 1-post/week cadence slips → topic authority stalls | `seo-weekly-draft` PR creates accountability; missed week visible in editorial-calendar status |
 | Scheduled tasks fire only when Cowork is open → drift detection delayed | Acceptable for monthly cadence tasks; for `seo-redirect-health` add a backup: GitHub Actions cron (issue if cron-on-actions becomes desirable later) |
 | Wikidata entry deleted by editors as non-notable | Cite akaushik.org/about + LinkedIn + Bluehost team page + any external press as references; re-submit if deleted |

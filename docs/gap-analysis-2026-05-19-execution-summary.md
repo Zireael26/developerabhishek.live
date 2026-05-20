@@ -81,10 +81,12 @@ In `docs/seo/STATUS.md > Human handoff queue`:
 | R1 | Calendly / Cal.com URL for Contact button | Cal.com signup + `components/sections/Contact.tsx:61` |
 | R8 | Abhishek's prose edit pass on `lib/about-copy.ts` + case-study honest-scope paragraphs + curat.money framing | local editor |
 | S7-a | Vercel: configure `akaushik.dev` as 308 redirect (currently co-serves 200 with akaushik.org's etag) | Vercel project domains |
-| S7-b | Verify `developerabhishek.live` registration + redirect status (curl returns no response 2026-05-19) | Vercel + DNS |
-| S7-c | GSC: submit Change of Address `developerabhishek.live` → `akaushik.org` | GSC dashboard |
+| ~~S7-b~~ | ~~Verify `developerabhishek.live` registration + redirect status~~ — **closed 2026-05-19** as not-applicable: owner no longer holds the domain (registration lapsed). ADR-0003 Outcome addendum + same-day CHANGELOG entry record the scrub. | — |
+| ~~S7-c~~ | ~~GSC: submit Change of Address `developerabhishek.live` → `akaushik.org`~~ — **closed 2026-05-19** as not-applicable: source property no longer exists. Recovery routes through Wikidata `sameAs` (S7-d) + GSC sitemap submit instead. | — |
 | S7-d | Wikidata: create "Abhishek Kaushik (AI engineer)" entry with references | wikidata.org |
 | S7-e | Profile NAP sync: Bluesky create, Hashnode create, dev.to create, then sync URL + tagline | each platform |
+| S7-f | **Cloudflare: disable "Manage robots.txt" / AI Crawler Control on `akaushik.org` zone.** Currently prepends a `Disallow: /` block for Amazonbot / Applebot-Extended / Bytespider / CCBot / ClaudeBot / GPTBot / Google-Extended / meta-externalagent + a `Content-Signal: ai-train=no` line that contradicts the origin route's `ai-train=yes`. Dashboard path: zone → Security → Bots (or Security → Settings) → toggle off → Caching → purge `https://akaushik.org/robots.txt` → re-verify origin output has no `BEGIN Cloudflare Managed content` block. **High priority for AIO** — every AI crawler this site's `llms.txt` / agent-readiness work invites is currently blocked at the edge. | Cloudflare dashboard |
+| S7-g | **GSC: after S7-f lands, request a recrawl of `/robots.txt`.** Settings → robots.txt report → Request a recrawl. Also add `akaushik.org` as a **Domain property** (DNS TXT verification) if currently a URL-prefix property — Domain property covers apex + www + http + https in one and is more robust against the kind of fetch glitch that produced the "robots.txt not available" status on 2026-05-19. | GSC dashboard |
 | isitagentready snapshot PNG | Live UI screenshot for `docs/agent-readiness-snapshots/2026-05-19.png` (curl-based snapshot lands in the same dir) | browser |
 
 ## New documents created during the cycle
@@ -196,4 +198,48 @@ Bundle overrun investigation + execution:
 2 ADRs created: 0011, 0012
 1 RFC created: 0001
 0 hook bypasses, 0 reverts, 0 force-pushes
+```
+
+---
+
+## Addendum 2 — `developerabhishek.live` lapse + Cloudflare robots.txt handoff (2026-05-19, same day)
+
+Two post-cycle events folded into the same calendar day after the bundle / a11y addenda:
+
+### Event 1 — legacy host registration lapsed
+
+`developerabhishek.live` was not renewed and the domain is no longer owned. Per ADR-0003 the host was always going to sunset; the lapse is the planned outcome, not a new decision. ADR-0003 gains an **Outcome (2026-05-19)** section. Same-day scrub PR drops operational references from `README.md`, `STATUS.md` (Phase 0 + handoff queue), `seo-strategy-design.md` §2, `seo-redirect-health` scheduled-task prompt (was about to fail every night until 2026-05-19), `seo-strategy` primer, and this execution-summary's handoff queue (S7-b + S7-c closed as not-applicable). Historical record left untouched in `HANDOFF.md`, `_reference/`, ADR-0001, ADR-0003 main body, `PRD.md` Q1/Q5, earlier CHANGELOG entries, `CLAUDE.md` domain-history note.
+
+### Event 2 — Cloudflare-managed robots.txt found contradicting origin
+
+Origin route `app/robots.txt/route.ts` serves `User-agent: * Allow: /` + `Content-Signal: search=yes, ai-input=yes, ai-train=yes` (opt-in to AI crawlers — consistent with the llms.txt + agent-readiness program). Live edge output prepends a Cloudflare-managed block:
+
+```
+# BEGIN Cloudflare Managed content
+User-agent: *
+Content-Signal: search=yes,ai-train=no
+Allow: /
+
+User-agent: Amazonbot           Disallow: /
+User-agent: Applebot-Extended   Disallow: /
+User-agent: Bytespider          Disallow: /
+User-agent: CCBot               Disallow: /
+User-agent: ClaudeBot           Disallow: /
+User-agent: CloudflareBrowserRenderingCrawler  Disallow: /
+User-agent: Google-Extended     Disallow: /
+User-agent: GPTBot              Disallow: /
+User-agent: meta-externalagent  Disallow: /
+# END Cloudflare Managed Content
+```
+
+Per RFC 9309, named crawlers match their specific group, so every listed AI bot is actively blocked at the edge — the opposite of what the origin and the rest of the AIO surface declare. This is dashboard-only to fix (zone → Security → Bots → "Manage robots.txt" / AI Crawler Control → toggle off → purge `/robots.txt` cache). Captured as handoff items S7-f (Cloudflare toggle) and S7-g (GSC robots.txt recrawl + Domain property migration, follow-on to the "robots.txt not available" status the owner reported on 2026-05-19).
+
+### Findings tally — final-final
+
+| ID | Status | Closed by |
+|---|---|---|
+| S7-b | Closed (n/a) | Domain lapsed; nothing to verify |
+| S7-c | Closed (n/a) | Source property no longer exists |
+| S7-f | New, owner-pending | Cloudflare managed robots.txt toggle |
+| S7-g | New, owner-pending | GSC robots.txt recrawl + Domain property |
 ```

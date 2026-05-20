@@ -52,3 +52,15 @@ This ADR settles open questions Q1 and Q5 in `docs/PRD.md`.
 - **Social bio sync:** LinkedIn, GitHub profile site URL, and X bio all updated to `https://akaushik.org` in a single coordinated pass before announcement.
 - **Repo rename** from `developerabhishek.live` → `akaushik.org` (matches canonical + `personal/` directory convention). Covered in `docs/CHANGELOG.md` under the cutover entry.
 - **`vercel.json` redirect** on the legacy project pointing `developerabhishek.live/*` → `https://akaushik.org/$1` (308) before the registration lapses.
+
+## Outcome (2026-05-19)
+
+The sunset planned in §15.D played out as expected, plus one un-planned escalation:
+
+- **`developerabhishek.live` registration was not renewed and has now lapsed.** The owner no longer holds the domain. Per Cloudflare DNS the zone is gone; `curl` against the host returns no response on 2026-05-19.
+- **The `vercel.json` catch-all 308 plan is moot.** Without ownership there is no project to deploy it on. Backlinks to legacy paths (high-traffic items were manually cleaned during the 2026-04-20 → 2026-05-19 window per the Consequences section above) will now 404 directly rather than redirect.
+- **Equity-recovery falls back to the two paths that don't depend on the legacy domain:** (a) Wikidata `Person` entry with `sameAs: akaushik.org` and references to LinkedIn / GitHub / Bluehost (tracked as STATUS.md H5), (b) GSC sitemap submission for the new canonical (STATUS.md H4). These were already planned as belt-and-braces; they're now load-bearing on their own.
+- **GSC Change of Address (was Phase 0 §2.5) is dropped.** A CoA requires both source and destination properties verified in GSC for ≥180 days; the source no longer exists, so the option is closed. The on-site signals already shipped (`Person` + `Organization` JSON-LD, canonical link tags, sitemap, llms.txt, agent-readiness Link headers) are the recovery surface.
+- **No new ADR.** The lapse is the outcome of this ADR's decision, not a new architectural choice. The CHANGELOG entry for 2026-05-19 records the scrub PR that flushed operational doc references.
+
+`akaushik.dev` 308 → `akaushik.org` remains the lone live redirect on the Vercel project. Phase 0 of the SEO program (`docs/seo/2026-05-18-seo-strategy-design.md §2`) is updated accordingly.
